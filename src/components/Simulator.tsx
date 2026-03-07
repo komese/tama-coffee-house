@@ -416,7 +416,7 @@ export default function Simulator() {
                             </div>
                             <div style={{
                                 display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(60px, 1fr))', gap: '5px',
-                                maxHeight: '200px', overflowY: 'auto', padding: '5px', border: '2px solid #ccc', borderRadius: '5px', backgroundColor: '#fff'
+                                maxHeight: '350px', overflowY: 'auto', padding: '5px', border: '2px solid #ccc', borderRadius: '5px', backgroundColor: '#fff'
                             }}>
                                 {(activeTab === 'base' ? availableTamas : availableEyes).map(opt => {
                                     const isSelected = activeTab === 'base' ? selectedBase === opt : selectedEye === opt;

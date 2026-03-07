@@ -170,13 +170,13 @@ export default function EvolutionList({ initialTab = 'land' }: { initialTab?: st
 
                                 <div style={{ backgroundColor: '#fff', color: 'var(--text-color)', padding: '15px', border: '2px solid var(--border-color)', marginBottom: '15px', fontFamily: 'var(--font-retro)', borderRadius: '10px' }}>
                                     <h4 style={{ color: 'var(--primary-color)', marginBottom: '5px' }}>[ じょうけん ]</h4>
-                                    <p style={{ fontSize: '1.1rem' }}>{selectedChar.condition}</p>
+                                    <p style={{ fontSize: '1.1rem', whiteSpace: 'pre-wrap' }}>{selectedChar.condition}</p>
                                 </div>
 
                                 {selectedChar.description && (
                                     <div style={{ borderLeft: '4px solid var(--primary-color)', paddingLeft: '10px' }}>
                                         <h4 style={{ color: 'var(--border-color)', marginBottom: '5px', fontFamily: 'var(--font-retro)' }}>[ せつめい ]</h4>
-                                        <p style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'var(--text-color)' }}>{selectedChar.description}</p>
+                                        <p style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'var(--text-color)', whiteSpace: 'pre-wrap' }}>{selectedChar.description}</p>
                                     </div>
                                 )}
                             </>

@@ -197,6 +197,17 @@ a:hover {
     align-items: stretch;
   }
 
+  /* PC用のflex-basis(横幅)が縦幅として認識されて見切れるのを防ぐためリセット */
+  .evolution-tree,
+  .evolution-detail,
+  .simulator-controls,
+  .simulator-preview {
+    flex: none !important;
+    width: 100%;
+    max-height: none !important;
+    /* PC用のmax-heightも解除 */
+  }
+
   .evolution-detail,
   .simulator-preview {
     position: static;
