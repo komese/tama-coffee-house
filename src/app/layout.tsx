@@ -9,6 +9,9 @@ export const metadata: Metadata = {
     default: "たまコーヒーハウス | たまごっちパラダイス攻略＆交流サイト",
   },
   description: "たまごっちパラダイスの攻略・遺伝シミュレーター・交流サイト。可愛く簡単なUIでサポート！",
+  verification: {
+    google: "hTdchN2Aw7YXXoFueBlZ073A_Yej0lgcBIyVdzBrJEA",
+  },
 };
 
 export default function RootLayout({
