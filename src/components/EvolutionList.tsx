@@ -88,9 +88,9 @@ export default function EvolutionList({ initialTab = 'land' }: { initialTab?: st
                 {/* ステージ表示用サブタイトル */}
             </p>
 
-            <div className="evolution-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+            <div className="evolution-container">
                 {/* ツリー表示部分 */}
-                <div className="evolution-tree" style={{ flex: '1 1 55%', paddingRight: '10px', display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '85vh', overflowY: 'auto' }}>
+                <div className="evolution-tree">
 
                     {currentData.length === 0 && (
                         <div style={{ textAlign: 'center', padding: '20px', fontFamily: 'var(--font-retro)', border: '2px dashed #999', borderRadius: '10px' }}>
@@ -156,9 +156,9 @@ export default function EvolutionList({ initialTab = 'land' }: { initialTab?: st
                 </div>
 
                 {/* 詳細プレビュー部分 (モバイルでは上部に配置される) */}
-                <div className="y2k-window evolution-detail" style={{ flex: '1 1 40%', position: 'sticky', top: '20px', height: 'fit-content', minWidth: '300px' }}>
+                <div className="y2k-window evolution-detail">
                     <div className="y2k-window-header" style={{ background: 'var(--border-color)', color: '#fff' }}>ファイル しょうさい</div>
-                    <div className="y2k-window-body" style={{ minHeight: '200px' }}>
+                    <div className="y2k-window-body">
                         {selectedChar ? (
                             <>
                                 <div style={{ textAlign: 'center', marginBottom: '10px' }}>

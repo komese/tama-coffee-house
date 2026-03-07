@@ -349,10 +349,10 @@ export default function Simulator() {
                 <canvas ref={canvasRef}></canvas>
             </div>
 
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px', justifyContent: 'center' }}>
+            <div className="simulator-container">
 
                 {/* コントロールパネル */}
-                <div className="y2k-window" style={{ flex: '1 1 350px' }}>
+                <div className="y2k-window simulator-controls">
                     <div className="y2k-window-header">コントロールパネル</div>
                     <div className="y2k-window-body">
 
@@ -515,7 +515,7 @@ export default function Simulator() {
                 </div>
 
                 {/* プレビュー画面 */}
-                <div className="y2k-window" style={{ flex: '1 1 300px' }}>
+                <div className="y2k-window simulator-preview">
                     <div className="y2k-window-header" style={{ background: 'var(--primary-color)', color: '#fffaf0' }}>[ プレビュー ]</div>
                     <div className="y2k-window-body" style={{
                         display: 'flex',

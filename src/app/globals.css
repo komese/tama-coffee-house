@@ -134,22 +134,44 @@ a:hover {
   /* スマホ用にナビゲーションも折り返し許可 */
 }
 
-/* --- 進化条件画面の共通・PC向けレイアウト --- */
-.evolution-container {
+/* --- 進化条件画面 / シミュレーター画面 の共通・PC向けレイアウト --- */
+.evolution-container,
+.simulator-container {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  /* ツリーと詳細枠が並ぶようにする */
+  gap: 20px;
+  justify-content: center;
+  align-items: flex-start;
+  /* 縦に無駄に伸びるのを防ぐ */
 }
 
+/* 各コンポーネントのPC向け設定 */
 .evolution-tree {
-  order: 1;
-  /* PC時はツリーが左（先） */
+  flex: 1 1 55%;
+  padding-right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 85vh;
+  overflow-y: auto;
 }
 
 .evolution-detail {
-  order: 2;
-  /* PC時は詳細枠が右（後） */
+  flex: 1 1 40%;
+  position: sticky;
+  top: 20px;
+  min-width: 300px;
+}
+
+.simulator-controls {
+  flex: 1 1 350px;
+}
+
+.simulator-preview {
+  flex: 1 1 300px;
+  position: sticky;
+  top: 20px;
 }
 
 @media (max-width: 600px) {
@@ -168,17 +190,17 @@ a:hover {
     font-size: 0.9rem;
   }
 
-  /* 進化条件のスマホレイアウト: 詳細情報パネルを上に配置する */
-  .evolution-container {
-    flex-direction: column;
+  /* スマホレイアウト: flex-direction を column-reverse にして後の要素(詳細/プレビュー)を上に配置 */
+  .evolution-container,
+  .simulator-container {
+    flex-direction: column-reverse;
+    align-items: stretch;
   }
 
-  .evolution-detail {
-    order: -1;
-  }
-
-  .evolution-tree {
-    order: 1;
+  .evolution-detail,
+  .simulator-preview {
+    position: static;
+    /* スマホではsticky解除 */
   }
 }
 
