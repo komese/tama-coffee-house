@@ -134,6 +134,24 @@ a:hover {
   /* スマホ用にナビゲーションも折り返し許可 */
 }
 
+/* --- 進化条件画面の共通・PC向けレイアウト --- */
+.evolution-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  /* ツリーと詳細枠が並ぶようにする */
+}
+
+.evolution-tree {
+  order: 1;
+  /* PC時はツリーが左（先） */
+}
+
+.evolution-detail {
+  order: 2;
+  /* PC時は詳細枠が右（後） */
+}
+
 @media (max-width: 600px) {
   .y2k-header {
     flex-direction: column;
@@ -148,6 +166,19 @@ a:hover {
   .y2k-nav-btn {
     padding: 6px 12px;
     font-size: 0.9rem;
+  }
+
+  /* 進化条件のスマホレイアウト: 詳細情報パネルを上に配置する */
+  .evolution-container {
+    flex-direction: column;
+  }
+
+  .evolution-detail {
+    order: -1;
+  }
+
+  .evolution-tree {
+    order: 1;
   }
 }
 
