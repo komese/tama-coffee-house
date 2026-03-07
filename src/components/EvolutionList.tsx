@@ -155,41 +155,41 @@ export default function EvolutionList({ initialTab = 'land' }: { initialTab?: st
                     )}
                 </div>
 
-                {/* 詳細プレビュー部分 (右側固定) */}
-                <div className="y2k-window" style={{ flex: '1 1 40%', position: 'sticky', top: '20px', height: 'fit-content' }}>
-                    <div className="y2k-window-header" style={{ background: 'var(--border-color)', color: '#fff' }}>ファイル しょうさい</div>
-                    <div className="y2k-window-body" style={{ minHeight: '350px' }}>
-                        {selectedChar ? (
-                            <>
-                                <div style={{ textAlign: 'center', marginBottom: '10px' }}>
-                                    <img src={selectedChar.iconUrl} alt={selectedChar.name} style={{ width: '120px', height: '120px', objectFit: 'contain' }} />
-                                </div>
-                                <h3 style={{ textAlign: 'center', color: 'var(--primary-color)', fontSize: '1.5rem', marginBottom: '15px', fontFamily: 'var(--font-retro)' }}>
-                                    {selectedChar.name}
-                                </h3>
-
-                                <div style={{ backgroundColor: '#000', color: '#0f0', padding: '15px', border: '2px solid var(--border-color)', marginBottom: '15px', fontFamily: 'var(--font-retro)', borderRadius: '10px' }}>
-                                    <h4 style={{ color: '#fff', marginBottom: '5px' }}>[ じょうけん ]</h4>
-                                    <p style={{ fontSize: '1.1rem' }}>{selectedChar.condition}</p>
-                                </div>
-
-                                {selectedChar.description && (
-                                    <div style={{ borderLeft: '4px solid var(--primary-color)', paddingLeft: '10px' }}>
-                                        <h4 style={{ color: 'var(--border-color)', marginBottom: '5px', fontFamily: 'var(--font-retro)' }}>[ せつめい ]</h4>
-                                        <p style={{ fontSize: '0.9rem', fontWeight: 'bold' }}>{selectedChar.description}</p>
-                                    </div>
-                                )}
-                            </>
-                        ) : (
-                            <div style={{ display: 'flex', height: '100%', minHeight: '300px', alignItems: 'center', justifyContent: 'center', color: '#999', textAlign: 'center', fontFamily: 'var(--font-retro)', fontWeight: 'bold' }}>
-                                キャラがえらばれていません。<br />左のツリーからタッチしてね！
-                            </div>
-                        )}
-                    </div>
-                </div>
-
             </div>
+
+            {/* 詳細プレビュー部分 (モバイルでは上部に配置される) */}
+            <div className="y2k-window" style={{ flex: '1 1 40%', position: 'sticky', top: '20px', height: 'fit-content', minWidth: '300px' }}>
+                <div className="y2k-window-header" style={{ background: 'var(--border-color)', color: '#fff' }}>ファイル しょうさい</div>
+                <div className="y2k-window-body" style={{ minHeight: '350px' }}>
+                    {selectedChar ? (
+                        <>
+                            <div style={{ textAlign: 'center', marginBottom: '10px' }}>
+                                <img src={selectedChar.iconUrl} alt={selectedChar.name} style={{ width: '120px', height: '120px', objectFit: 'contain' }} />
+                            </div>
+                            <h3 style={{ textAlign: 'center', color: 'var(--primary-color)', fontSize: '1.5rem', marginBottom: '15px', fontFamily: 'var(--font-retro)' }}>
+                                {selectedChar.name}
+                            </h3>
+
+                            <div style={{ backgroundColor: '#fff', color: 'var(--text-color)', padding: '15px', border: '2px solid var(--border-color)', marginBottom: '15px', fontFamily: 'var(--font-retro)', borderRadius: '10px' }}>
+                                <h4 style={{ color: 'var(--primary-color)', marginBottom: '5px' }}>[ じょうけん ]</h4>
+                                <p style={{ fontSize: '1.1rem' }}>{selectedChar.condition}</p>
+                            </div>
+
+                            {selectedChar.description && (
+                                <div style={{ borderLeft: '4px solid var(--primary-color)', paddingLeft: '10px' }}>
+                                    <h4 style={{ color: 'var(--border-color)', marginBottom: '5px', fontFamily: 'var(--font-retro)' }}>[ せつめい ]</h4>
+                                    <p style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'var(--text-color)' }}>{selectedChar.description}</p>
+                                </div>
+                            )}
+                        </>
+                    ) : (
+                        <div style={{ display: 'flex', height: '100%', minHeight: '300px', alignItems: 'center', justifyContent: 'center', color: '#999', textAlign: 'center', fontFamily: 'var(--font-retro)', fontWeight: 'bold' }}>
+                            キャラがえらばれていません。<br />左のツリーからタッチしてね！
+                        </div>
+                    )}
+                </div>
+            </div>
+
         </div>
     );
 }
-

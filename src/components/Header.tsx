@@ -17,7 +17,7 @@ export default function Header() {
             }}>
                 <Link href="/" style={{ color: 'var(--primary-color)' }}>☕ たまコーヒーハウス</Link>
             </div>
-            <nav style={{ display: 'flex', gap: '15px' }}>
+            <nav className="header-nav">
                 {pathname !== '/' && <Link href="/" className="y2k-nav-btn">ホーム</Link>}
                 {pathname !== '/simulator' && <Link href="/simulator" className="y2k-nav-btn">遺伝シミュ</Link>}
                 {!pathname.startsWith('/evolution') && <Link href="/#evolution" className="y2k-nav-btn">進化じょうけん</Link>}

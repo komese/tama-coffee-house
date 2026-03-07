@@ -19,17 +19,6 @@
   --font-retro: 'DotGothic16', sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-color: #2b1f1a;
-    --primary-color: #d2b48c;
-    --secondary-color: #8b5a2b;
-    --accent-color: #5c4033;
-    --text-color: #fdf6e3;
-    --border-color: #d2b48c;
-  }
-}
-
 html,
 body {
   max-width: 100vw;
@@ -133,7 +122,35 @@ a:hover {
   position: sticky;
   top: 0;
   z-index: 100;
+  flex-wrap: wrap;
+  /* スマホ用に折り返しを許可 */
+  gap: 10px;
 }
+
+.header-nav {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  /* スマホ用にナビゲーションも折り返し許可 */
+}
+
+@media (max-width: 600px) {
+  .y2k-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 15px;
+  }
+
+  .header-nav {
+    gap: 8px;
+  }
+
+  .y2k-nav-btn {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
+}
+
 
 .y2k-nav-btn {
   background: transparent;
