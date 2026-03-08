@@ -8,7 +8,7 @@ export const metadata: Metadata = {
     template: "%s | たまコーヒーハウス",
     default: "たまコーヒーハウス | たまごっちパラダイス攻略＆交流サイト",
   },
-  description: "たまごっちパラダイスの攻略・遺伝シミュレーター・交流サイト。可愛く簡単なUIでサポート！",
+  description: "たまごっちパラダイスの攻略＆交流サイト「たまコーヒーハウス」へようこそ！ブリードで遺伝するキャラクターの見た目のシミュレーターや、全ステージ（りく・みず・そら・もり）全キャラの進化じょうけんの一覧を確認できます！たまパラファン同士で語り合える掲示板も完備！！",
   verification: {
     google: "hTdchN2Aw7YXXoFueBlZ073A_Yej0lgcBIyVdzBrJEA",
   },
