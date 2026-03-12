@@ -368,7 +368,7 @@ export default function FamilyTreePage() {
         </label>
       </div>
 
-      <div className="y2k-window" style={{ overflowX: 'auto', padding: '40px 20px' }}>
+      <div className="y2k-window" style={{ overflowX: 'auto', padding: '40px 20px', marginTop: '10px' }}>
         <div ref={treeRef} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           
           {/* ツリー描画領域 */}
@@ -399,8 +399,8 @@ export default function FamilyTreePage() {
               {/* 初代の線 */}
               <div style={{ position: 'relative', width: '280px', height: '40px' }}>
                   <div style={{ position: 'absolute', left: '60px', top: 0, width: '2px', height: '40px', backgroundColor: 'var(--primary-color)' }}></div>
-                  <div style={{ position: 'absolute', left: '220px', top: 0, width: '2px', height: '20px', backgroundColor: 'var(--primary-color)' }}></div>
-                  <div style={{ position: 'absolute', left: '60px', top: '20px', width: '160px', height: '2px', backgroundColor: 'var(--primary-color)' }}></div>
+                  <div style={{ position: 'absolute', left: '220px', top: 0, width: '2px', height: '22px', backgroundColor: 'var(--primary-color)' }}></div>
+                  <div style={{ position: 'absolute', left: '60px', top: '19px', width: '162px', height: '2px', backgroundColor: 'var(--primary-color)' }}></div>
               </div>
 
               {/* 世代ごとのループ描画 */}
@@ -441,8 +441,8 @@ export default function FamilyTreePage() {
                     {!isLast && (
                        <div style={{ position: 'relative', width: '280px', height: '40px' }}>
                           <div style={{ position: 'absolute', left: '60px', top: 0, width: '2px', height: '40px', backgroundColor: 'var(--primary-color)' }}></div>
-                          <div style={{ position: 'absolute', left: '220px', top: 0, width: '2px', height: '20px', backgroundColor: 'var(--primary-color)' }}></div>
-                          <div style={{ position: 'absolute', left: '60px', top: '20px', width: '160px', height: '2px', backgroundColor: 'var(--primary-color)' }}></div>
+                          <div style={{ position: 'absolute', left: '220px', top: 0, width: '2px', height: '22px', backgroundColor: 'var(--primary-color)' }}></div>
+                          <div style={{ position: 'absolute', left: '60px', top: '19px', width: '162px', height: '2px', backgroundColor: 'var(--primary-color)' }}></div>
                        </div>
                     )}
 
