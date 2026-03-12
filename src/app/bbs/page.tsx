@@ -180,7 +180,7 @@ export default function BBS() {
     };
 
     return (
-        <div className="y2k-container" style={{ maxWidth: '800px', margin: '0 auto' }}>
+        <div className="y2k-container" style={{ maxWidth: '800px', margin: '0 auto', paddingTop: '30px' }}>
             <h1 className="y2k-title" style={{ textAlign: 'center', lineHeight: '1.2' }}>
                 たまコーヒーハウス<br />
                 <span style={{ fontSize: '0.8em' }}>みんなの掲示板</span>

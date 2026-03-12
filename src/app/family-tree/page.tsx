@@ -341,7 +341,7 @@ export default function FamilyTreePage() {
   };
 
   return (
-    <div className="y2k-container" style={{ maxWidth: '1000px', margin: '0 auto' }}>
+    <div className="y2k-container" style={{ maxWidth: '1000px', margin: '0 auto', paddingTop: '30px' }}>
       <h1 className="y2k-title" style={{ textAlign: 'center', lineHeight: '1.2', fontSize: '2.5rem' }}>
         家系図メーカー
       </h1>
@@ -399,7 +399,7 @@ export default function FamilyTreePage() {
               {/* 初代の線 */}
               <div style={{ position: 'relative', width: '280px', height: '40px' }}>
                   <div style={{ position: 'absolute', left: '60px', top: 0, width: '2px', height: '40px', backgroundColor: 'var(--primary-color)' }}></div>
-                  <div style={{ position: 'absolute', left: '220px', top: 0, width: '2px', height: '22px', backgroundColor: 'var(--primary-color)' }}></div>
+                  <div style={{ position: 'absolute', left: '220px', top: 0, width: '2px', height: '21px', backgroundColor: 'var(--primary-color)' }}></div>
                   <div style={{ position: 'absolute', left: '60px', top: '19px', width: '162px', height: '2px', backgroundColor: 'var(--primary-color)' }}></div>
               </div>
 
@@ -441,7 +441,7 @@ export default function FamilyTreePage() {
                     {!isLast && (
                        <div style={{ position: 'relative', width: '280px', height: '40px' }}>
                           <div style={{ position: 'absolute', left: '60px', top: 0, width: '2px', height: '40px', backgroundColor: 'var(--primary-color)' }}></div>
-                          <div style={{ position: 'absolute', left: '220px', top: 0, width: '2px', height: '22px', backgroundColor: 'var(--primary-color)' }}></div>
+                          <div style={{ position: 'absolute', left: '220px', top: 0, width: '2px', height: '21px', backgroundColor: 'var(--primary-color)' }}></div>
                           <div style={{ position: 'absolute', left: '60px', top: '19px', width: '162px', height: '2px', backgroundColor: 'var(--primary-color)' }}></div>
                        </div>
                     )}
