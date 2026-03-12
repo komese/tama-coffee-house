@@ -111,9 +111,10 @@ const CombinedIcon = ({ name }: { name: string }) => {
     );
 };
 
-export default function Simulator() {
+export default function Simulator({ minimalMode = false }: { minimalMode?: boolean }) {
     // Checkbox states (for filters)
     const [excludeJadeExclusive, setExcludeJadeExclusive] = useState(false);
+    const [worldTab, setWorldTab] = useState<'all' | 'land' | 'sea' | 'sky' | 'forest'>('all');
 
     // Filtered lists
     // NON_BREEDABLE（ベビー・キッズ・ヤング）を除外した eyeNames を使うことでアダルト期限定にする
@@ -159,6 +160,24 @@ export default function Simulator() {
     };
     availableTamas.sort(sortByName);
     availableEyes.sort(sortByName);
+
+    const getWorld = (name: string) => {
+        const idx = ADULT_ORDER.indexOf(name);
+        if (idx >= 0 && idx < 17) return 'land';
+        if (idx >= 17 && idx < 34) return 'sea';
+        if (idx >= 34 && idx < 51) return 'sky';
+        if (idx >= 51 && idx < 68) return 'forest';
+        if (name.includes('land') || name.includes('roaryoung') || name.includes('toddle') || name.includes('lick') || name.includes('sprout')) return 'land';
+        if (name.includes('water') || name.includes('swim') || name.includes('hop') || name.includes('splash') || name.includes('float') || name.includes('axolo') || name.includes('beaver')) return 'sea';
+        if (name.includes('sky') || name.includes('flap') || name.includes('chirp') || name.includes('bumble') || name.includes('tick')) return 'sky';
+        if (name.includes('forest') || name.includes('raccoon')) return 'forest';
+        return 'basic';
+    };
+
+    if (worldTab !== 'all') {
+        availableTamas = availableTamas.filter(name => getWorld(name) === worldTab || getWorld(name) === 'basic');
+        availableEyes = availableEyes.filter(name => getWorld(name) === worldTab || getWorld(name) === 'basic');
+    }
 
     const [selectedBase, setSelectedBase] = useState(availableTamas[0]);
     const [selectedEye, setSelectedEye] = useState(availableEyes[0]);
@@ -340,32 +359,68 @@ export default function Simulator() {
     }, [selectedBase, selectedEye, selectedColor]);
 
     return (
-        <div className="y2k-container" style={{ marginTop: '20px' }}>
-            <h2 className="y2k-title" style={{ fontSize: '2.5rem' }}>
-                遺伝シミュレーター
-            </h2>
+        <div className="y2k-container" style={{ marginTop: '20px', padding: minimalMode ? '15px' : '30px', maxWidth: minimalMode ? '100%' : '800px' }}>
+            {!minimalMode && (
+                <h2 className="y2k-title" style={{ fontSize: '2.5rem' }}>
+                    遺伝シミュレーター
+                </h2>
+            )}
+            {minimalMode && (
+                <h2 className="y2k-title" style={{ fontSize: '1.5rem', marginBottom: '10px' }}>
+                    キャラカスタム
+                </h2>
+            )}
 
             <div style={{ display: 'none' }}>
                 <canvas ref={canvasRef}></canvas>
             </div>
 
-            <div className="simulator-container">
+            <div className="simulator-container" style={{ flexDirection: minimalMode ? 'column-reverse' : 'row' }}>
 
                 {/* コントロールパネル */}
                 <div className="y2k-window simulator-controls">
-                    <div className="y2k-window-header">コントロールパネル</div>
-                    <div className="y2k-window-body">
+                    {!minimalMode && <div className="y2k-window-header">コントロールパネル</div>}
+                    <div className="y2k-window-body" style={{ padding: minimalMode ? '10px' : '15px' }}>
 
                         {/* チェックボックス類 */}
-                        <div style={{ marginBottom: '15px', display: 'flex', gap: '10px', fontSize: '0.9rem', flexWrap: 'wrap' }}>
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                <input type="checkbox" checked={excludeJadeExclusive} onChange={e => setExcludeJadeExclusive(e.target.checked)} />
-                                Jade Forest限定を除外
-                            </label>
-                        </div>
+                        {!minimalMode && (
+                            <div style={{ marginBottom: '15px', display: 'flex', gap: '10px', fontSize: '0.9rem', flexWrap: 'wrap' }}>
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                    <input type="checkbox" checked={excludeJadeExclusive} onChange={e => setExcludeJadeExclusive(e.target.checked)} />
+                                    Jade Forest限定を除外
+                                </label>
+                            </div>
+                        )}
 
-                        <div style={{ marginBottom: '15px', display: 'flex', gap: '10px' }}>
-                            <button className="y2k-button" onClick={randomizeAll} style={{ padding: '5px 10px', fontSize: '0.9rem' }}>🎲 全てランダム</button>
+                        {!minimalMode && (
+                            <div style={{ marginBottom: '15px', display: 'flex', gap: '10px' }}>
+                                <button className="y2k-button" onClick={randomizeAll} style={{ padding: '5px 10px', fontSize: '0.9rem' }}>🎲 全てランダム</button>
+                            </div>
+                        )}
+
+                        {/* フィールド絞り込みタブ */}
+                        <div style={{ marginBottom: '10px', display: 'flex', gap: '5px', overflowX: 'auto', paddingBottom: '5px' }}>
+                            {(['all', 'land', 'sea', 'sky', 'forest'] as const).map(tab => {
+                                const labels = { all: 'すべて', land: 'りく', sea: 'うみ', sky: 'そら', forest: 'もり' };
+                                return (
+                                    <button
+                                        key={tab}
+                                        onClick={() => setWorldTab(tab)}
+                                        style={{
+                                            padding: '4px 10px',
+                                            borderRadius: '20px',
+                                            border: `2px solid ${worldTab === tab ? 'var(--primary-color)' : '#ccc'}`,
+                                            background: worldTab === tab ? 'var(--primary-color)' : '#fff',
+                                            color: worldTab === tab ? '#fff' : '#666',
+                                            fontSize: '0.8rem',
+                                            cursor: 'pointer',
+                                            whiteSpace: 'nowrap'
+                                        }}
+                                    >
+                                        {labels[tab]}
+                                    </button>
+                                );
+                            })}
                         </div>
 
                         {/* タブ切り替え式のキャラ・目選択リスト */}
@@ -403,21 +458,24 @@ export default function Simulator() {
                                 <h3 style={{ fontSize: '1rem', margin: 0, fontFamily: 'var(--font-retro)' }}>
                                     {activeTab === 'base' ? 'ベースキャラ (Tamagotchi)' : '目の形 (Eyes)'}
                                 </h3>
-                                <button
-                                    className="y2k-button"
-                                    onClick={() => {
-                                        if (activeTab === 'base') setSelectedBase(availableTamas[Math.floor(Math.random() * availableTamas.length)]);
-                                        else setSelectedEye(availableEyes[Math.floor(Math.random() * availableEyes.length)]);
-                                    }}
-                                    style={{ padding: '2px 8px' }}
-                                >
-                                    🎲
-                                </button>
+                                {!minimalMode && (
+                                    <button
+                                        className="y2k-button"
+                                        onClick={() => {
+                                            if (activeTab === 'base') setSelectedBase(availableTamas[Math.floor(Math.random() * availableTamas.length)]);
+                                            else setSelectedEye(availableEyes[Math.floor(Math.random() * availableEyes.length)]);
+                                        }}
+                                        style={{ padding: '2px 8px' }}
+                                    >
+                                        🎲
+                                    </button>
+                                )}
                             </div>
                             <div style={{
                                 display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(60px, 1fr))', gap: '5px',
-                                maxHeight: '350px', overflowY: 'auto', padding: '5px', border: '2px solid #ccc', borderRadius: '5px', backgroundColor: '#fff'
+                                maxHeight: minimalMode ? '160px' : '350px', overflowY: 'auto', padding: '5px', border: '2px solid #ccc', borderRadius: '5px', backgroundColor: '#fff'
                             }}>
+                                {availableTamas.length === 0 && <div style={{ padding: '10px', fontSize: '0.8rem', color: '#888' }}>該当なし</div>}
                                 {(activeTab === 'base' ? availableTamas : availableEyes).map(opt => {
                                     const isSelected = activeTab === 'base' ? selectedBase === opt : selectedEye === opt;
                                     const selectColor = activeTab === 'base' ? 'var(--primary-color)' : 'var(--secondary-color)';
@@ -464,10 +522,12 @@ export default function Simulator() {
                             </div>
                         </div>
 
-                        <div style={{ marginBottom: '15px' }}>
+                        <div style={{ marginBottom: minimalMode ? '5px' : '15px' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
                                 <h3 style={{ fontSize: '1rem', margin: 0, fontFamily: 'var(--font-retro)' }}>色 (Color)</h3>
-                                <button className="y2k-button" onClick={() => setSelectedColor(colorNames[Math.floor(Math.random() * colorNames.length)])} style={{ padding: '2px 8px' }}>🎲</button>
+                                {!minimalMode && (
+                                    <button className="y2k-button" onClick={() => setSelectedColor(colorNames[Math.floor(Math.random() * colorNames.length)])} style={{ padding: '2px 8px' }}>🎲</button>
+                                )}
                             </div>
                             <div style={{
                                 display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(40px, 1fr))', gap: '8px',
@@ -515,14 +575,15 @@ export default function Simulator() {
                 </div>
 
                 {/* プレビュー画面 */}
-                <div className="y2k-window simulator-preview">
-                    <div className="y2k-window-header" style={{ background: 'var(--primary-color)', color: '#fffaf0' }}>[ プレビュー ]</div>
+                <div className="y2k-window simulator-preview" style={{ marginBottom: minimalMode ? '10px' : '20px' }}>
+                    {!minimalMode && <div className="y2k-window-header" style={{ background: 'var(--primary-color)', color: '#fffaf0' }}>[ プレビュー ]</div>}
                     <div className="y2k-window-body" style={{
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        minHeight: '280px',
+                        minHeight: minimalMode ? '200px' : '280px',
+                        padding: minimalMode ? '10px' : '15px',
                         backgroundColor: '#f5e6d3',
                         backgroundImage: 'repeating-linear-gradient(45deg, #eaddc5 25%, transparent 25%, transparent 75%, #eaddc5 75%, #eaddc5), repeating-linear-gradient(45deg, #eaddc5 25%, #f5e6d3 25%, #f5e6d3 75%, #eaddc5 75%, #eaddc5)',
                         backgroundPosition: '0 0, 10px 10px',

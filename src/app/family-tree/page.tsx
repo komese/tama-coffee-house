@@ -6,8 +6,8 @@ import html2canvas from 'html2canvas';
 import { LAND_DATA, SEA_DATA, SKY_DATA, FOREST_DATA } from '@/data/evolutionData';
 import Simulator from '@/components/Simulator';
 
-// アダルト期かつ画像が存在するキャラクターのみを抽出
-const ALL_CHARACTERS = [...LAND_DATA, ...SEA_DATA, ...SKY_DATA, ...FOREST_DATA].filter(c => c.iconUrl && c.stage === 'アダルト');
+// アダルト期・特殊期かつ画像が存在するキャラクターのみを抽出
+const ALL_CHARACTERS = [...LAND_DATA, ...SEA_DATA, ...SKY_DATA, ...FOREST_DATA].filter(c => c.iconUrl && (c.stage === 'アダルト' || c.stage === '特殊'));
 
 type CharacterData = {
   name: string;
@@ -129,7 +129,7 @@ export default function FamilyTreePage() {
         <div ref={treeRef} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           
           {/* ツリー描画領域 */}
-          <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
             
               {/* 一番星 (Root Parentと第1パートナー) */}
               <div style={{ display: 'flex', gap: '40px', alignItems: 'flex-start' }}>
@@ -152,13 +152,10 @@ export default function FamilyTreePage() {
               </div>
 
               {/* 初代の線 (最初の結合) */}
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '40px', width: '100%' }}>
-                  <div style={{ display: 'flex', width: '160px', justifyContent: 'space-between' }}>
-                     <div style={{ width: '2px', height: '20px', backgroundColor: 'var(--primary-color)' }}></div>
-                     <div style={{ width: '2px', height: '20px', backgroundColor: 'var(--primary-color)' }}></div>
-                  </div>
-                  <div style={{ width: '160px', height: '2px', backgroundColor: 'var(--primary-color)' }}></div>
-                  <div style={{ width: '2px', height: '20px', backgroundColor: 'var(--primary-color)' }}></div>
+              <div style={{ position: 'relative', width: '280px', height: '40px' }}>
+                  <div style={{ position: 'absolute', left: '60px', top: 0, width: '2px', height: '40px', backgroundColor: 'var(--primary-color)' }}></div>
+                  <div style={{ position: 'absolute', left: '220px', top: 0, width: '2px', height: '20px', backgroundColor: 'var(--primary-color)' }}></div>
+                  <div style={{ position: 'absolute', left: '60px', top: '20px', width: '160px', height: '2px', backgroundColor: 'var(--primary-color)' }}></div>
               </div>
 
               {/* 世代ごとのループ描画 */}
@@ -167,10 +164,10 @@ export default function FamilyTreePage() {
                 const nextGen = generations[index + 1];
 
                 return (
-                  <div key={gen.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <div key={gen.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     
                     {/* 子ども(次世代の親) と、次世代のパートナーがある場合は横に並べる */}
-                    <div style={{ display: 'flex', gap: '40px', alignItems: 'flex-start', transform: nextGen ? 'translateX(80px)' : 'none' }}>
+                    <div style={{ display: 'flex', gap: '40px', alignItems: 'flex-start' }}>
                       <CharacterBox 
                           title={`第${index + 1}世代`}
                           data={gen.child} 
@@ -197,13 +194,10 @@ export default function FamilyTreePage() {
 
                     {/* 次の世代へ続く線 */}
                     {!isLast && (
-                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '40px', width: '100%', transform: 'translateX(80px)' }}>
-                          <div style={{ display: 'flex', width: '160px', justifyContent: 'space-between' }}>
-                             <div style={{ width: '2px', height: '20px', backgroundColor: 'var(--primary-color)' }}></div>
-                             <div style={{ width: '2px', height: '20px', backgroundColor: 'var(--primary-color)' }}></div>
-                          </div>
-                          <div style={{ width: '160px', height: '2px', backgroundColor: 'var(--primary-color)' }}></div>
-                          <div style={{ width: '2px', height: '20px', backgroundColor: 'var(--primary-color)' }}></div>
+                       <div style={{ position: 'relative', width: '280px', height: '40px' }}>
+                          <div style={{ position: 'absolute', left: '60px', top: 0, width: '2px', height: '40px', backgroundColor: 'var(--primary-color)' }}></div>
+                          <div style={{ position: 'absolute', left: '220px', top: 0, width: '2px', height: '20px', backgroundColor: 'var(--primary-color)' }}></div>
+                          <div style={{ position: 'absolute', left: '60px', top: '20px', width: '160px', height: '2px', backgroundColor: 'var(--primary-color)' }}></div>
                        </div>
                     )}
 
@@ -274,17 +268,17 @@ export default function FamilyTreePage() {
 
               {modalTab === 'custom' && (
                 <div style={{ textAlign: 'center', padding: '10px' }}>
-                  <p style={{ marginBottom: '10px', fontSize: '0.9rem' }}>シミュレーターで画像を作って、直接ドラッグ＆ドロップするか保存した画像をアップロードできます。</p>
                   
                   {/* 簡易シミュレーターの組み込み */}
-                  <div style={{ border: '1px solid var(--primary-color)', borderRadius: '8px', padding: '10px', marginBottom: '15px', backgroundColor: '#fff', transform: 'scale(0.9)', transformOrigin: 'top center' }}>
-                     <Simulator />
+                  <div style={{ border: '1px solid var(--primary-color)', borderRadius: '8px', padding: '10px', marginBottom: '15px', backgroundColor: '#fff' }}>
+                     <Simulator minimalMode />
                   </div>
 
-                  <label className="y2k-button" style={{ cursor: 'pointer', display: 'inline-block' }}>
-                    📸 画像を選択して確定する
+                  <label className="y2k-button" style={{ cursor: 'pointer', display: 'inline-block', fontSize: '1rem', padding: '8px 16px' }}>
+                    📸 作った画像をアップロード
                     <input type="file" accept="image/*" onChange={handleCustomImageUpload} style={{ display: 'none' }} />
                   </label>
+                  <p style={{ marginTop: '10px', fontSize: '0.8rem', color: '#666' }}>※PCやスマホに画像を保存してからアップロードしてください</p>
                 </div>
               )}
             </div>
