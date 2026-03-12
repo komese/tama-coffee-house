@@ -378,7 +378,7 @@ export default function Simulator({ minimalMode = false }: { minimalMode?: boole
             <div className="simulator-container" style={{ flexDirection: minimalMode ? 'column-reverse' : 'row' }}>
 
                 {/* コントロールパネル */}
-                <div className="y2k-window simulator-controls">
+                <div className="y2k-window simulator-controls" style={minimalMode ? { flex: '1 1 auto', width: '100%', maxWidth: '100%' } : {}}>
                     {!minimalMode && <div className="y2k-window-header">コントロールパネル</div>}
                     <div className="y2k-window-body" style={{ padding: minimalMode ? '10px' : '15px' }}>
 
@@ -575,7 +575,10 @@ export default function Simulator({ minimalMode = false }: { minimalMode?: boole
                 </div>
 
                 {/* プレビュー画面 */}
-                <div className="y2k-window simulator-preview" style={{ marginBottom: minimalMode ? '10px' : '20px' }}>
+                <div className="y2k-window simulator-preview" style={{ 
+                    marginBottom: minimalMode ? '10px' : '20px',
+                    ...(minimalMode ? { position: 'relative', top: 'auto', flex: '1 1 auto', width: '100%', maxWidth: '100%' } : {})
+                }}>
                     {!minimalMode && <div className="y2k-window-header" style={{ background: 'var(--primary-color)', color: '#fffaf0' }}>[ プレビュー ]</div>}
                     <div className="y2k-window-body" style={{
                         display: 'flex',

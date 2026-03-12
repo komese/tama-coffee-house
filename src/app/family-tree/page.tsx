@@ -233,7 +233,7 @@ export default function FamilyTreePage() {
           backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 1000,
           display: 'flex', justifyContent: 'center', alignItems: 'center'
         }}>
-          <div className="y2k-window" style={{ width: '90%', maxWidth: '600px', maxHeight: '80vh', display: 'flex', flexDirection: 'column' }}>
+          <div className="y2k-window" style={{ width: '95%', maxWidth: '800px', maxHeight: '85vh', display: 'flex', flexDirection: 'column' }}>
             <div className="y2k-window-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span>キャラクターをえらぶ</span>
               <button onClick={closeModal} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>✖</button>
