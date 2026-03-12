@@ -515,7 +515,7 @@ export default function FamilyTreePage() {
           📂 家系図データを出力
         </button>
         <label className="y2k-button" style={{ backgroundColor: '#fffdf8', color: 'var(--primary-color)', fontSize: '0.85rem', padding: '6px 14px', cursor: 'pointer', display: 'inline-block' }}>
-          📂 データを読み込み
+          📂 家系図データを読み込み
           <input type="file" accept=".json" style={{ display: 'none' }} onChange={(e) => {
             const file = e.target.files?.[0];
             if (!file) return;
@@ -659,7 +659,7 @@ function CharacterBox({ title, data, onChange, onClick, showName }: { title: str
         onClick={onClick}
       >
         {data.imageUrl ? (
-          <img src={data.imageUrl} alt={data.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+          <img src={data.imageUrl} alt={data.name} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain', display: 'block' }} />
         ) : (
           <span style={{ fontSize: '2rem', color: '#ccc' }}>+</span>
         )}
