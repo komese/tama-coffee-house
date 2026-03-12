@@ -1,50 +1,24 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-    const baseUrl = 'https://tama-coffee-house.vercel.app'; // Vercelデプロイ後の仮URLをセット
+    const baseUrl = 'https://tama-coffee-house.vercel.app';
 
-    return [
-        {
-            url: `${baseUrl}`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 1,
-        },
-        {
-            url: `${baseUrl}/simulator`,
-            lastModified: new Date(),
-            changeFrequency: 'weekly',
-            priority: 0.9,
-        },
-        {
-            url: `${baseUrl}/evolution/land`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/evolution/sea`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/evolution/sky`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/evolution/forest`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly',
-            priority: 0.8,
-        },
-        {
-            url: `${baseUrl}/bbs`,
-            lastModified: new Date(),
-            changeFrequency: 'daily',
-            priority: 0.7,
-        },
+    // 全ページを定義（新しいページを追加したらここに追記するだけ）
+    const pages: { path: string; changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency']; priority: number }[] = [
+        { path: '/', changeFrequency: 'weekly', priority: 1 },
+        { path: '/simulator', changeFrequency: 'weekly', priority: 0.9 },
+        { path: '/family-tree', changeFrequency: 'weekly', priority: 0.9 },
+        { path: '/evolution/land', changeFrequency: 'monthly', priority: 0.8 },
+        { path: '/evolution/sea', changeFrequency: 'monthly', priority: 0.8 },
+        { path: '/evolution/sky', changeFrequency: 'monthly', priority: 0.8 },
+        { path: '/evolution/forest', changeFrequency: 'monthly', priority: 0.8 },
+        { path: '/bbs', changeFrequency: 'daily', priority: 0.7 },
     ];
+
+    return pages.map(({ path, changeFrequency, priority }) => ({
+        url: `${baseUrl}${path === '/' ? '' : path}`,
+        lastModified: new Date(),
+        changeFrequency,
+        priority,
+    }));
 }
