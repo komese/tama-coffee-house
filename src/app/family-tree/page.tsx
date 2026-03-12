@@ -4,10 +4,100 @@ import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import html2canvas from 'html2canvas';
 import { LAND_DATA, SEA_DATA, SKY_DATA, FOREST_DATA } from '@/data/evolutionData';
+import { TAMA_DATA } from '@/data/simulatorData';
 import Simulator from '@/components/Simulator';
 
 // アダルト期・特殊期かつ画像が存在するキャラクターのみを抽出
 const ALL_CHARACTERS = [...LAND_DATA, ...SEA_DATA, ...SKY_DATA, ...FOREST_DATA].filter(c => c.iconUrl && (c.stage === 'アダルト' || c.stage === '特殊'));
+
+// 進化データのID → シミュレーター内部名マッピング（スプライト合成用）
+const ID_TO_INTERNAL: Record<string, string> = {
+  // りく
+  'land_7': 'myaotchi', 'land_11': 'pochitchi', 'land_15': 'gumax', 'land_19': 'ratchi',
+  'land_8': 'mametchi', 'land_12': 'mimitchi', 'land_16': 'morumotchi', 'land_20': 'sheeputchi',
+  'land_9': 'reopatchi', 'land_13': 'sebiretchi', 'land_17': 'elizardotchi', 'land_21': 'heabitchi',
+  'land_10': 'furawatchi', 'land_14': 'potsunentchi', 'land_18': 'tasutasutchi', 'land_22': 'shigemisan',
+  'land_23': 'chodracotchi',
+  // みず
+  'sea_7': 'irukatchi', 'sea_8': 'kametchi', 'sea_9': 'kujiratchi', 'sea_10': 'uruotchi',
+  'sea_11': 'axolopatchi', 'sea_12': 'imoritchi', 'sea_13': 'kawazutchi', 'sea_14': 'beavertchi',
+  'sea_15': 'tachutchi', 'sea_16': 'sharktchi', 'sea_17': 'ankotchi', 'sea_18': 'otototchi',
+  'sea_19': 'kuraratchi', 'sea_20': 'mendakotchi', 'sea_21': 'amefuratchi', 'sea_22': 'gusokutchi',
+  'sea_23': 'mamarintchi',
+  // そら
+  'sky_7': 'hohotchi', 'sky_8': 'mongatchi', 'sky_9': 'eagletchi', 'sky_10': 'batchi',
+  'sky_11': 'peacotchi', 'sky_12': 'batatchi', 'sky_13': 'kuchipatchi', 'sky_14': 'kiwitchi',
+  'sky_15': 'papiyotchi', 'sky_16': 'kabutotchi', 'sky_17': 'tentotchi', 'sky_18': 'hatchitchi',
+  'sky_19': 'gemtchi', 'sky_20': 'oretatchi', 'sky_21': 'ishikorotchi', 'sky_22': 'magumatchi',
+  'sky_23': 'yayakontchi',
+  // もり
+  'forest_7': 'foresthorhotchi', 'forest_8': 'konkotchi', 'forest_9': 'taigaotchi', 'forest_10': 'raccoonntchi',
+  'forest_11': 'resapantchi', 'forest_12': 'kanokotchi', 'forest_13': 'suigyutchi', 'forest_14': 'pambootchi',
+  'forest_15': 'forestkachitchi', 'forest_16': 'tokipatchi', 'forest_17': 'forestkuchipatchi', 'forest_18': 'suparotchi',
+  'forest_19': 'shiitaketchi', 'forest_20': 'piitchi', 'forest_21': 'nappatchi', 'forest_22': 'radishraditchi',
+  'forest_23': 'tatsutchi',
+};
+
+// スプライト合成関数（体＋目をキャンバスで合成してdataURLを返す）
+async function generateCharacterSprite(internalName: string): Promise<string | null> {
+  const loadImage = (src: string): Promise<HTMLImageElement> => new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error(`Failed to load ${src}`));
+    img.src = src;
+  });
+
+  try {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return null;
+
+    // 体画像をロード
+    const baseImg = await loadImage(`/simulator/character/${internalName}.png`);
+    canvas.width = baseImg.width || 64;
+    canvas.height = baseImg.height || 64;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(baseImg, 0, 0);
+
+    // 目画像をロード＆位置合わせして合成
+    const tamaConfig = TAMA_DATA[internalName];
+    if (tamaConfig) {
+      const eyePosX = tamaConfig.eyePosition[0];
+      const eyePosY = tamaConfig.eyePosition[1] + tamaConfig.adjustments;
+      const eyeImg = await loadImage(`/simulator/eyes/${internalName}.png`);
+
+      // マスク処理
+      let useMask = false;
+      let maskImg: HTMLImageElement | null = null;
+      try {
+        maskImg = await loadImage(`/simulator/mask/${internalName}.png`);
+        useMask = true;
+      } catch { /* no mask */ }
+
+      if (useMask && maskImg) {
+        const tempCanvas = document.createElement('canvas');
+        tempCanvas.width = eyeImg.width;
+        tempCanvas.height = eyeImg.height;
+        const tempCtx = tempCanvas.getContext('2d');
+        if (tempCtx) {
+          tempCtx.drawImage(eyeImg, 0, 0);
+          tempCtx.globalCompositeOperation = 'destination-out';
+          tempCtx.drawImage(maskImg, eyePosX, eyePosY, eyeImg.width, eyeImg.height, 0, 0, eyeImg.width, eyeImg.height);
+          ctx.drawImage(tempCanvas, eyePosX, eyePosY);
+        } else {
+          ctx.drawImage(eyeImg, eyePosX, eyePosY);
+        }
+      } else {
+        ctx.drawImage(eyeImg, eyePosX, eyePosY);
+      }
+    }
+
+    return canvas.toDataURL();
+  } catch (e) {
+    console.error('Sprite generation failed:', e);
+    return null;
+  }
+}
 
 type CharacterData = {
   name: string;
@@ -67,6 +157,17 @@ export default function FamilyTreePage() {
     closeModal();
   };
 
+  // 既存キャラ選択：スプライト画像を合成して枠にセット
+  const handleExistingCharacterSelect = async (charId: string, charName: string, fallbackUrl: string | null) => {
+    const internalName = ID_TO_INTERNAL[charId];
+    if (internalName) {
+      const spriteUrl = await generateCharacterSprite(internalName);
+      handleCharacterSelect({ name: charName, imageUrl: spriteUrl || fallbackUrl });
+    } else {
+      handleCharacterSelect({ name: charName, imageUrl: fallbackUrl });
+    }
+  };
+
   // カスタムキャラ用：画像のみセット、名前は自動入力しない
   const handleCustomCharacterSelect = (charData: CharacterData) => {
     handleCharacterSelect({ name: '', imageUrl: charData.imageUrl });
@@ -93,11 +194,18 @@ export default function FamilyTreePage() {
   const handleSaveImage = async () => {
     if (!treeRef.current) return;
     try {
+      // 保存時は名前入力欄を一時非表示
+      const inputs = treeRef.current.querySelectorAll('input');
+      inputs.forEach(input => (input as HTMLElement).style.display = 'none');
+
       const canvas = await html2canvas(treeRef.current, {
         backgroundColor: '#fffdf8',
         scale: 2,
         useCORS: true
       });
+
+      // 名前入力欄を復元
+      inputs.forEach(input => (input as HTMLElement).style.display = '');
       
       const ctx = canvas.getContext('2d');
       if (ctx) {
@@ -108,7 +216,6 @@ export default function FamilyTreePage() {
       }
       
       const imgData = canvas.toDataURL('image/png');
-      // プレビューを表示
       setPreviewImageUrl(imgData);
     } catch (e) {
       console.error('Failed to capture image', e);
@@ -164,17 +271,17 @@ export default function FamilyTreePage() {
           {/* ツリー描画領域 */}
           <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
             
-              {/* 一番星 (Root Parentと第1パートナー) */}
+              {/* 第1世代とパートナー */}
               <div style={{ display: 'flex', gap: '40px', alignItems: 'flex-start' }}>
                 <CharacterBox 
-                  title="親1"
+                  title="第1世代"
                   data={rootParent} 
                   onChange={(newData) => setRootParent(newData)} 
                   onClick={() => openModal({ type: 'root' })}
                   showName={showNames}
                 />
                 <CharacterBox 
-                  title="親2"
+                  title="パートナー"
                   data={generations[0].partner} 
                   onChange={(newData) => {
                     const newGens = [...generations];
@@ -186,7 +293,7 @@ export default function FamilyTreePage() {
                 />
               </div>
 
-              {/* 初代の線 (最初の結合) */}
+              {/* 初代の線 */}
               <div style={{ position: 'relative', width: '280px', height: '40px' }}>
                   <div style={{ position: 'absolute', left: '60px', top: 0, width: '2px', height: '40px', backgroundColor: 'var(--primary-color)' }}></div>
                   <div style={{ position: 'absolute', left: '220px', top: 0, width: '2px', height: '20px', backgroundColor: 'var(--primary-color)' }}></div>
@@ -201,10 +308,9 @@ export default function FamilyTreePage() {
                 return (
                   <div key={gen.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     
-                    {/* 子ども(次世代の親) と、次世代のパートナーがある場合は横に並べる */}
                     <div style={{ display: 'flex', gap: '40px', alignItems: 'flex-start' }}>
                       <CharacterBox 
-                          title={`第${index + 1}世代`}
+                          title={`第${index + 2}世代`}
                           data={gen.child} 
                           onChange={(newData) => {
                             const newGens = [...generations];
@@ -229,7 +335,6 @@ export default function FamilyTreePage() {
                       )}
                     </div>
 
-                    {/* 次の世代へ続く線 */}
                     {!isLast && (
                        <div style={{ position: 'relative', width: '280px', height: '40px' }}>
                           <div style={{ position: 'absolute', left: '60px', top: 0, width: '2px', height: '40px', backgroundColor: 'var(--primary-color)' }}></div>
@@ -320,9 +425,9 @@ export default function FamilyTreePage() {
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}>
                   {ALL_CHARACTERS.map(c => (
                     <div 
-                      key={c.name} 
+                      key={c.id} 
                       style={{ border: '2px solid var(--accent-color)', borderRadius: '8px', padding: '5px', cursor: 'pointer', width: '80px', textAlign: 'center' }}
-                      onClick={() => handleCharacterSelect({ name: c.name, imageUrl: c.iconUrl || null })}
+                      onClick={() => handleExistingCharacterSelect(c.id, c.name, c.iconUrl || null)}
                     >
                       <img src={c.iconUrl} alt={c.name} style={{ width: '60px', height: '60px', objectFit: 'contain' }} />
                       <div style={{ fontSize: '0.7rem', overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{c.name}</div>

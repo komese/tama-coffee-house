@@ -182,8 +182,8 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
     };
 
     if (worldTab !== 'all') {
-        availableTamas = availableTamas.filter(name => getWorld(name) === worldTab || getWorld(name) === 'basic');
-        availableEyes = availableEyes.filter(name => getWorld(name) === worldTab || getWorld(name) === 'basic');
+        availableTamas = availableTamas.filter(name => getWorld(name) === worldTab);
+        availableEyes = availableEyes.filter(name => getWorld(name) === worldTab);
     }
 
     const [selectedBase, setSelectedBase] = useState(availableTamas[0]);
