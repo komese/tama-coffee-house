@@ -4,8 +4,10 @@ import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import html2canvas from 'html2canvas';
 import { LAND_DATA, SEA_DATA, SKY_DATA, FOREST_DATA } from '@/data/evolutionData';
+import Simulator from '@/components/Simulator';
 
-const ALL_CHARACTERS = [...LAND_DATA, ...SEA_DATA, ...SKY_DATA, ...FOREST_DATA].filter(c => c.iconUrl); // 画像があるもののみ
+// アダルト期かつ画像が存在するキャラクターのみを抽出
+const ALL_CHARACTERS = [...LAND_DATA, ...SEA_DATA, ...SKY_DATA, ...FOREST_DATA].filter(c => c.iconUrl && c.stage === 'アダルト');
 
 type CharacterData = {
   name: string;
@@ -149,7 +151,7 @@ export default function FamilyTreePage() {
                 />
               </div>
 
-              {/* 線 (最初の結合) */}
+              {/* 初代の線 (最初の結合) */}
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '40px', width: '100%' }}>
                   <div style={{ display: 'flex', width: '160px', justifyContent: 'space-between' }}>
                      <div style={{ width: '2px', height: '20px', backgroundColor: 'var(--primary-color)' }}></div>
@@ -165,10 +167,10 @@ export default function FamilyTreePage() {
                 const nextGen = generations[index + 1];
 
                 return (
-                  <div key={gen.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                  <div key={gen.id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     
                     {/* 子ども(次世代の親) と、次世代のパートナーがある場合は横に並べる */}
-                    <div style={{ display: 'flex', gap: '40px', alignItems: 'flex-start' }}>
+                    <div style={{ display: 'flex', gap: '40px', alignItems: 'flex-start', transform: nextGen ? 'translateX(80px)' : 'none' }}>
                       <CharacterBox 
                           title={`第${index + 1}世代`}
                           data={gen.child} 
@@ -195,7 +197,7 @@ export default function FamilyTreePage() {
 
                     {/* 次の世代へ続く線 */}
                     {!isLast && (
-                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '40px', width: '100%', marginLeft: '60px' }}>
+                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '40px', width: '100%', transform: 'translateX(80px)' }}>
                           <div style={{ display: 'flex', width: '160px', justifyContent: 'space-between' }}>
                              <div style={{ width: '2px', height: '20px', backgroundColor: 'var(--primary-color)' }}></div>
                              <div style={{ width: '2px', height: '20px', backgroundColor: 'var(--primary-color)' }}></div>
@@ -243,18 +245,18 @@ export default function FamilyTreePage() {
               <button onClick={closeModal} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>✖</button>
             </div>
             
-            <div style={{ display: 'flex', borderBottom: '2px solid var(--primary-color)', backgroundColor: '#fffdf8' }}>
+            <div style={{ display: 'flex', borderBottom: '2px solid var(--primary-color)', backgroundColor: 'var(--primary-color)' }}>
               <button 
                 onClick={() => setModalTab('existing')} 
-                style={{ flex: 1, padding: '10px', border: 'none', background: modalTab === 'existing' ? 'var(--primary-color)' : 'transparent', color: modalTab === 'existing' ? '#fff' : 'inherit', fontWeight: 'bold', cursor: 'pointer' }}
+                style={{ flex: 1, padding: '10px', border: 'none', background: modalTab === 'existing' ? '#fffdf8' : 'transparent', color: modalTab === 'existing' ? 'var(--primary-color)' : '#fff', fontWeight: 'bold', cursor: 'pointer' }}
               >既存キャラ</button>
               <button 
                 onClick={() => setModalTab('custom')} 
-                style={{ flex: 1, padding: '10px', border: 'none', background: modalTab === 'custom' ? 'var(--primary-color)' : 'transparent', color: modalTab === 'custom' ? '#fff' : 'inherit', fontWeight: 'bold', cursor: 'pointer' }}
+                style={{ flex: 1, padding: '10px', border: 'none', background: modalTab === 'custom' ? '#fffdf8' : 'transparent', color: modalTab === 'custom' ? 'var(--primary-color)' : '#fff', fontWeight: 'bold', cursor: 'pointer' }}
               >自分で作ったキャラ</button>
             </div>
 
-            <div className="y2k-window-body" style={{ flex: 1, overflowY: 'auto' }}>
+            <div className="y2k-window-body" style={{ flex: 1, overflowY: 'auto', backgroundColor: '#fffdf8' }}>
               {modalTab === 'existing' && (
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}>
                   {ALL_CHARACTERS.map(c => (
@@ -271,10 +273,16 @@ export default function FamilyTreePage() {
               )}
 
               {modalTab === 'custom' && (
-                <div style={{ textAlign: 'center', padding: '20px' }}>
-                  <p style={{ marginBottom: '15px' }}>シミュレーターで作成した画像や、お気に入りの画像をアップロードして設定できます。</p>
-                  <label className="y2k-button" style={{ cursor: 'pointer' }}>
-                    画像を選択して設定する
+                <div style={{ textAlign: 'center', padding: '10px' }}>
+                  <p style={{ marginBottom: '10px', fontSize: '0.9rem' }}>シミュレーターで画像を作って、直接ドラッグ＆ドロップするか保存した画像をアップロードできます。</p>
+                  
+                  {/* 簡易シミュレーターの組み込み */}
+                  <div style={{ border: '1px solid var(--primary-color)', borderRadius: '8px', padding: '10px', marginBottom: '15px', backgroundColor: '#fff', transform: 'scale(0.9)', transformOrigin: 'top center' }}>
+                     <Simulator />
+                  </div>
+
+                  <label className="y2k-button" style={{ cursor: 'pointer', display: 'inline-block' }}>
+                    📸 画像を選択して確定する
                     <input type="file" accept="image/*" onChange={handleCustomImageUpload} style={{ display: 'none' }} />
                   </label>
                 </div>
