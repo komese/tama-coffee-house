@@ -191,6 +191,11 @@ export default function FamilyTreePage() {
     ]);
   };
 
+  const removeGeneration = () => {
+    if (generations.length <= 1) return;
+    setGenerations(generations.slice(0, -1));
+  };
+
   const handleSaveImage = async () => {
     if (!treeRef.current) return;
     try {
@@ -355,6 +360,14 @@ export default function FamilyTreePage() {
       <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '30px', flexWrap: 'wrap' }}>
         <button className="y2k-button" onClick={addGeneration} style={{ backgroundColor: '#fffdf8', color: 'var(--primary-color)' }}>
           ➕ 世代を追加
+        </button>
+        <button 
+          className="y2k-button" 
+          onClick={removeGeneration} 
+          disabled={generations.length <= 1}
+          style={{ backgroundColor: '#fffdf8', color: 'var(--primary-color)', opacity: generations.length <= 1 ? 0.4 : 1, cursor: generations.length <= 1 ? 'not-allowed' : 'pointer' }}
+        >
+          ↩ 1つ戻る
         </button>
         <button className="y2k-button" onClick={handleSaveImage}>
           📸 画像として保存
