@@ -111,7 +111,12 @@ const CombinedIcon = ({ name }: { name: string }) => {
     );
 };
 
-export default function Simulator({ minimalMode = false }: { minimalMode?: boolean }) {
+interface SimulatorProps {
+    minimalMode?: boolean;
+    onComplete?: (data: { name: string; imageUrl: string }) => void;
+}
+
+export default function Simulator({ minimalMode = false, onComplete }: SimulatorProps) {
     // Checkbox states (for filters)
     const [excludeJadeExclusive, setExcludeJadeExclusive] = useState(false);
     const [worldTab, setWorldTab] = useState<'all' | 'land' | 'sea' | 'sky' | 'forest'>('all');
@@ -161,16 +166,18 @@ export default function Simulator({ minimalMode = false }: { minimalMode?: boole
     availableTamas.sort(sortByName);
     availableEyes.sort(sortByName);
 
+    // ADULT_ORDER配列の並び順に基づく正確なフィールドマッピング
+    // りく: indices 0-16, うみ: 17-33, そら: 34-50, もり: 51-67
+    const LAND_TAMAS = new Set(ADULT_ORDER.slice(0, 17));
+    const SEA_TAMAS = new Set(ADULT_ORDER.slice(17, 34));
+    const SKY_TAMAS = new Set(ADULT_ORDER.slice(34, 51));
+    const FOREST_TAMAS = new Set(ADULT_ORDER.slice(51));
+
     const getWorld = (name: string) => {
-        const idx = ADULT_ORDER.indexOf(name);
-        if (idx >= 0 && idx < 17) return 'land';
-        if (idx >= 17 && idx < 34) return 'sea';
-        if (idx >= 34 && idx < 51) return 'sky';
-        if (idx >= 51 && idx < 68) return 'forest';
-        if (name.includes('land') || name.includes('roaryoung') || name.includes('toddle') || name.includes('lick') || name.includes('sprout')) return 'land';
-        if (name.includes('water') || name.includes('swim') || name.includes('hop') || name.includes('splash') || name.includes('float') || name.includes('axolo') || name.includes('beaver')) return 'sea';
-        if (name.includes('sky') || name.includes('flap') || name.includes('chirp') || name.includes('bumble') || name.includes('tick')) return 'sky';
-        if (name.includes('forest') || name.includes('raccoon')) return 'forest';
+        if (LAND_TAMAS.has(name)) return 'land';
+        if (SEA_TAMAS.has(name)) return 'sea';
+        if (SKY_TAMAS.has(name)) return 'sky';
+        if (FOREST_TAMAS.has(name)) return 'forest';
         return 'basic';
     };
 
@@ -366,9 +373,22 @@ export default function Simulator({ minimalMode = false }: { minimalMode?: boole
                 </h2>
             )}
             {minimalMode && (
-                <h2 className="y2k-title" style={{ fontSize: '1.5rem', marginBottom: '10px' }}>
-                    キャラカスタム
-                </h2>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '15px', marginBottom: '10px' }}>
+                    <h2 className="y2k-title" style={{ fontSize: '1.5rem', margin: 0 }}>
+                        キャラカスタム
+                    </h2>
+                    <button 
+                        className="y2k-button" 
+                        style={{ padding: '6px 20px', backgroundColor: '#e24e42', color: '#fff', fontSize: '1rem', fontWeight: 'bold', margin: 0, border: '2px solid #a82e2e', borderRadius: '8px' }}
+                        onClick={() => {
+                            if (onComplete && previewUrl) {
+                                onComplete({ name: `${selectedColor} ${selectedBase} / ${selectedEye}目`, imageUrl: previewUrl });
+                            }
+                        }}
+                    >
+                        ✓ 完成
+                    </button>
+                </div>
             )}
 
             <div style={{ display: 'none' }}>

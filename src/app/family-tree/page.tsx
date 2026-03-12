@@ -267,18 +267,22 @@ export default function FamilyTreePage() {
               )}
 
               {modalTab === 'custom' && (
-                <div style={{ textAlign: 'center', padding: '10px' }}>
+                <div style={{ padding: '10px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
                   
-                  {/* 簡易シミュレーターの組み込み */}
-                  <div style={{ border: '1px solid var(--primary-color)', borderRadius: '8px', padding: '10px', marginBottom: '15px', backgroundColor: '#fff' }}>
-                     <Simulator minimalMode />
+                  {/* 外部画像アップロード */}
+                  <div style={{ textAlign: 'center', padding: '15px', backgroundColor: '#fff', border: '2px dashed #ccc', borderRadius: '8px' }}>
+                     <p style={{ margin: '0 0 10px 0', fontWeight: 'bold', color: 'var(--primary-color)' }}>手持ちの画像を使う</p>
+                     <label className="y2k-button" style={{ cursor: 'pointer', display: 'inline-block', fontSize: '1rem', padding: '8px 16px', backgroundColor: '#fffdf8' }}>
+                        📁 画像から選択
+                        <input type="file" accept="image/*" onChange={handleCustomImageUpload} style={{ display: 'none' }} />
+                     </label>
                   </div>
 
-                  <label className="y2k-button" style={{ cursor: 'pointer', display: 'inline-block', fontSize: '1rem', padding: '8px 16px' }}>
-                    📸 作った画像をアップロード
-                    <input type="file" accept="image/*" onChange={handleCustomImageUpload} style={{ display: 'none' }} />
-                  </label>
-                  <p style={{ marginTop: '10px', fontSize: '0.8rem', color: '#666' }}>※PCやスマホに画像を保存してからアップロードしてください</p>
+                  {/* 簡易シミュレーターの組み込み */}
+                  <div style={{ border: '2px solid var(--primary-color)', borderRadius: '8px', padding: '10px', backgroundColor: '#fff', position: 'relative' }}>
+                     <Simulator minimalMode onComplete={handleCharacterSelect} />
+                  </div>
+
                 </div>
               )}
             </div>
