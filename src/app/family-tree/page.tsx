@@ -512,7 +512,7 @@ export default function FamilyTreePage() {
           link.click();
           URL.revokeObjectURL(url);
         }} style={{ backgroundColor: '#fffdf8', color: 'var(--primary-color)', fontSize: '0.85rem', padding: '6px 14px' }}>
-          💾 データを保存
+          📂 家系図データを出力
         </button>
         <label className="y2k-button" style={{ backgroundColor: '#fffdf8', color: 'var(--primary-color)', fontSize: '0.85rem', padding: '6px 14px', cursor: 'pointer', display: 'inline-block' }}>
           📂 データを読み込み
