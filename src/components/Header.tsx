@@ -21,6 +21,7 @@ export default function Header() {
                 {pathname !== '/' && <Link href="/" className="y2k-nav-btn">ホーム</Link>}
                 {pathname !== '/simulator' && <Link href="/simulator" className="y2k-nav-btn">遺伝シミュ</Link>}
                 {!pathname.startsWith('/evolution') && <Link href="/#evolution" className="y2k-nav-btn">進化じょうけん</Link>}
+                {pathname !== '/family-tree' && <Link href="/family-tree" className="y2k-nav-btn">家系図メーカー</Link>}
                 {pathname !== '/bbs' && <Link href="/bbs" className="y2k-nav-btn">みんなの掲示板</Link>}
             </nav>
         </header>

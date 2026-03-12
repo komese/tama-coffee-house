@@ -26,6 +26,7 @@ export default function Home() {
             </div>
           </div>
 
+          <Link href="/family-tree" className="y2k-button" style={{ alignSelf: 'center', marginTop: '15px' }}>🧬 家系図メーカー</Link>
           <Link href="/bbs" className="y2k-button" style={{ alignSelf: 'center', marginTop: '15px' }}>💬 けいじばん</Link>
         </div>
       </div>
