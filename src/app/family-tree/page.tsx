@@ -273,10 +273,71 @@ export default function FamilyTreePage() {
     link.click();
   };
 
-  const handleShare = () => {
-    const text = encodeURIComponent(`たまコーヒーハウスで${generations.length}世代続く家系図を作ったよ！🧬☕\n\n#たまパラ #たまごっち`);
-    const url = `https://twitter.com/intent/tweet?text=${text}`;
-    window.open(url, '_blank');
+  const handleShare = async () => {
+    const shareText = `たまコーヒーハウスで${generations.length + 1}世代続く家系図を作ったよ！\n\n#たまパラ #たまごっち`;
+    const shareUrl = 'https://tama-coffee-house.vercel.app/family-tree';
+
+    // まず画像を生成
+    let imageFile: File | null = null;
+    if (treeRef.current) {
+      try {
+        const inputs = treeRef.current.querySelectorAll('input');
+        const originalStyles: string[] = [];
+        inputs.forEach(input => {
+          const el = input as HTMLInputElement;
+          originalStyles.push(el.style.cssText);
+          el.style.border = 'none';
+          el.style.outline = 'none';
+          el.style.background = 'transparent';
+          el.style.boxShadow = 'none';
+        });
+        const capturedCanvas = await html2canvas(treeRef.current, { backgroundColor: '#fffdf8', scale: 2, useCORS: true });
+        inputs.forEach((input, i) => { (input as HTMLInputElement).style.cssText = originalStyles[i]; });
+        const finalCanvas = document.createElement('canvas');
+        finalCanvas.width = capturedCanvas.width;
+        finalCanvas.height = capturedCanvas.height;
+        const ctx = finalCanvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(capturedCanvas, 0, 0);
+          ctx.font = '24px sans-serif';
+          ctx.fillStyle = 'rgba(139, 109, 80, 0.30)';
+          ctx.textAlign = 'right';
+          ctx.textBaseline = 'bottom';
+          ctx.fillText('たまコーヒーハウス', finalCanvas.width - 30, finalCanvas.height - 20);
+        }
+        const blob = await new Promise<Blob | null>(resolve => (finalCanvas).toBlob(resolve, 'image/png'));
+        if (blob) {
+          imageFile = new File([blob], 'family-tree.png', { type: 'image/png' });
+        }
+      } catch (e) {
+        console.error('Image generation for share failed', e);
+      }
+    }
+
+    // Web Share APIが使えるか判定（主にスマホ）
+    if (navigator.share) {
+      try {
+        const shareData: ShareData = {
+          title: '家系図メーカー | たまコーヒーハウス',
+          text: shareText,
+          url: shareUrl,
+        };
+        // 画像ファイルがある場合は添付
+        if (imageFile && navigator.canShare && navigator.canShare({ files: [imageFile] })) {
+          shareData.files = [imageFile];
+        }
+        await navigator.share(shareData);
+        return;
+      } catch (e) {
+        // ユーザーがキャンセルした場合は何もしない
+        if ((e as Error).name === 'AbortError') return;
+      }
+    }
+
+    // PCフォールバック: X(Twitter) intent URL
+    const tweetText = encodeURIComponent(shareText);
+    const tweetUrl = encodeURIComponent(shareUrl);
+    window.open(`https://twitter.com/intent/tweet?text=${tweetText}&url=${tweetUrl}`, '_blank');
   };
 
   return (
@@ -409,8 +470,8 @@ export default function FamilyTreePage() {
         <button className="y2k-button" onClick={handleSaveImage}>
           📸 画像として保存
         </button>
-        <button className="y2k-button" style={{ backgroundColor: '#1DA1F2', color: '#fff', borderColor: '#1DA1F2' }} onClick={handleShare}>
-          🐦 Xでシェア
+        <button className="y2k-button" style={{ backgroundColor: '#7c6f64', color: '#fff', borderColor: '#7c6f64' }} onClick={handleShare}>
+          📤 シェアする
         </button>
       </div>
       
