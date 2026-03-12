@@ -65,13 +65,39 @@ export default function BBS() {
 
         // 画像のアップロード処理
         if (imageFile) {
-            const fileExt = imageFile.name.split('.').pop();
+            let uploadFile: File | Blob = imageFile;
+            let fileExt = imageFile.name.split('.').pop()?.toLowerCase() || '';
+
+            // HEIC/HEIFの変換処理
+            if (fileExt === 'heic' || fileExt === 'heif' || imageFile.type === 'image/heic' || imageFile.type === 'image/heif') {
+                try {
+                    // クライアントサイドでのみ実行されるように動的インポート
+                    const heic2any = (await import('heic2any')).default;
+                    const convertedBlob = await heic2any({
+                        blob: imageFile,
+                        toType: 'image/jpeg',
+                        quality: 0.8,
+                    });
+                    
+                    // heic2anyはBlob、またはアニメーション等でBlobの配列を返す可能性がある
+                    uploadFile = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
+                    fileExt = 'jpeg';
+                } catch (conversionError) {
+                    console.error('HEIC conversion error:', conversionError);
+                    alert('画像のHEIC変換に失敗しました。別の画像をお試しください。');
+                    setSaving(false);
+                    return;
+                }
+            }
+
             const fileName = `${Date.now()}_${Math.random().toString(36).substring(2)}.${fileExt}`;
             const filePath = `uploads/${fileName}`;
 
             const { error: uploadError } = await supabase.storage
                 .from('bbs-images')
-                .upload(filePath, imageFile);
+                .upload(filePath, uploadFile, {
+                    contentType: fileExt === 'jpeg' ? 'image/jpeg' : imageFile.type
+                });
 
             if (uploadError) {
                 console.error('Error uploading image:', uploadError);
@@ -193,7 +219,7 @@ export default function BBS() {
                             <input
                                 id="image-upload"
                                 type="file"
-                                accept="image/*"
+                                accept="image/*, .heic, .heif"
                                 onChange={(e) => setImageFile(e.target.files ? e.target.files[0] : null)}
                                 style={{ fontSize: '0.9rem' }}
                             />
