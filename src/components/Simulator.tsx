@@ -132,26 +132,31 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
     }
 
     // 進化リストのアダルト期キャラクターの並び順（りく→うみ→そら→もりの順）
+    // ※ TAMA_DATAの実際のキー名に合わせる
     const ADULT_ORDER = [
-        "myaotchi", "pochitchi", "gumax", "ratchi",
-        "mametchi", "mimitchi", "morumotchi", "sheeputchi",
-        "reopatchi", "sebiretchi", "elizardotchi", "heabitchi",
-        "furawatchi", "potsunentchi", "tasutasutchi", "shigemisan",
+        // りく (Land) - 17体
+        "meowtchi", "pochitchi", "gumax", "ratchi",
+        "mametchi", "mimitchi", "molmotchi", "sheeptchi",
+        "leopatchi", "sebiretchi", "elizardotchi", "heavytchi",
+        "furawatchi", "potsunentchi", "tustustchi", "shigemi-san",
         "chodracotchi",
+        // みず (Water) - 17体
         "irukatchi", "kametchi", "kujiratchi", "uruotchi",
         "axolopatchi", "imoritchi", "kawazutchi", "beavertchi",
         "tachutchi", "sharktchi", "ankotchi", "otototchi",
         "kuraratchi", "mendakotchi", "amefuratchi", "gusokutchi",
-        "mamarintchi",
-        "hohotchi", "mongatchi", "eagletchi", "batchi",
+        "mermarintchi",
+        // そら (Sky) - 17体
+        "horhotchi", "mongatchi", "eagletchi", "batchi",
         "peacotchi", "batatchi", "kuchipatchi", "kiwitchi",
-        "papiyotchi", "kabutotchi", "tentotchi", "hatchitchi",
-        "gemtchi", "oretatchi", "ishikorotchi", "magumatchi",
-        "yayakontchi",
-        "foresthorhotchi", "konkotchi", "taigaotchi", "raccoonntchi",
-        "resapantchi", "kanokotchi", "suigyutchi", "pambootchi",
-        "forestkachitchi", "tokipatchi", "forestkuchipatchi", "suparotchi",
-        "shiitaketchi", "piitchi", "nappatchi", "radishraditchi",
+        "papillotchi", "kabutotchi", "tentotchi", "hatchitchi",
+        "gemtchi", "oretatchi", "ishikorotchi", "magmatchi",
+        "yayacorntchi",
+        // もり (Forest) - 17体
+        "foresthorhotchi", "konkotchi", "tigaotchi", "tanoontchi",
+        "lessapantchi", "kanokotchi", "suigyutchi", "panbootchi",
+        "kachitchi", "tokipatchi", "kuchipatchi", "sparrotchi",
+        "shiitaketchi", "peatchi", "nappatchi", "rushraditchi",
         "tatsutchi"
     ];
 
@@ -166,24 +171,32 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
     availableTamas.sort(sortByName);
     availableEyes.sort(sortByName);
 
-    // ADULT_ORDER配列の並び順に基づく正確なフィールドマッピング
-    // りく: indices 0-16, うみ: 17-33, そら: 34-50, もり: 51-67
-    const LAND_TAMAS = new Set(ADULT_ORDER.slice(0, 17));
-    const SEA_TAMAS = new Set(ADULT_ORDER.slice(17, 34));
-    const SKY_TAMAS = new Set(ADULT_ORDER.slice(34, 51));
-    const FOREST_TAMAS = new Set(ADULT_ORDER.slice(51));
+    // TAMA_DATAのキー名 → フィールドの直接マッピング（複数フィールド対応）
+    const FIELD_MAP: Record<string, string[]> = {};
+    // りく (Land) - 17体
+    ["meowtchi","pochitchi","gumax","ratchi","mametchi","mimitchi","molmotchi","sheeptchi",
+     "leopatchi","sebiretchi","elizardotchi","heavytchi","furawatchi","potsunentchi",
+     "tustustchi","shigemi-san","chodracotchi"].forEach(n => { FIELD_MAP[n] = [...(FIELD_MAP[n]||[]), 'land']; });
+    // みず (Water) - 17体
+    ["irukatchi","kametchi","kujiratchi","uruotchi","axolopatchi","imoritchi","kawazutchi",
+     "beavertchi","tachutchi","sharktchi","ankotchi","otototchi","kuraratchi","mendakotchi",
+     "amefuratchi","gusokutchi","mermarintchi"].forEach(n => { FIELD_MAP[n] = [...(FIELD_MAP[n]||[]), 'sea']; });
+    // そら (Sky) - 17体
+    ["horhotchi","mongatchi","eagletchi","batchi","peacotchi","batatchi","kuchipatchi","kiwitchi",
+     "papillotchi","kabutotchi","tentotchi","hatchitchi","gemtchi","oretatchi","ishikorotchi",
+     "magmatchi","yayacorntchi"].forEach(n => { FIELD_MAP[n] = [...(FIELD_MAP[n]||[]), 'sky']; });
+    // もり (Forest) - 17体
+    ["foresthorhotchi","konkotchi","tigaotchi","tanoontchi","lessapantchi","kanokotchi","suigyutchi",
+     "panbootchi","kachitchi","tokipatchi","kuchipatchi","sparrotchi","shiitaketchi","peatchi",
+     "nappatchi","rushraditchi","tatsutchi"].forEach(n => { FIELD_MAP[n] = [...(FIELD_MAP[n]||[]), 'forest']; });
 
-    const getWorld = (name: string) => {
-        if (LAND_TAMAS.has(name)) return 'land';
-        if (SEA_TAMAS.has(name)) return 'sea';
-        if (SKY_TAMAS.has(name)) return 'sky';
-        if (FOREST_TAMAS.has(name)) return 'forest';
-        return 'basic';
+    const getWorld = (name: string): string[] => {
+        return FIELD_MAP[name] || [];
     };
 
     if (worldTab !== 'all') {
-        availableTamas = availableTamas.filter(name => getWorld(name) === worldTab);
-        availableEyes = availableEyes.filter(name => getWorld(name) === worldTab);
+        availableTamas = availableTamas.filter(name => getWorld(name).includes(worldTab));
+        availableEyes = availableEyes.filter(name => getWorld(name).includes(worldTab));
     }
 
     const [selectedBase, setSelectedBase] = useState(availableTamas[0]);

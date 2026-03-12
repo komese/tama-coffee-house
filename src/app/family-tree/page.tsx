@@ -13,28 +13,28 @@ const ALL_CHARACTERS = [...LAND_DATA, ...SEA_DATA, ...SKY_DATA, ...FOREST_DATA].
 // 進化データのID → シミュレーター内部名マッピング（スプライト合成用）
 const ID_TO_INTERNAL: Record<string, string> = {
   // りく
-  'land_7': 'myaotchi', 'land_11': 'pochitchi', 'land_15': 'gumax', 'land_19': 'ratchi',
-  'land_8': 'mametchi', 'land_12': 'mimitchi', 'land_16': 'morumotchi', 'land_20': 'sheeputchi',
-  'land_9': 'reopatchi', 'land_13': 'sebiretchi', 'land_17': 'elizardotchi', 'land_21': 'heabitchi',
-  'land_10': 'furawatchi', 'land_14': 'potsunentchi', 'land_18': 'tasutasutchi', 'land_22': 'shigemisan',
+  'land_7': 'meowtchi', 'land_11': 'pochitchi', 'land_15': 'gumax', 'land_19': 'ratchi',
+  'land_8': 'mametchi', 'land_12': 'mimitchi', 'land_16': 'molmotchi', 'land_20': 'sheeptchi',
+  'land_9': 'leopatchi', 'land_13': 'sebiretchi', 'land_17': 'elizardotchi', 'land_21': 'heavytchi',
+  'land_10': 'furawatchi', 'land_14': 'potsunentchi', 'land_18': 'tustustchi', 'land_22': 'shigemi-san',
   'land_23': 'chodracotchi',
   // みず
   'sea_7': 'irukatchi', 'sea_8': 'kametchi', 'sea_9': 'kujiratchi', 'sea_10': 'uruotchi',
   'sea_11': 'axolopatchi', 'sea_12': 'imoritchi', 'sea_13': 'kawazutchi', 'sea_14': 'beavertchi',
   'sea_15': 'tachutchi', 'sea_16': 'sharktchi', 'sea_17': 'ankotchi', 'sea_18': 'otototchi',
   'sea_19': 'kuraratchi', 'sea_20': 'mendakotchi', 'sea_21': 'amefuratchi', 'sea_22': 'gusokutchi',
-  'sea_23': 'mamarintchi',
+  'sea_23': 'mermarintchi',
   // そら
-  'sky_7': 'hohotchi', 'sky_8': 'mongatchi', 'sky_9': 'eagletchi', 'sky_10': 'batchi',
+  'sky_7': 'horhotchi', 'sky_8': 'mongatchi', 'sky_9': 'eagletchi', 'sky_10': 'batchi',
   'sky_11': 'peacotchi', 'sky_12': 'batatchi', 'sky_13': 'kuchipatchi', 'sky_14': 'kiwitchi',
-  'sky_15': 'papiyotchi', 'sky_16': 'kabutotchi', 'sky_17': 'tentotchi', 'sky_18': 'hatchitchi',
-  'sky_19': 'gemtchi', 'sky_20': 'oretatchi', 'sky_21': 'ishikorotchi', 'sky_22': 'magumatchi',
-  'sky_23': 'yayakontchi',
+  'sky_15': 'papillotchi', 'sky_16': 'kabutotchi', 'sky_17': 'tentotchi', 'sky_18': 'hatchitchi',
+  'sky_19': 'gemtchi', 'sky_20': 'oretatchi', 'sky_21': 'ishikorotchi', 'sky_22': 'magmatchi',
+  'sky_23': 'yayacorntchi',
   // もり
-  'forest_7': 'foresthorhotchi', 'forest_8': 'konkotchi', 'forest_9': 'taigaotchi', 'forest_10': 'raccoonntchi',
-  'forest_11': 'resapantchi', 'forest_12': 'kanokotchi', 'forest_13': 'suigyutchi', 'forest_14': 'pambootchi',
-  'forest_15': 'forestkachitchi', 'forest_16': 'tokipatchi', 'forest_17': 'forestkuchipatchi', 'forest_18': 'suparotchi',
-  'forest_19': 'shiitaketchi', 'forest_20': 'piitchi', 'forest_21': 'nappatchi', 'forest_22': 'radishraditchi',
+  'forest_7': 'foresthorhotchi', 'forest_8': 'konkotchi', 'forest_9': 'tigaotchi', 'forest_10': 'tanoontchi',
+  'forest_11': 'lessapantchi', 'forest_12': 'kanokotchi', 'forest_13': 'suigyutchi', 'forest_14': 'panbootchi',
+  'forest_15': 'kachitchi', 'forest_16': 'tokipatchi', 'forest_17': 'kuchipatchi', 'forest_18': 'sparrotchi',
+  'forest_19': 'shiitaketchi', 'forest_20': 'peatchi', 'forest_21': 'nappatchi', 'forest_22': 'rushraditchi',
   'forest_23': 'tatsutchi',
 };
 
@@ -116,6 +116,23 @@ export default function FamilyTreePage() {
     { id: 'gen-1', partner: { name: '', imageUrl: null }, child: { name: '', imageUrl: null } }
   ]);
 
+  // Undo履歴
+  type HistoryState = { rootParent: CharacterData; generations: Generation[] };
+  const [history, setHistory] = useState<HistoryState[]>([]);
+
+  // 現在の状態をhistoryに保存するヘルパー
+  const pushHistory = () => {
+    setHistory(prev => [...prev.slice(-19), { rootParent: JSON.parse(JSON.stringify(rootParent)), generations: JSON.parse(JSON.stringify(generations)) }]);
+  };
+
+  const undo = () => {
+    if (history.length === 0) return;
+    const prev = history[history.length - 1];
+    setHistory(history.slice(0, -1));
+    setRootParent(prev.rootParent);
+    setGenerations(prev.generations);
+  };
+
   const treeRef = useRef<HTMLDivElement>(null);
 
   // モーダル制御用ステート
@@ -141,6 +158,7 @@ export default function FamilyTreePage() {
 
   const handleCharacterSelect = (charData: CharacterData) => {
     if (!targetNode) return;
+    pushHistory(); // 操作前の状態を保存
 
     if (targetNode.type === 'root') {
       setRootParent({ ...rootParent, ...charData });
@@ -185,6 +203,7 @@ export default function FamilyTreePage() {
   };
 
   const addGeneration = () => {
+    pushHistory();
     setGenerations([
       ...generations,
       { id: `gen-${generations.length + 1}`, partner: { name: '', imageUrl: null }, child: { name: '', imageUrl: null } }
@@ -193,6 +212,7 @@ export default function FamilyTreePage() {
 
   const removeGeneration = () => {
     if (generations.length <= 1) return;
+    pushHistory();
     setGenerations(generations.slice(0, -1));
   };
 
@@ -214,10 +234,11 @@ export default function FamilyTreePage() {
       
       const ctx = canvas.getContext('2d');
       if (ctx) {
-        ctx.font = 'bold 24px "M PLUS Rounded 1c", sans-serif';
-        ctx.fillStyle = 'rgba(100, 70, 50, 0.4)';
+        // 右下に控えめな透かしテキスト
+        ctx.font = 'bold 20px "M PLUS Rounded 1c", sans-serif';
+        ctx.fillStyle = 'rgba(100, 70, 50, 0.3)';
         ctx.textAlign = 'right';
-        ctx.fillText('(c) たまコーヒーハウス', canvas.width - 20, canvas.height - 20);
+        ctx.fillText('たまコーヒーハウス ☕', canvas.width - 20, canvas.height - 15);
       }
       
       const imgData = canvas.toDataURL('image/png');
@@ -363,9 +384,9 @@ export default function FamilyTreePage() {
         </button>
         <button 
           className="y2k-button" 
-          onClick={removeGeneration} 
-          disabled={generations.length <= 1}
-          style={{ backgroundColor: '#fffdf8', color: 'var(--primary-color)', opacity: generations.length <= 1 ? 0.4 : 1, cursor: generations.length <= 1 ? 'not-allowed' : 'pointer' }}
+          onClick={undo} 
+          disabled={history.length === 0}
+          style={{ backgroundColor: '#fffdf8', color: 'var(--primary-color)', opacity: history.length === 0 ? 0.4 : 1, cursor: history.length === 0 ? 'not-allowed' : 'pointer' }}
         >
           ↩ 1つ戻る
         </button>
