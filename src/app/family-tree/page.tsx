@@ -219,9 +219,17 @@ export default function FamilyTreePage() {
   const handleSaveImage = async () => {
     if (!treeRef.current) return;
     try {
-      // 保存時は名前入力欄を一時非表示
+      // 保存時は名前入力欄の枠線を一時非表示（文字は残す）
       const inputs = treeRef.current.querySelectorAll('input');
-      inputs.forEach(input => (input as HTMLElement).style.display = 'none');
+      const originalStyles: string[] = [];
+      inputs.forEach(input => {
+        const el = input as HTMLInputElement;
+        originalStyles.push(el.style.cssText);
+        el.style.border = 'none';
+        el.style.outline = 'none';
+        el.style.background = 'transparent';
+        el.style.boxShadow = 'none';
+      });
 
       const canvas = await html2canvas(treeRef.current, {
         backgroundColor: '#fffdf8',
@@ -230,15 +238,18 @@ export default function FamilyTreePage() {
       });
 
       // 名前入力欄を復元
-      inputs.forEach(input => (input as HTMLElement).style.display = '');
+      inputs.forEach((input, i) => {
+        (input as HTMLInputElement).style.cssText = originalStyles[i];
+      });
       
       const ctx = canvas.getContext('2d');
       if (ctx) {
         // 右下に控えめな透かしテキスト
-        ctx.font = 'bold 20px "M PLUS Rounded 1c", sans-serif';
-        ctx.fillStyle = 'rgba(100, 70, 50, 0.3)';
+        ctx.font = '20px sans-serif';
+        ctx.fillStyle = 'rgba(139, 109, 80, 0.35)';
         ctx.textAlign = 'right';
-        ctx.fillText('たまコーヒーハウス ☕', canvas.width - 20, canvas.height - 15);
+        ctx.textBaseline = 'bottom';
+        ctx.fillText('たまコーヒーハウス ☕', canvas.width - 30, canvas.height - 20);
       }
       
       const imgData = canvas.toDataURL('image/png');
@@ -266,7 +277,7 @@ export default function FamilyTreePage() {
   return (
     <div className="y2k-container" style={{ maxWidth: '1000px', margin: '0 auto' }}>
       <h1 className="y2k-title" style={{ textAlign: 'center', lineHeight: '1.2', fontSize: '2.5rem' }}>
-        🧬 家系図メーカー
+        家系図メーカー
       </h1>
 
       <div style={{ textAlign: 'center', marginBottom: '20px' }}>
@@ -384,11 +395,11 @@ export default function FamilyTreePage() {
         </button>
         <button 
           className="y2k-button" 
-          onClick={undo} 
-          disabled={history.length === 0}
-          style={{ backgroundColor: '#fffdf8', color: 'var(--primary-color)', opacity: history.length === 0 ? 0.4 : 1, cursor: history.length === 0 ? 'not-allowed' : 'pointer' }}
+          onClick={removeGeneration} 
+          disabled={generations.length <= 1}
+          style={{ backgroundColor: '#fffdf8', color: 'var(--primary-color)', opacity: generations.length <= 1 ? 0.4 : 1, cursor: generations.length <= 1 ? 'not-allowed' : 'pointer' }}
         >
-          ↩ 1つ戻る
+          ➖ 世代を削除
         </button>
         <button className="y2k-button" onClick={handleSaveImage}>
           📸 画像として保存

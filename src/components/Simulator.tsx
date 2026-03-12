@@ -119,7 +119,7 @@ interface SimulatorProps {
 export default function Simulator({ minimalMode = false, onComplete }: SimulatorProps) {
     // Checkbox states (for filters)
     const [excludeJadeExclusive, setExcludeJadeExclusive] = useState(false);
-    const [worldTab, setWorldTab] = useState<'all' | 'land' | 'sea' | 'sky' | 'forest'>('all');
+    const [worldTab, setWorldTab] = useState<'all' | 'land' | 'sea' | 'sky' | 'forest'>(minimalMode ? 'land' : 'all');
 
     // Filtered lists
     // NON_BREEDABLE（ベビー・キッズ・ヤング）を除外した eyeNames を使うことでアダルト期限定にする
@@ -386,13 +386,13 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
                 </h2>
             )}
             {minimalMode && (
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '15px', marginBottom: '10px' }}>
-                    <h2 className="y2k-title" style={{ fontSize: '1.5rem', margin: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '10px', marginBottom: '10px', flexWrap: 'nowrap' }}>
+                    <h2 className="y2k-title" style={{ fontSize: '1.2rem', margin: 0, whiteSpace: 'nowrap' }}>
                         キャラカスタム
                     </h2>
                     <button 
                         className="y2k-button" 
-                        style={{ padding: '6px 20px', backgroundColor: 'var(--primary-color)', color: '#fff', fontSize: '1rem', fontWeight: 'bold', margin: 0, border: '2px solid var(--border-color)', borderRadius: '8px' }}
+                        style={{ padding: '4px 14px', backgroundColor: 'var(--primary-color)', color: '#fff', fontSize: '0.85rem', fontWeight: 'bold', margin: 0, border: '2px solid var(--border-color)', borderRadius: '8px', whiteSpace: 'nowrap' }}
                         onClick={() => {
                             if (onComplete && previewUrl) {
                                 onComplete({ name: `${selectedColor} ${selectedBase} / ${selectedEye}目`, imageUrl: previewUrl });
@@ -433,7 +433,7 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
 
                         {/* フィールド絞り込みタブ */}
                         <div style={{ marginBottom: '10px', display: 'flex', gap: '5px', overflowX: 'auto', paddingBottom: '5px' }}>
-                            {(['all', 'land', 'sea', 'sky', 'forest'] as const).map(tab => {
+                            {(minimalMode ? ['land', 'sea', 'sky', 'forest'] as const : ['all', 'land', 'sea', 'sky', 'forest'] as const).map(tab => {
                                 const labels = { all: 'すべて', land: 'りく', sea: 'うみ', sky: 'そら', forest: 'もり' };
                                 return (
                                     <button
