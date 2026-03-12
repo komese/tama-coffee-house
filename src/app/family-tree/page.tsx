@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import html2canvas from 'html2canvas';
 import { LAND_DATA, SEA_DATA, SKY_DATA, FOREST_DATA } from '@/data/evolutionData';
@@ -115,6 +115,32 @@ export default function FamilyTreePage() {
   const [generations, setGenerations] = useState<Generation[]>([
     { id: 'gen-1', partner: { name: '', imageUrl: null }, child: { name: '', imageUrl: null } }
   ]);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // localStorageから復元（初回マウント時）
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('familyTreeData');
+      if (saved) {
+        const data = JSON.parse(saved);
+        if (data.rootParent) setRootParent(data.rootParent);
+        if (data.generations?.length) setGenerations(data.generations);
+      }
+    } catch (e) {
+      console.error('Failed to load family tree data', e);
+    }
+    setIsLoaded(true);
+  }, []);
+
+  // データ変更時に自動保存
+  useEffect(() => {
+    if (!isLoaded) return;
+    try {
+      localStorage.setItem('familyTreeData', JSON.stringify({ rootParent, generations }));
+    } catch (e) {
+      console.error('Failed to save family tree data', e);
+    }
+  }, [rootParent, generations, isLoaded]);
 
   // Undo履歴
   type HistoryState = { rootParent: CharacterData; generations: Generation[] };
@@ -473,6 +499,41 @@ export default function FamilyTreePage() {
         <button className="y2k-button" style={{ backgroundColor: '#7c6f64', color: '#fff', borderColor: '#7c6f64' }} onClick={handleShare}>
           📤 シェアする
         </button>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginTop: '15px', flexWrap: 'wrap' }}>
+        <button className="y2k-button" onClick={() => {
+          const data = JSON.stringify({ rootParent, generations }, null, 2);
+          const blob = new Blob([data], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.download = `family-tree-${Date.now()}.json`;
+          link.href = url;
+          link.click();
+          URL.revokeObjectURL(url);
+        }} style={{ backgroundColor: '#fffdf8', color: 'var(--primary-color)', fontSize: '0.85rem', padding: '6px 14px' }}>
+          💾 データを保存
+        </button>
+        <label className="y2k-button" style={{ backgroundColor: '#fffdf8', color: 'var(--primary-color)', fontSize: '0.85rem', padding: '6px 14px', cursor: 'pointer', display: 'inline-block' }}>
+          📂 データを読み込み
+          <input type="file" accept=".json" style={{ display: 'none' }} onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+              try {
+                const data = JSON.parse(ev.target?.result as string);
+                if (data.rootParent) setRootParent(data.rootParent);
+                if (data.generations?.length) setGenerations(data.generations);
+                alert('家系図データを読み込みました！');
+              } catch {
+                alert('ファイルの読み込みに失敗しました。');
+              }
+            };
+            reader.readAsText(file);
+            e.target.value = '';
+          }} />
+        </label>
       </div>
       
       <div style={{ textAlign: 'center', marginTop: '20px' }}>
