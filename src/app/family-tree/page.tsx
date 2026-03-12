@@ -244,12 +244,12 @@ export default function FamilyTreePage() {
       
       const ctx = canvas.getContext('2d');
       if (ctx) {
-        // 右下に控えめな透かしテキスト
-        ctx.font = '20px sans-serif';
-        ctx.fillStyle = 'rgba(139, 109, 80, 0.35)';
+        // 右下に控えめな透かしテキスト（scale:2のためフォント・座標も2倍）
+        ctx.font = '40px sans-serif';
+        ctx.fillStyle = 'rgba(139, 109, 80, 0.30)';
         ctx.textAlign = 'right';
         ctx.textBaseline = 'bottom';
-        ctx.fillText('たまコーヒーハウス ☕', canvas.width - 30, canvas.height - 20);
+        ctx.fillText('たまコーヒーハウス', canvas.width - 40, canvas.height - 30);
       }
       
       const imgData = canvas.toDataURL('image/png');
