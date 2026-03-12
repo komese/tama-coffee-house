@@ -379,7 +379,7 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
                     </h2>
                     <button 
                         className="y2k-button" 
-                        style={{ padding: '6px 20px', backgroundColor: '#e24e42', color: '#fff', fontSize: '1rem', fontWeight: 'bold', margin: 0, border: '2px solid #a82e2e', borderRadius: '8px' }}
+                        style={{ padding: '6px 20px', backgroundColor: 'var(--primary-color)', color: '#fff', fontSize: '1rem', fontWeight: 'bold', margin: 0, border: '2px solid var(--border-color)', borderRadius: '8px' }}
                         onClick={() => {
                             if (onComplete && previewUrl) {
                                 onComplete({ name: `${selectedColor} ${selectedBase} / ${selectedEye}目`, imageUrl: previewUrl });

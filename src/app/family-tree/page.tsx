@@ -33,6 +33,12 @@ export default function FamilyTreePage() {
   const [targetNode, setTargetNode] = useState<{ type: 'root' } | { type: 'partner' | 'child', genIndex: number } | null>(null);
   const [modalTab, setModalTab] = useState<'existing' | 'custom'>('existing');
 
+  // 名前表示ON/OFFスイッチ
+  const [showNames, setShowNames] = useState(true);
+
+  // 画像プレビューモーダル
+  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+
   const openModal = (target: { type: 'root' } | { type: 'partner' | 'child', genIndex: number }) => {
     setTargetNode(target);
     setIsModalOpen(true);
@@ -61,12 +67,17 @@ export default function FamilyTreePage() {
     closeModal();
   };
 
+  // カスタムキャラ用：画像のみセット、名前は自動入力しない
+  const handleCustomCharacterSelect = (charData: CharacterData) => {
+    handleCharacterSelect({ name: '', imageUrl: charData.imageUrl });
+  };
+
   const handleCustomImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (event) => {
-        handleCharacterSelect({ name: 'カスタムキャラ', imageUrl: event.target?.result as string });
+        handleCharacterSelect({ name: '', imageUrl: event.target?.result as string });
       };
       reader.readAsDataURL(file);
     }
@@ -82,30 +93,35 @@ export default function FamilyTreePage() {
   const handleSaveImage = async () => {
     if (!treeRef.current) return;
     try {
-      // 一時的にスタイルを調整して綺麗にキャプチャする（任意）
       const canvas = await html2canvas(treeRef.current, {
-        backgroundColor: '#fffdf8', // カフェ風背景色
-        scale: 2, // 高画質化
-        useCORS: true // 外部画像の描画許可
+        backgroundColor: '#fffdf8',
+        scale: 2,
+        useCORS: true
       });
       
       const ctx = canvas.getContext('2d');
       if (ctx) {
         ctx.font = 'bold 24px "M PLUS Rounded 1c", sans-serif';
-        ctx.fillStyle = 'rgba(100, 70, 50, 0.4)'; // ブラウン系の透かし
+        ctx.fillStyle = 'rgba(100, 70, 50, 0.4)';
         ctx.textAlign = 'right';
         ctx.fillText('(c) たまコーヒーハウス', canvas.width - 20, canvas.height - 20);
       }
       
       const imgData = canvas.toDataURL('image/png');
-      const link = document.createElement('a');
-      link.download = `tamagochi-family-tree-${Date.now()}.png`;
-      link.href = imgData;
-      link.click();
+      // プレビューを表示
+      setPreviewImageUrl(imgData);
     } catch (e) {
       console.error('Failed to capture image', e);
       alert('画像の保存に失敗しました。');
     }
+  };
+
+  const handleDownloadPreview = () => {
+    if (!previewImageUrl) return;
+    const link = document.createElement('a');
+    link.download = `tamagochi-family-tree-${Date.now()}.png`;
+    link.href = previewImageUrl;
+    link.click();
   };
 
   const handleShare = () => {
@@ -116,13 +132,30 @@ export default function FamilyTreePage() {
 
   return (
     <div className="y2k-container" style={{ maxWidth: '1000px', margin: '0 auto' }}>
-      <h1 className="y2k-title" style={{ textAlign: 'center', lineHeight: '1.2' }}>
-        たまコーヒーハウス<br />
-        <span style={{ fontSize: '0.8em' }}>家系図メーカー</span>
+      <h1 className="y2k-title" style={{ textAlign: 'center', lineHeight: '1.2', fontSize: '2.5rem' }}>
+        🧬 家系図メーカー
       </h1>
 
       <div style={{ textAlign: 'center', marginBottom: '20px' }}>
         <p>あなただけのたまごっちの血統を記録しよう！</p>
+        <label style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', cursor: 'pointer', marginTop: '10px' }}>
+          <span>名前を表示</span>
+          <div
+            onClick={() => setShowNames(!showNames)}
+            style={{
+              width: '44px', height: '24px', borderRadius: '12px',
+              backgroundColor: showNames ? 'var(--primary-color)' : '#ccc',
+              position: 'relative', cursor: 'pointer', transition: 'background-color 0.2s'
+            }}
+          >
+            <div style={{
+              width: '20px', height: '20px', borderRadius: '50%',
+              backgroundColor: '#fff', position: 'absolute', top: '2px',
+              left: showNames ? '22px' : '2px', transition: 'left 0.2s',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.3)'
+            }} />
+          </div>
+        </label>
       </div>
 
       <div className="y2k-window" style={{ overflowX: 'auto', padding: '40px 20px' }}>
@@ -138,6 +171,7 @@ export default function FamilyTreePage() {
                   data={rootParent} 
                   onChange={(newData) => setRootParent(newData)} 
                   onClick={() => openModal({ type: 'root' })}
+                  showName={showNames}
                 />
                 <CharacterBox 
                   title="親2"
@@ -148,6 +182,7 @@ export default function FamilyTreePage() {
                     setGenerations(newGens);
                   }} 
                   onClick={() => openModal({ type: 'partner', genIndex: 0 })}
+                  showName={showNames}
                 />
               </div>
 
@@ -177,6 +212,7 @@ export default function FamilyTreePage() {
                             setGenerations(newGens);
                           }} 
                           onClick={() => openModal({ type: 'child', genIndex: index })}
+                          showName={showNames}
                       />
                       {nextGen && (
                         <CharacterBox 
@@ -188,6 +224,7 @@ export default function FamilyTreePage() {
                             setGenerations(newGens);
                           }} 
                           onClick={() => openModal({ type: 'partner', genIndex: index + 1 })}
+                          showName={showNames}
                         />
                       )}
                     </div>
@@ -225,6 +262,34 @@ export default function FamilyTreePage() {
       <div style={{ textAlign: 'center', marginTop: '20px' }}>
         <Link href="/" className="y2k-button" style={{ padding: '8px 15px', fontSize: '0.9rem' }}>ホームに戻る</Link>
       </div>
+
+      {/* 画像プレビューモーダル */}
+      {previewImageUrl && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 1100,
+          display: 'flex', justifyContent: 'center', alignItems: 'center',
+          padding: '20px'
+        }}>
+          <div className="y2k-window" style={{ maxWidth: '700px', width: '95%', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
+            <div className="y2k-window-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span>📸 画像プレビュー</span>
+              <button onClick={() => setPreviewImageUrl(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>✖</button>
+            </div>
+            <div className="y2k-window-body" style={{ flex: 1, overflowY: 'auto', textAlign: 'center', padding: '20px', backgroundColor: '#fffdf8' }}>
+              <img src={previewImageUrl} alt="家系図プレビュー" style={{ width: '100%', maxHeight: '60vh', objectFit: 'contain', borderRadius: '8px', border: '2px solid var(--border-color)' }} />
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginTop: '20px' }}>
+                <button className="y2k-button" onClick={handleDownloadPreview} style={{ padding: '10px 25px', fontSize: '1rem' }}>
+                  💾 ダウンロード
+                </button>
+                <button className="y2k-button" onClick={() => setPreviewImageUrl(null)} style={{ padding: '10px 25px', fontSize: '1rem', backgroundColor: '#fffdf8', color: 'var(--primary-color)' }}>
+                  ← 戻る
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* キャラクター選択モーダル */}
       {isModalOpen && (
@@ -280,7 +345,7 @@ export default function FamilyTreePage() {
 
                   {/* 簡易シミュレーターの組み込み */}
                   <div style={{ border: '2px solid var(--primary-color)', borderRadius: '8px', padding: '10px', backgroundColor: '#fff', position: 'relative' }}>
-                     <Simulator minimalMode onComplete={handleCharacterSelect} />
+                     <Simulator minimalMode onComplete={handleCustomCharacterSelect} />
                   </div>
 
                 </div>
@@ -295,7 +360,7 @@ export default function FamilyTreePage() {
 }
 
 // 個別のキャラクター枠コンポーネント
-function CharacterBox({ title, data, onChange, onClick }: { title: string, data: CharacterData, onChange: (d: CharacterData) => void, onClick: () => void }) {
+function CharacterBox({ title, data, onChange, onClick, showName }: { title: string, data: CharacterData, onChange: (d: CharacterData) => void, onClick: () => void, showName: boolean }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '120px' }}>
       <span style={{ fontSize: '0.8rem', color: '#888', marginBottom: '5px', fontWeight: 'bold' }}>{title}</span>
@@ -311,7 +376,8 @@ function CharacterBox({ title, data, onChange, onClick }: { title: string, data:
           backgroundColor: '#fff',
           cursor: 'pointer',
           overflow: 'hidden',
-          marginBottom: '8px'
+          marginBottom: '8px',
+          padding: '6px'
         }}
         onClick={onClick}
       >
@@ -321,14 +387,16 @@ function CharacterBox({ title, data, onChange, onClick }: { title: string, data:
           <span style={{ fontSize: '2rem', color: '#ccc' }}>+</span>
         )}
       </div>
-      <input 
-        type="text" 
-        value={data.name}
-        onChange={(e) => onChange({ ...data, name: e.target.value })}
-        placeholder="なまえ"
-        className="y2k-input"
-        style={{ width: '100%', padding: '5px', fontSize: '0.8rem', textAlign: 'center' }}
-      />
+      {showName && (
+        <input 
+          type="text" 
+          value={data.name}
+          onChange={(e) => onChange({ ...data, name: e.target.value })}
+          placeholder="なまえ"
+          className="y2k-input"
+          style={{ width: '100%', padding: '5px', fontSize: '0.8rem', textAlign: 'center' }}
+        />
+      )}
     </div>
   );
 }
