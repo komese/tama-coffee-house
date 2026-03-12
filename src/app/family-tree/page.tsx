@@ -231,7 +231,7 @@ export default function FamilyTreePage() {
         el.style.boxShadow = 'none';
       });
 
-      const canvas = await html2canvas(treeRef.current, {
+      const capturedCanvas = await html2canvas(treeRef.current, {
         backgroundColor: '#fffdf8',
         scale: 2,
         useCORS: true
@@ -242,17 +242,22 @@ export default function FamilyTreePage() {
         (input as HTMLInputElement).style.cssText = originalStyles[i];
       });
       
-      const ctx = canvas.getContext('2d');
+      // 新しいキャンバスに合成してから透かしを追加
+      const finalCanvas = document.createElement('canvas');
+      finalCanvas.width = capturedCanvas.width;
+      finalCanvas.height = capturedCanvas.height;
+      const ctx = finalCanvas.getContext('2d');
       if (ctx) {
+        ctx.drawImage(capturedCanvas, 0, 0);
         // 右下に控えめな透かしテキスト（scale:2のためフォント・座標も2倍）
-        ctx.font = '40px sans-serif';
-        ctx.fillStyle = 'rgba(139, 109, 80, 0.30)';
+        ctx.font = '36px sans-serif';
+        ctx.fillStyle = 'rgba(139, 109, 80, 0.35)';
         ctx.textAlign = 'right';
         ctx.textBaseline = 'bottom';
-        ctx.fillText('たまコーヒーハウス', canvas.width - 40, canvas.height - 30);
+        ctx.fillText('たまコーヒーハウス', finalCanvas.width - 40, finalCanvas.height - 30);
       }
       
-      const imgData = canvas.toDataURL('image/png');
+      const imgData = finalCanvas.toDataURL('image/png');
       setPreviewImageUrl(imgData);
     } catch (e) {
       console.error('Failed to capture image', e);
