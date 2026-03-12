@@ -341,7 +341,7 @@ export default function FamilyTreePage() {
   };
 
   return (
-    <div className="y2k-container" style={{ maxWidth: '1000px', margin: '0 auto', paddingTop: '30px' }}>
+    <div className="y2k-container" style={{ maxWidth: '1000px', margin: '30px auto 0' }}>
       <h1 className="y2k-title" style={{ textAlign: 'center', lineHeight: '1.2', fontSize: '2.5rem' }}>
         家系図メーカー
       </h1>
