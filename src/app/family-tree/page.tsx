@@ -250,11 +250,11 @@ export default function FamilyTreePage() {
       if (ctx) {
         ctx.drawImage(capturedCanvas, 0, 0);
         // 右下に控えめな透かしテキスト（scale:2のためフォント・座標も2倍）
-        ctx.font = '36px sans-serif';
-        ctx.fillStyle = 'rgba(139, 109, 80, 0.35)';
+        ctx.font = '24px sans-serif';
+        ctx.fillStyle = 'rgba(139, 109, 80, 0.30)';
         ctx.textAlign = 'right';
         ctx.textBaseline = 'bottom';
-        ctx.fillText('たまコーヒーハウス', finalCanvas.width - 40, finalCanvas.height - 30);
+        ctx.fillText('たまコーヒーハウス', finalCanvas.width - 30, finalCanvas.height - 20);
       }
       
       const imgData = finalCanvas.toDataURL('image/png');
