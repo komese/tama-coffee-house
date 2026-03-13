@@ -38,14 +38,21 @@ export default function EvolutionList({ initialTab = 'land' }: { initialTab?: st
             <div
                 onClick={() => setSelectedChar(char)}
                 style={{
-                    padding: '5px',
-                    borderRadius: '8px',
+                    backgroundColor: isSelected ? '#000' : '#fff',
+                    color: isSelected ? 'var(--primary-color)' : '#000',
+                    padding: '8px',
+                    border: '2px solid var(--border-color)',
                     cursor: 'pointer',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.1s',
+                    boxShadow: isSelected ? '2px 2px 0 var(--primary-color)' : '3px 3px 0px var(--accent-color)',
+                    transform: isSelected ? 'translate(2px, 2px)' : 'none',
+                    borderRadius: '8px',
+                    width: '100px',
                     textAlign: 'center',
-                    border: isSelected ? '2px solid var(--primary-color)' : '2px solid transparent',
-                    backgroundColor: isSelected ? '#fff5e0' : 'transparent',
-                    transition: 'all 0.2s',
-                    width: '70px'
                 }}
             >
                 <img
