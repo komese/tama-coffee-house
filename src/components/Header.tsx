@@ -33,19 +33,21 @@ export default function Header() {
                 {!cleanPath.startsWith('/evolution') && <Link href="/#evolution" className="y2k-nav-btn">{t('evolution')}</Link>}
                 {cleanPath !== '/family-tree' && <Link href="/family-tree" className="y2k-nav-btn">{t('familyTree')}</Link>}
                 {cleanPath !== '/bbs' && <Link href="/bbs" className="y2k-nav-btn">{t('bbs')}</Link>}
-                <a 
-                    href={switchPath}
-                    className="y2k-nav-btn" 
-                    style={{ 
-                        fontSize: '0.85rem', 
-                        padding: '4px 10px', 
-                        backgroundColor: 'var(--primary-color)', 
-                        color: '#fff',
-                        borderColor: 'var(--primary-color)'
-                    }}
-                >
-                    {locale === 'ja' ? '🇬🇧 EN' : '🇯🇵 JA'}
-                </a>
+                {cleanPath !== '/bbs' && (
+                    <a 
+                        href={switchPath}
+                        className="y2k-nav-btn" 
+                        style={{ 
+                            fontSize: '0.85rem', 
+                            padding: '4px 10px', 
+                            backgroundColor: 'var(--primary-color)', 
+                            color: '#fff',
+                            borderColor: 'var(--primary-color)'
+                        }}
+                    >
+                        {locale === 'ja' ? '🇬🇧 EN' : '🇯🇵 JA'}
+                    </a>
+                )}
             </nav>
         </header>
     );

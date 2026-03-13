@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { supabase } from '../../../lib/supabaseClient';
 
 export default function BBS() {
     const t = useTranslations('bbs');
+    const locale = useLocale();
+    const targetTable = locale === 'ja' ? 'messages' : 'en_messages';
     const [messages, setMessages] = useState<any[]>([]);
     const [newName, setNewName] = useState('');
     const [newContent, setNewContent] = useState('');
@@ -29,11 +31,11 @@ export default function BBS() {
 
         // リアルタイム更新のサブスクリプションを設定（オプション）
         const subscription = supabase
-            .channel('public:messages')
-            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, payload => {
+            .channel(`public:${targetTable}`)
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: targetTable }, payload => {
                 setMessages(prev => [payload.new, ...prev]);
             })
-            .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'messages' }, payload => {
+            .on('postgres_changes', { event: 'DELETE', schema: 'public', table: targetTable }, payload => {
                 setMessages(prev => prev.filter(msg => msg.id !== payload.old.id));
             })
             .subscribe();
@@ -46,7 +48,7 @@ export default function BBS() {
     const fetchMessages = async () => {
         setLoading(true);
         const { data, error } = await supabase
-            .from('messages')
+            .from(targetTable)
             .select('*')
             .order('created_at', { ascending: false });
 
@@ -116,7 +118,7 @@ export default function BBS() {
         }
 
         const { data, error } = await supabase
-            .from('messages')
+            .from(targetTable)
             .insert([
                 {
                     author_name: newName.trim(),
@@ -156,7 +158,7 @@ export default function BBS() {
         // LocalStorage 방식이므로 본인 확인은 클라이언트 UI에서 이루어짐.
         // 하지만 DB 보안(RLS)상으로는 누구나 삭제 가능하므로 실제 앱에서는 조심해야 함.
         const { error } = await supabase
-            .from('messages')
+            .from(targetTable)
             .delete()
             .eq('id', id);
 
