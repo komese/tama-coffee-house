@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabaseClient';
+import { useTranslations } from 'next-intl';
+import { supabase } from '../../../lib/supabaseClient';
 
 export default function BBS() {
+    const t = useTranslations('bbs');
     const [messages, setMessages] = useState<any[]>([]);
     const [newName, setNewName] = useState('');
     const [newContent, setNewContent] = useState('');
@@ -182,8 +184,8 @@ export default function BBS() {
     return (
         <div className="y2k-container" style={{ maxWidth: '800px', margin: '30px auto 0' }}>
             <h1 className="y2k-title" style={{ textAlign: 'center', lineHeight: '1.2' }}>
-                たまコーヒーハウス<br />
-                <span style={{ fontSize: '0.8em' }}>みんなの掲示板</span>
+                {t('title')}<br />
+                <span style={{ fontSize: '0.8em' }}>{t('subtitle')}</span>
             </h1>
 
             <div className="y2k-window" style={{ marginBottom: '20px' }}>
@@ -191,24 +193,24 @@ export default function BBS() {
                 <div className="y2k-window-body">
                     <form onSubmit={handlePost} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                         <div>
-                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>なまえ:</label>
+                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>{t('nameLabel')}:</label>
                             <input
                                 type="text"
                                 className="y2k-input"
                                 value={newName}
                                 onChange={(e) => setNewName(e.target.value)}
-                                placeholder="名無しっち"
+                                placeholder={t('namePlaceholder')}
                                 maxLength={20}
                                 required
                             />
                         </div>
                         <div>
-                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>めっせーじ:</label>
+                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>{t('contentLabel')}:</label>
                             <textarea
                                 className="y2k-input"
                                 value={newContent}
                                 onChange={(e) => setNewContent(e.target.value)}
-                                placeholder="たまごっちの交配結果などを共有しよう！"
+                                placeholder={t('contentPlaceholder')}
                                 rows={5}
                                 maxLength={500}
                                 style={{ resize: 'vertical', width: '100%', boxSizing: 'border-box' }}
@@ -225,7 +227,7 @@ export default function BBS() {
                             />
                         </div>
                         <button type="submit" className="y2k-button" disabled={saving || !newName.trim() || (!newContent.trim() && !imageFile)}>
-                            {saving ? 'かきこみ中...' : 'かきこむ！'}
+                            {saving ? t('loading') : t('submit')}
                         </button>
                     </form>
                 </div>
@@ -256,7 +258,7 @@ export default function BBS() {
                                             onClick={() => handleDelete(msg.id)}
                                             style={{ background: 'none', border: 'none', color: '#ff6b6b', textDecoration: 'underline', cursor: 'pointer', fontSize: '0.8rem' }}
                                         >
-                                            削除
+                                            {t('delete')}
                                         </button>
                                     )}
                                 </div>

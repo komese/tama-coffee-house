@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import html2canvas from 'html2canvas';
 import { LAND_DATA, SEA_DATA, SKY_DATA, FOREST_DATA } from '@/data/evolutionData';
@@ -111,6 +112,8 @@ type Generation = {
 };
 
 export default function FamilyTreePage() {
+  const t = useTranslations('familyTree');
+  const locale = useLocale();
   const [rootParent, setRootParent] = useState<CharacterData>({ name: '', imageUrl: null });
   const [generations, setGenerations] = useState<Generation[]>([
     { id: 'gen-1', partner: { name: '', imageUrl: null }, child: { name: '', imageUrl: null } }
@@ -280,14 +283,14 @@ export default function FamilyTreePage() {
         ctx.fillStyle = 'rgba(139, 109, 80, 0.30)';
         ctx.textAlign = 'right';
         ctx.textBaseline = 'bottom';
-        ctx.fillText('たまコーヒーハウス', finalCanvas.width - 30, finalCanvas.height - 20);
+        ctx.fillText(t('watermark'), finalCanvas.width - 30, finalCanvas.height - 20);
       }
       
       const imgData = finalCanvas.toDataURL('image/png');
       setPreviewImageUrl(imgData);
     } catch (e) {
       console.error('Failed to capture image', e);
-      alert('画像の保存に失敗しました。');
+      alert(t('saveError'));
     }
   };
 
@@ -300,8 +303,8 @@ export default function FamilyTreePage() {
   };
 
   const handleShare = async () => {
-    const shareText = `たまコーヒーハウスで${generations.length + 1}世代続く家系図を作ったよ！\n\n#たまパラ #たまごっち`;
-    const shareUrl = 'https://tama-coffee-house.vercel.app/family-tree';
+    const shareText = t('shareText', { count: generations.length + 1 });
+    const shareUrl = `https://tama-coffee-house.vercel.app${locale === 'ja' ? '' : '/en'}/family-tree`;
 
     // まず画像を生成
     let imageFile: File | null = null;
@@ -329,7 +332,7 @@ export default function FamilyTreePage() {
           ctx.fillStyle = 'rgba(139, 109, 80, 0.30)';
           ctx.textAlign = 'right';
           ctx.textBaseline = 'bottom';
-          ctx.fillText('たまコーヒーハウス', finalCanvas.width - 30, finalCanvas.height - 20);
+          ctx.fillText(t('watermark'), finalCanvas.width - 30, finalCanvas.height - 20);
         }
         const blob = await new Promise<Blob | null>(resolve => (finalCanvas).toBlob(resolve, 'image/png'));
         if (blob) {
@@ -344,7 +347,7 @@ export default function FamilyTreePage() {
     if (navigator.share) {
       try {
         const shareData: ShareData = {
-          title: '家系図メーカー | たまコーヒーハウス',
+          title: t('shareTitle'),
           text: shareText,
           url: shareUrl,
         };
@@ -369,13 +372,13 @@ export default function FamilyTreePage() {
   return (
     <div className="y2k-container" style={{ maxWidth: '1000px', margin: '30px auto 0' }}>
       <h1 className="y2k-title" style={{ textAlign: 'center', lineHeight: '1.2', fontSize: '2.5rem' }}>
-        家系図メーカー
+        {t('title')}
       </h1>
 
       <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-        <p>あなただけのたまごっちの血統を記録しよう！</p>
+        <p>{t('subtitle')}</p>
         <label style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', cursor: 'pointer', marginTop: '10px' }}>
-          <span>名前を表示</span>
+          <span>{t('showNames')}</span>
           <div
             onClick={() => setShowNames(!showNames)}
             style={{
@@ -403,14 +406,15 @@ export default function FamilyTreePage() {
               {/* 第1世代とパートナー */}
               <div style={{ display: 'flex', gap: '40px', alignItems: 'flex-start' }}>
                 <CharacterBox 
-                  title="第1世代"
+                  title={t('gen1')}
                   data={rootParent} 
                   onChange={(newData) => setRootParent(newData)} 
                   onClick={() => openModal({ type: 'root' })}
                   showName={showNames}
+                  namePlaceholder={t('namePlaceholder')}
                 />
                 <CharacterBox 
-                  title="パートナー"
+                  title={t('partner')}
                   data={generations[0].partner} 
                   onChange={(newData) => {
                     const newGens = [...generations];
@@ -419,6 +423,7 @@ export default function FamilyTreePage() {
                   }} 
                   onClick={() => openModal({ type: 'partner', genIndex: 0 })}
                   showName={showNames}
+                  namePlaceholder={t('namePlaceholder')}
                 />
               </div>
 
@@ -439,7 +444,7 @@ export default function FamilyTreePage() {
                     
                     <div style={{ display: 'flex', gap: '40px', alignItems: 'flex-start' }}>
                       <CharacterBox 
-                          title={`第${index + 2}世代`}
+                          title={t('genN', { n: index + 2 })}
                           data={gen.child} 
                           onChange={(newData) => {
                             const newGens = [...generations];
@@ -448,10 +453,11 @@ export default function FamilyTreePage() {
                           }} 
                           onClick={() => openModal({ type: 'child', genIndex: index })}
                           showName={showNames}
+                  namePlaceholder={t('namePlaceholder')}
                       />
                       {nextGen && (
                         <CharacterBox 
-                          title="パートナー"
+                          title={t('partner')}
                           data={nextGen.partner} 
                           onChange={(newData) => {
                             const newGens = [...generations];
@@ -483,7 +489,7 @@ export default function FamilyTreePage() {
 
       <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginTop: '30px', flexWrap: 'wrap' }}>
         <button className="y2k-button" onClick={addGeneration} style={{ backgroundColor: '#fffdf8', color: 'var(--primary-color)' }}>
-          ➕ 世代を追加
+          {t('addGen')}
         </button>
         <button 
           className="y2k-button" 
@@ -491,13 +497,13 @@ export default function FamilyTreePage() {
           disabled={generations.length <= 1}
           style={{ backgroundColor: '#fffdf8', color: 'var(--primary-color)', opacity: generations.length <= 1 ? 0.4 : 1, cursor: generations.length <= 1 ? 'not-allowed' : 'pointer' }}
         >
-          ➖ 世代を削除
+          {t('removeGen')}
         </button>
         <button className="y2k-button" onClick={handleSaveImage}>
-          📸 画像として保存
+          {t('saveImage')}
         </button>
         <button className="y2k-button" style={{ backgroundColor: '#7c6f64', color: '#fff', borderColor: '#7c6f64' }} onClick={handleShare}>
-          📤 シェアする
+          {t('share')}
         </button>
       </div>
 
@@ -512,10 +518,10 @@ export default function FamilyTreePage() {
           link.click();
           URL.revokeObjectURL(url);
         }} style={{ backgroundColor: '#fffdf8', color: 'var(--primary-color)', fontSize: '0.85rem', padding: '6px 14px' }}>
-          📂 家系図データを出力
+          {t('exportData')}
         </button>
         <label className="y2k-button" style={{ backgroundColor: '#fffdf8', color: 'var(--primary-color)', fontSize: '0.85rem', padding: '6px 14px', cursor: 'pointer', display: 'inline-block' }}>
-          📂 家系図データを読み込み
+          {t('importData')}
           <input type="file" accept=".json" style={{ display: 'none' }} onChange={(e) => {
             const file = e.target.files?.[0];
             if (!file) return;
@@ -525,9 +531,9 @@ export default function FamilyTreePage() {
                 const data = JSON.parse(ev.target?.result as string);
                 if (data.rootParent) setRootParent(data.rootParent);
                 if (data.generations?.length) setGenerations(data.generations);
-                alert('家系図データを読み込みました！');
+                alert(t('importSuccess'));
               } catch {
-                alert('ファイルの読み込みに失敗しました。');
+                alert(t('importError'));
               }
             };
             reader.readAsText(file);
@@ -537,7 +543,7 @@ export default function FamilyTreePage() {
       </div>
       
       <div style={{ textAlign: 'center', marginTop: '20px' }}>
-        <Link href="/" className="y2k-button" style={{ padding: '8px 15px', fontSize: '0.9rem' }}>ホームに戻る</Link>
+        <Link href="/" className="y2k-button" style={{ padding: '8px 15px', fontSize: '0.9rem' }}>{t('backHome')}</Link>
       </div>
 
       {/* 画像プレビューモーダル */}
@@ -550,17 +556,17 @@ export default function FamilyTreePage() {
         }}>
           <div className="y2k-window" style={{ maxWidth: '700px', width: '95%', maxHeight: '90vh', display: 'flex', flexDirection: 'column' }}>
             <div className="y2k-window-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span>📸 画像プレビュー</span>
+              <span>📸 {t('previewTitle')}</span>
               <button onClick={() => setPreviewImageUrl(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>✖</button>
             </div>
             <div className="y2k-window-body" style={{ flex: 1, overflowY: 'auto', textAlign: 'center', padding: '20px', backgroundColor: '#fffdf8' }}>
               <img src={previewImageUrl} alt="家系図プレビュー" style={{ width: '100%', maxHeight: '60vh', objectFit: 'contain', borderRadius: '8px', border: '2px solid var(--border-color)' }} />
               <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginTop: '20px' }}>
                 <button className="y2k-button" onClick={handleDownloadPreview} style={{ padding: '10px 25px', fontSize: '1rem' }}>
-                  💾 ダウンロード
+                  {t('download')}
                 </button>
                 <button className="y2k-button" onClick={() => setPreviewImageUrl(null)} style={{ padding: '10px 25px', fontSize: '1rem', backgroundColor: '#fffdf8', color: 'var(--primary-color)' }}>
-                  ← 戻る
+                  ← {t('close')}
                 </button>
               </div>
             </div>
@@ -577,7 +583,7 @@ export default function FamilyTreePage() {
         }}>
           <div className="y2k-window" style={{ width: '95%', maxWidth: '800px', maxHeight: '85vh', display: 'flex', flexDirection: 'column' }}>
             <div className="y2k-window-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span>キャラクターをえらぶ</span>
+              <span>{t('selectChar')}</span>
               <button onClick={closeModal} style={{ background: 'none', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>✖</button>
             </div>
             
@@ -585,11 +591,11 @@ export default function FamilyTreePage() {
               <button 
                 onClick={() => setModalTab('existing')} 
                 style={{ flex: 1, padding: '10px', border: 'none', background: modalTab === 'existing' ? '#fffdf8' : 'transparent', color: modalTab === 'existing' ? 'var(--primary-color)' : '#fff', fontWeight: 'bold', cursor: 'pointer' }}
-              >既存キャラ</button>
+              >{t('existingChars')}</button>
               <button 
                 onClick={() => setModalTab('custom')} 
                 style={{ flex: 1, padding: '10px', border: 'none', background: modalTab === 'custom' ? '#fffdf8' : 'transparent', color: modalTab === 'custom' ? 'var(--primary-color)' : '#fff', fontWeight: 'bold', cursor: 'pointer' }}
-              >自分で作ったキャラ</button>
+              >{t('customChar')}</button>
             </div>
 
             <div className="y2k-window-body" style={{ flex: 1, overflowY: 'auto', backgroundColor: '#fffdf8' }}>
@@ -613,9 +619,9 @@ export default function FamilyTreePage() {
                   
                   {/* 外部画像アップロード */}
                   <div style={{ textAlign: 'center', padding: '15px', backgroundColor: '#fff', border: '2px dashed #ccc', borderRadius: '8px' }}>
-                     <p style={{ margin: '0 0 10px 0', fontWeight: 'bold', color: 'var(--primary-color)' }}>手持ちの画像を使う</p>
+                     <p style={{ margin: '0 0 10px 0', fontWeight: 'bold', color: 'var(--primary-color)' }}>{t('uploadImage')}</p>
                      <label className="y2k-button" style={{ cursor: 'pointer', display: 'inline-block', fontSize: '1rem', padding: '8px 16px', backgroundColor: '#fffdf8' }}>
-                        📁 画像から選択
+                        📁 {t('uploadImage')}
                         <input type="file" accept="image/*" onChange={handleCustomImageUpload} style={{ display: 'none' }} />
                      </label>
                   </div>
@@ -637,7 +643,7 @@ export default function FamilyTreePage() {
 }
 
 // 個別のキャラクター枠コンポーネント
-function CharacterBox({ title, data, onChange, onClick, showName }: { title: string, data: CharacterData, onChange: (d: CharacterData) => void, onClick: () => void, showName: boolean }) {
+function CharacterBox({ title, data, onChange, onClick, showName, namePlaceholder }: { title: string, data: CharacterData, onChange: (d: CharacterData) => void, onClick: () => void, showName: boolean, namePlaceholder?: string }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '120px' }}>
       <span style={{ fontSize: '0.8rem', color: '#888', marginBottom: '5px', fontWeight: 'bold' }}>{title}</span>
@@ -669,7 +675,7 @@ function CharacterBox({ title, data, onChange, onClick, showName }: { title: str
           type="text" 
           value={data.name}
           onChange={(e) => onChange({ ...data, name: e.target.value })}
-          placeholder="なまえ"
+          placeholder={namePlaceholder || 'Name'}
           className="y2k-input"
           style={{ width: '100%', padding: '5px', fontSize: '0.8rem', textAlign: 'center' }}
         />

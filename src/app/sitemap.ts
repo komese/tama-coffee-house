@@ -2,8 +2,9 @@ import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = 'https://tama-coffee-house.vercel.app';
+    const locales = ['ja', 'en'] as const;
+    const defaultLocale = 'ja';
 
-    // 全ページを定義（新しいページを追加したらここに追記するだけ）
     const pages: { path: string; changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency']; priority: number }[] = [
         { path: '/', changeFrequency: 'weekly', priority: 1 },
         { path: '/simulator', changeFrequency: 'weekly', priority: 0.9 },
@@ -15,10 +16,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { path: '/bbs', changeFrequency: 'daily', priority: 0.7 },
     ];
 
-    return pages.map(({ path, changeFrequency, priority }) => ({
-        url: `${baseUrl}${path === '/' ? '' : path}`,
-        lastModified: new Date(),
-        changeFrequency,
-        priority,
-    }));
+    const entries: MetadataRoute.Sitemap = [];
+
+    for (const page of pages) {
+        for (const locale of locales) {
+            const prefix = locale === defaultLocale ? '' : `/${locale}`;
+            entries.push({
+                url: `${baseUrl}${prefix}${page.path === '/' ? '' : page.path}`,
+                lastModified: new Date(),
+                changeFrequency: page.changeFrequency,
+                priority: page.priority,
+            });
+        }
+    }
+
+    return entries;
 }

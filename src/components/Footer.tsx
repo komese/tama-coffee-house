@@ -1,4 +1,9 @@
+"use client";
+
+import { useTranslations } from 'next-intl';
+
 export default function Footer() {
+    const t = useTranslations('footer');
     return (
         <footer style={{
             backgroundColor: 'var(--primary-color)',
@@ -11,7 +16,7 @@ export default function Footer() {
             fontFamily: 'var(--font-retro)'
         }}>
             <p style={{ marginBottom: '10px', fontSize: '1.2em' }}>
-                ☕ TAMA COFFEE HOUSE ☕
+                {t('title')}
             </p>
 
             <div style={{
@@ -25,9 +30,8 @@ export default function Footer() {
                 color: '#ececec',
                 fontFamily: 'var(--font-main)'
             }}>
-                <strong style={{ color: '#fdf6e3' }}>【免責事項】</strong><br />
-                当サイトは「たまごっちパラダイス」の非公式ファンサイトであり、株式会社バンダイ様および関連企業様とは一切関係ありません。<br />
-                サイト内で使用されている名称、画像などの著作権・商標権は、それぞれの原著作者、企業に帰属します。
+                <strong style={{ color: '#fdf6e3' }}>{t('disclaimer')}</strong><br />
+                {t('disclaimerText')}
             </div>
 
             <p style={{ marginTop: '15px', fontSize: '0.8rem', color: '#666' }}>

@@ -2,20 +2,20 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { LAND_DATA, SEA_DATA, SKY_DATA, FOREST_DATA, EvolutionCharacter } from '../data/evolutionData';
 
 const TABS = [
-    { id: 'land', label: 'りく', path: '/evolution/land' },
-    { id: 'sea', label: 'みず', path: '/evolution/sea' },
-    { id: 'sky', label: 'そら', path: '/evolution/sky' },
-    { id: 'forest', label: 'もり', path: '/evolution/forest' },
+    { id: 'land', path: '/evolution/land' },
+    { id: 'sea', path: '/evolution/sea' },
+    { id: 'sky', path: '/evolution/sky' },
+    { id: 'forest', path: '/evolution/forest' },
 ];
 
 export default function EvolutionList({ initialTab = 'land' }: { initialTab?: string }) {
-    // ページ遷移になったため、activeTabはpropsから受け取ったものを固定で使用し、
-    // 切り替えはLinkコンポーネントによるルーティングに任せる
     const activeTab = initialTab;
     const [selectedChar, setSelectedChar] = useState<EvolutionCharacter | null>(null);
+    const t = useTranslations('evolution');
 
     let currentData: EvolutionCharacter[] = [];
     switch (activeTab) {
@@ -38,24 +38,16 @@ export default function EvolutionList({ initialTab = 'land' }: { initialTab?: st
             <div
                 onClick={() => setSelectedChar(char)}
                 style={{
-                    backgroundColor: isSelected ? '#000' : '#fff',
-                    color: isSelected ? 'var(--primary-color)' : '#000',
-                    padding: '8px',
-                    border: '2px solid var(--border-color)',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    transition: 'all 0.1s',
-                    boxShadow: isSelected ? '2px 2px 0 var(--primary-color)' : '3px 3px 0px var(--accent-color)',
-                    transform: isSelected ? 'translate(2px, 2px)' : 'none',
+                    padding: '5px',
                     borderRadius: '8px',
-                    width: '100px', // 幅を元の100pxに戻してはみ出しを防止
+                    cursor: 'pointer',
                     textAlign: 'center',
+                    border: isSelected ? '2px solid var(--primary-color)' : '2px solid transparent',
+                    backgroundColor: isSelected ? '#fff5e0' : 'transparent',
+                    transition: 'all 0.2s',
+                    width: '70px'
                 }}
             >
-                {/* 画像サイズも安全な50pxに戻す */}
                 <img
                     src={char.iconUrl}
                     alt={char.name}
@@ -68,7 +60,6 @@ export default function EvolutionList({ initialTab = 'land' }: { initialTab?: st
                     }}
                 />
 
-                {/* 枠から文字がはみ出さないように折り返し設定のみ適用 */}
                 <strong style={{ fontSize: '0.75rem', fontFamily: 'var(--font-retro)', wordBreak: 'break-all', overflowWrap: 'break-word', lineHeight: '1.2' }}>{char.name}</strong>
             </div>
         );
@@ -77,32 +68,26 @@ export default function EvolutionList({ initialTab = 'land' }: { initialTab?: st
     return (
         <div className="y2k-container" style={{ marginTop: '20px' }}>
             <h2 className="y2k-title" style={{ fontSize: '2rem' }}>
-                {activeTab === 'land' && '🐾 りく'}
-                {activeTab === 'sea' && '💧 みず'}
-                {activeTab === 'sky' && '☁️ そら'}
-                {activeTab === 'forest' && '🌲 もり'}
-                の進化じょうけんリスト
+                {t(activeTab as 'land' | 'sea' | 'sky' | 'forest')}
+                {t('listTitle')}
             </h2>
 
             <p style={{ textAlign: 'center', marginBottom: '20px', color: '#666', fontFamily: 'var(--font-retro)' }}>
-                {/* ステージ表示用サブタイトル */}
             </p>
 
             <div className="evolution-container">
-                {/* ツリー表示部分 */}
                 <div className="evolution-tree">
 
                     {currentData.length === 0 && (
                         <div style={{ textAlign: 'center', padding: '20px', fontFamily: 'var(--font-retro)', border: '2px dashed #999', borderRadius: '10px' }}>
-                            じゅんびちゅう...
+                            {t('preparing')}
                         </div>
                     )}
 
-                    {/* === ベビー期、キッズ期、特殊 を一列のコンパクトなヘッダー風にする === */}
                     <div style={{ display: 'flex', gap: '15px', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff', padding: '10px', borderRadius: '10px', border: '2px solid #ccc' }}>
                         {babies.length > 0 && (
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                <h4 style={{ margin: '0 0 5px 0', fontSize: '0.9rem', fontFamily: 'var(--font-retro)', color: '#5599ff' }}>ベビー期</h4>
+                                <h4 style={{ margin: '0 0 5px 0', fontSize: '0.9rem', fontFamily: 'var(--font-retro)', color: '#5599ff' }}>{t('baby')}</h4>
                                 {babies.map(char => <CharCard key={char.id} char={char} />)}
                             </div>
                         )}
@@ -111,29 +96,26 @@ export default function EvolutionList({ initialTab = 'land' }: { initialTab?: st
 
                         {kids.length > 0 && (
                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                <h4 style={{ margin: '0 0 5px 0', fontSize: '0.9rem', fontFamily: 'var(--font-retro)', color: '#ff6699' }}>キッズ期</h4>
+                                <h4 style={{ margin: '0 0 5px 0', fontSize: '0.9rem', fontFamily: 'var(--font-retro)', color: '#ff6699' }}>{t('kids')}</h4>
                                 {kids.map(char => <CharCard key={char.id} char={char} />)}
                             </div>
                         )}
 
                     </div>
 
-                    {/* === ヤング期 → アダルト期の横型ツリー === */}
                     {youngs.length > 0 && (
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '10px' }}>
                             {youngs.map(young => {
                                 const relatedAdults = adults.filter(a => a.parentName === young.name);
                                 return (
                                     <div key={young.id} style={{ display: 'flex', backgroundColor: '#fcfcfc', borderRadius: '8px', border: '2px solid #e0e0e0', padding: '8px', alignItems: 'center', gap: '10px' }}>
-                                        {/* 親 (ヤング) */}
                                         <div style={{ flex: '0 0 auto', borderRight: '2px dashed #ccc', paddingRight: '10px' }}>
-                                            <h4 style={{ margin: '0 0 5px 0', fontSize: '0.8rem', textAlign: 'center', fontFamily: 'var(--font-retro)', color: '#3cb371' }}>ヤング期</h4>
+                                            <h4 style={{ margin: '0 0 5px 0', fontSize: '0.8rem', textAlign: 'center', fontFamily: 'var(--font-retro)', color: '#3cb371' }}>{t('young')}</h4>
                                             <CharCard char={young} />
                                         </div>
 
-                                        {/* 子 (アダルトのグリッド表示) */}
                                         <div style={{ flex: '1 1 auto' }}>
-                                            <h4 style={{ margin: '0 0 5px 0', fontSize: '0.8rem', textAlign: 'center', fontFamily: 'var(--font-retro)', color: '#daa520' }}>アダルト期</h4>
+                                            <h4 style={{ margin: '0 0 5px 0', fontSize: '0.8rem', textAlign: 'center', fontFamily: 'var(--font-retro)', color: '#daa520' }}>{t('adult')}</h4>
                                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '5px' }}>
                                                 {relatedAdults.map(adult => <CharCard key={adult.id} char={adult} />)}
                                             </div>
@@ -144,10 +126,9 @@ export default function EvolutionList({ initialTab = 'land' }: { initialTab?: st
                         </div>
                     )}
 
-                    {/* 特殊枠 */}
                     {specials.length > 0 && (
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#fcfcfc', borderRadius: '8px', border: '2px dashed #ce93d8', padding: '10px', marginTop: '10px' }}>
-                            <h4 style={{ margin: '0 0 10px 0', fontSize: '1rem', fontFamily: 'var(--font-retro)', color: '#ce93d8' }}>✨ 特殊進化</h4>
+                            <h4 style={{ margin: '0 0 10px 0', fontSize: '1rem', fontFamily: 'var(--font-retro)', color: '#ce93d8' }}>{t('special')}</h4>
                             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
                                 {specials.map(char => <CharCard key={char.id} char={char} />)}
                             </div>
@@ -155,9 +136,8 @@ export default function EvolutionList({ initialTab = 'land' }: { initialTab?: st
                     )}
                 </div>
 
-                {/* 詳細プレビュー部分 (モバイルでは上部に配置される) */}
                 <div className="y2k-window evolution-detail">
-                    <div className="y2k-window-header" style={{ background: 'var(--border-color)', color: '#fff' }}>ファイル しょうさい</div>
+                    <div className="y2k-window-header" style={{ background: 'var(--border-color)', color: '#fff' }}>{t('detailHeader')}</div>
                     <div className="y2k-window-body">
                         {selectedChar ? (
                             <>
@@ -169,20 +149,20 @@ export default function EvolutionList({ initialTab = 'land' }: { initialTab?: st
                                 </h3>
 
                                 <div style={{ backgroundColor: '#fff', color: 'var(--text-color)', padding: '15px', border: '2px solid var(--border-color)', marginBottom: '15px', fontFamily: 'var(--font-retro)', borderRadius: '10px' }}>
-                                    <h4 style={{ color: 'var(--primary-color)', marginBottom: '5px' }}>[ じょうけん ]</h4>
+                                    <h4 style={{ color: 'var(--primary-color)', marginBottom: '5px' }}>{t('conditionLabel')}</h4>
                                     <p style={{ fontSize: '1.1rem', whiteSpace: 'pre-wrap' }}>{selectedChar.condition}</p>
                                 </div>
 
                                 {selectedChar.description && (
                                     <div style={{ borderLeft: '4px solid var(--primary-color)', paddingLeft: '10px' }}>
-                                        <h4 style={{ color: 'var(--border-color)', marginBottom: '5px', fontFamily: 'var(--font-retro)' }}>[ せつめい ]</h4>
+                                        <h4 style={{ color: 'var(--border-color)', marginBottom: '5px', fontFamily: 'var(--font-retro)' }}>{t('descriptionLabel')}</h4>
                                         <p style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'var(--text-color)', whiteSpace: 'pre-wrap' }}>{selectedChar.description}</p>
                                     </div>
                                 )}
                             </>
                         ) : (
-                            <div style={{ display: 'flex', height: '100%', minHeight: '150px', alignItems: 'center', justifyContent: 'center', color: '#999', textAlign: 'center', fontFamily: 'var(--font-retro)', fontWeight: 'bold' }}>
-                                キャラがえらばれていません。<br />左のツリーからタッチしてね！
+                            <div style={{ display: 'flex', height: '100%', minHeight: '150px', alignItems: 'center', justifyContent: 'center', color: '#999', textAlign: 'center', fontFamily: 'var(--font-retro)', fontWeight: 'bold', whiteSpace: 'pre-wrap' }}>
+                                {t('noSelection')}
                             </div>
                         )}
                     </div>
