@@ -37,6 +37,9 @@ export default function Header() {
                     <a 
                         href={switchPath}
                         className="y2k-nav-btn" 
+                        onClick={() => {
+                            document.cookie = `NEXT_LOCALE=${switchLocale}; path=/; max-age=31536000`;
+                        }}
                         style={{ 
                             fontSize: '0.85rem', 
                             padding: '4px 10px', 
