@@ -12,9 +12,12 @@ export default function Header() {
     // ロケールプレフィックスを除いた純粋なパスを取得
     const cleanPath = pathname.replace(/^\/(en|ja)/, '') || '/';
 
-    // 言語切替用のリンク先
-    const switchLocale = locale === 'ja' ? 'en' : 'ja';
-    const switchPath = switchLocale === 'ja' ? cleanPath : `/en${cleanPath === '/' ? '' : cleanPath}`;
+    // 言語切替用のリンク先 (JA -> EN -> ZH -> JA)
+    const nextLocaleMap = { ja: 'en', en: 'zh-TW', 'zh-TW': 'ja' };
+    const switchLocale = nextLocaleMap[locale as keyof typeof nextLocaleMap] || 'ja';
+    const switchPath = switchLocale === 'ja' ? cleanPath : `/${switchLocale}${cleanPath === '/' ? '' : cleanPath}`;
+    const switchLabelMap = { ja: '🇬🇧 EN', en: '🇹🇼/🇭🇰 ZH', 'zh-TW': '🇯🇵 JA' };
+    const switchLabel = switchLabelMap[locale as keyof typeof switchLabelMap] || '🇯🇵 JA';
 
     return (
         <header className="y2k-header">
@@ -48,7 +51,7 @@ export default function Header() {
                             borderColor: 'var(--primary-color)'
                         }}
                     >
-                        {locale === 'ja' ? '🇬🇧 EN' : '🇯🇵 JA'}
+                        {switchLabel}
                     </a>
                 )}
             </nav>
