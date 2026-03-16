@@ -10,14 +10,14 @@ export default function Header() {
     const locale = useLocale();
 
     // ロケールプレフィックスを除いた純粋なパスを取得
-    const cleanPath = pathname.replace(/^\/(en|ja|zh-TW)/, '') || '/';
+    const cleanPath = pathname.replace(/^\/(en|ja|zh-TW|ko)/, '') || '/';
 
-    // 言語切替用のリンク先 (JA -> EN -> ZH -> JA)
-    const nextLocaleMap = { ja: 'en', en: 'zh-TW', 'zh-TW': 'ja' };
-    const switchLocale = nextLocaleMap[locale as keyof typeof nextLocaleMap] || 'ja';
-    const switchPath = switchLocale === 'ja' ? cleanPath : `/${switchLocale}${cleanPath === '/' ? '' : cleanPath}`;
-    const switchLabelMap = { ja: '🇬🇧 EN', en: '🇹🇼/🇭🇰 ZH', 'zh-TW': '🇯🇵 JA' };
-    const switchLabel = switchLabelMap[locale as keyof typeof switchLabelMap] || '🇯🇵 JA';
+    const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const newLocale = e.target.value;
+        const newPath = newLocale === 'ja' ? cleanPath : `/${newLocale}${cleanPath === '/' ? '' : cleanPath}`;
+        document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000`;
+        window.location.href = newPath;
+    };
 
     return (
         <header className="y2k-header">
@@ -37,22 +37,25 @@ export default function Header() {
                 {cleanPath !== '/family-tree' && <Link href="/family-tree" className="y2k-nav-btn">{t('familyTree')}</Link>}
                 {cleanPath !== '/bbs' && <Link href="/bbs" className="y2k-nav-btn">{t('bbs')}</Link>}
                 {cleanPath !== '/bbs' && (
-                    <a 
-                        href={switchPath}
-                        className="y2k-nav-btn" 
-                        onClick={() => {
-                            document.cookie = `NEXT_LOCALE=${switchLocale}; path=/; max-age=31536000`;
-                        }}
-                        style={{ 
-                            fontSize: '0.85rem', 
-                            padding: '4px 10px', 
-                            backgroundColor: 'var(--primary-color)', 
+                    <select
+                        value={locale}
+                        onChange={handleLanguageChange}
+                        className="y2k-nav-btn"
+                        style={{
+                            fontSize: '0.85rem',
+                            padding: '4px 20px 4px 10px',
+                            backgroundColor: 'var(--primary-color)',
                             color: '#fff',
-                            borderColor: 'var(--primary-color)'
+                            borderColor: 'var(--primary-color)',
+                            cursor: 'pointer',
+                            outline: 'none',
                         }}
                     >
-                        {switchLabel}
-                    </a>
+                        <option value="ja">🇯🇵 日本語</option>
+                        <option value="en">🇬🇧 English</option>
+                        <option value="zh-TW">🇹🇼/🇭🇰 繁體中文</option>
+                        <option value="ko">🇰🇷 한국어</option>
+                    </select>
                 )}
             </nav>
         </header>

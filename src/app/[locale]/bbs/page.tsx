@@ -7,7 +7,7 @@ import { supabase } from '../../../lib/supabaseClient';
 export default function BBS() {
     const t = useTranslations('bbs');
     const locale = useLocale();
-    const targetTable = locale === 'ja' ? 'messages' : locale === 'en' ? 'en_messages' : 'zh_tw_messages';
+    const targetTable = locale === 'ja' ? 'messages' : locale === 'en' ? 'en_messages' : locale === 'zh-TW' ? 'zh_tw_messages' : 'ko_messages';
     const [messages, setMessages] = useState<any[]>([]);
     const [newName, setNewName] = useState('');
     const [newContent, setNewContent] = useState('');

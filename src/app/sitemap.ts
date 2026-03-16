@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = 'https://tama-coffee-house.vercel.app';
-    const locales = ['ja', 'en', 'zh-TW'] as const;
+    const locales = ['ja', 'en', 'zh-TW', 'ko'] as const;
     const defaultLocale = 'ja';
 
     const pages: { path: string; changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency']; priority: number }[] = [
