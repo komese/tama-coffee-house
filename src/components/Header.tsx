@@ -10,7 +10,7 @@ export default function Header() {
     const locale = useLocale();
 
     // ロケールプレフィックスを除いた純粋なパスを取得
-    const cleanPath = pathname.replace(/^\/(en|ja)/, '') || '/';
+    const cleanPath = pathname.replace(/^\/(en|ja|zh-TW)/, '') || '/';
 
     // 言語切替用のリンク先 (JA -> EN -> ZH -> JA)
     const nextLocaleMap = { ja: 'en', en: 'zh-TW', 'zh-TW': 'ja' };
