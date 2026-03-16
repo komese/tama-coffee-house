@@ -10,7 +10,7 @@ export default function Header() {
     const locale = useLocale();
 
     // ロケールプレフィックスを除いた純粋なパスを取得
-    const cleanPath = pathname.replace(/^\/(en|ja|zh-TW|ko)/, '') || '/';
+    const cleanPath = pathname.replace(/^\/(en|ja|zh-TW|ko|pt-BR|de|fr|es|it|th)/, '') || '/';
 
     const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newLocale = e.target.value;
@@ -55,6 +55,12 @@ export default function Header() {
                         <option value="en">🇬🇧 English</option>
                         <option value="zh-TW">🇹🇼/🇭🇰 繁體中文</option>
                         <option value="ko">🇰🇷 한국어</option>
+                        <option value="pt-BR">🇧🇷 Português</option>
+                        <option value="de">🇩🇪 Deutsch</option>
+                        <option value="fr">🇫🇷 Français</option>
+                        <option value="es">🇪🇸 Español</option>
+                        <option value="it">🇮🇹 Italiano</option>
+                        <option value="th">🇹🇭 ภาษาไทย</option>
                     </select>
                 )}
             </nav>

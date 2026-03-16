@@ -7,7 +7,12 @@ import { supabase } from '../../../lib/supabaseClient';
 export default function BBS() {
     const t = useTranslations('bbs');
     const locale = useLocale();
-    const targetTable = locale === 'ja' ? 'messages' : locale === 'en' ? 'en_messages' : locale === 'zh-TW' ? 'zh_tw_messages' : 'ko_messages';
+    const tableMap: Record<string, string> = {
+        ja: 'messages', en: 'en_messages', 'zh-TW': 'zh_tw_messages', ko: 'ko_messages',
+        'pt-BR': 'pt_br_messages', de: 'de_messages', fr: 'fr_messages',
+        es: 'es_messages', it: 'it_messages', th: 'th_messages'
+    };
+    const targetTable = tableMap[locale] || 'messages';
     const [messages, setMessages] = useState<any[]>([]);
     const [newName, setNewName] = useState('');
     const [newContent, setNewContent] = useState('');
