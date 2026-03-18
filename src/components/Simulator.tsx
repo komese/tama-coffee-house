@@ -408,7 +408,58 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
                 <canvas ref={canvasRef}></canvas>
             </div>
 
-            <div className="simulator-container" style={{ flexDirection: minimalMode ? 'column-reverse' : 'row' }}>
+            <div className="simulator-container" style={{ flexDirection: minimalMode ? 'column-reverse' : 'column' }}>
+
+                {/* プレビュー画面 */}
+                <div className="y2k-window simulator-preview" style={{ 
+                    marginBottom: minimalMode ? '10px' : '20px',
+                    ...(minimalMode ? { position: 'relative', top: 'auto', flex: '1 1 auto', width: '100%', maxWidth: '100%' } : {})
+                }}>
+                    {!minimalMode && <div className="y2k-window-header" style={{ background: 'var(--primary-color)', color: '#fffaf0' }}>[ プレビュー ]</div>}
+                    <div className="y2k-window-body" style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        minHeight: minimalMode ? '200px' : '280px',
+                        padding: minimalMode ? '10px' : '15px',
+                        backgroundColor: '#f5e6d3',
+                        backgroundImage: 'repeating-linear-gradient(45deg, #eaddc5 25%, transparent 25%, transparent 75%, #eaddc5 75%, #eaddc5), repeating-linear-gradient(45deg, #eaddc5 25%, #f5e6d3 25%, #f5e6d3 75%, #eaddc5 75%, #eaddc5)',
+                        backgroundPosition: '0 0, 10px 10px',
+                        backgroundSize: '20px 20px',
+                    }}>
+                        {loading && <div style={{ marginBottom: '10px', fontFamily: 'var(--font-retro)' }}>ロード中...</div>}
+
+                        {previewUrl && (
+                            <div style={{
+                                width: '160px',
+                                height: '160px',
+                                backgroundColor: 'transparent',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                imageRendering: 'pixelated'
+                            }}>
+                                <img src={previewUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                            </div>
+                        )}
+
+                        <div style={{
+                            marginTop: '20px',
+                            backgroundColor: '#3b2f2f',
+                            color: '#eaddc5',
+                            padding: '10px',
+                            fontFamily: 'var(--font-retro)',
+                            width: '100%',
+                            textAlign: 'center',
+                            border: '2px solid var(--border-color)',
+                            fontSize: '0.8rem',
+                            wordBreak: 'break-all'
+                        }}>
+                            構成:<br />{selectedColor} {selectedBase} / {selectedEye} 目
+                        </div>
+                    </div>
+                </div>
 
                 {/* コントロールパネル */}
                 <div className="y2k-window simulator-controls" style={minimalMode ? { flex: '1 1 auto', width: '100%', maxWidth: '100%' } : {}}>
@@ -607,59 +658,8 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
                     </div>
                 </div>
 
-                {/* プレビュー画面 */}
-                <div className="y2k-window simulator-preview" style={{ 
-                    marginBottom: minimalMode ? '10px' : '20px',
-                    ...(minimalMode ? { position: 'relative', top: 'auto', flex: '1 1 auto', width: '100%', maxWidth: '100%' } : {})
-                }}>
-                    {!minimalMode && <div className="y2k-window-header" style={{ background: 'var(--primary-color)', color: '#fffaf0' }}>[ プレビュー ]</div>}
-                    <div className="y2k-window-body" style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        minHeight: minimalMode ? '200px' : '280px',
-                        padding: minimalMode ? '10px' : '15px',
-                        backgroundColor: '#f5e6d3',
-                        backgroundImage: 'repeating-linear-gradient(45deg, #eaddc5 25%, transparent 25%, transparent 75%, #eaddc5 75%, #eaddc5), repeating-linear-gradient(45deg, #eaddc5 25%, #f5e6d3 25%, #f5e6d3 75%, #eaddc5 75%, #eaddc5)',
-                        backgroundPosition: '0 0, 10px 10px',
-                        backgroundSize: '20px 20px',
-                    }}>
-                        {loading && <div style={{ marginBottom: '10px', fontFamily: 'var(--font-retro)' }}>ロード中...</div>}
-
-                        {previewUrl && (
-                            <div style={{
-                                width: '160px',
-                                height: '160px',
-                                backgroundColor: 'transparent',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                // CSS pixels scale pixel-art appropriately
-                                imageRendering: 'pixelated'
-                            }}>
-                                <img src={previewUrl} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                            </div>
-                        )}
-
-                        <div style={{
-                            marginTop: '20px',
-                            backgroundColor: '#3b2f2f',
-                            color: '#eaddc5',
-                            padding: '10px',
-                            fontFamily: 'var(--font-retro)',
-                            width: '100%',
-                            textAlign: 'center',
-                            border: '2px solid var(--border-color)',
-                            fontSize: '0.8rem',
-                            wordBreak: 'break-all'
-                        }}>
-                            構成:<br />{selectedColor} {selectedBase} / {selectedEye} 目
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
     );
 }
+
