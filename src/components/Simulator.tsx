@@ -410,7 +410,7 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
                 <canvas ref={canvasRef}></canvas>
             </div>
 
-            <div className="simulator-container" style={{ flexDirection: minimalMode ? 'column-reverse' : 'column' }}>
+            <div className="simulator-container" style={minimalMode ? { flexDirection: 'column-reverse' } : {}}>
 
                 {/* プレビュー画面 */}
                 <div className="y2k-window simulator-preview" style={{ 
