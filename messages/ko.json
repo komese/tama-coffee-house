@@ -70,7 +70,17 @@
     "sea": "바다",
     "sky": "하늘",
     "forest": "숲",
-    "uploadImage": "이미지 업로드"
+    "uploadImage": "이미지 업로드",
+    "loading": "로딩 중...",
+    "composition": "구성:",
+    "eyeSuffix": "눈",
+    "controlPanel": "컨트롤 패널",
+    "selectBody": "👤 몸통 선택",
+    "selectEyes": "👀 눈 선택",
+    "bodyLabel": "베이스 캐릭터 (Tamagotchi)",
+    "eyesLabel": "눈 모양 (Eyes)",
+    "colorLabel": "색상 (Color)",
+    "noResults": "결과 없음"
   },
   "evolution": {
     "land": "🐾 육지",
@@ -108,7 +118,17 @@
     "deletePass": "게시글 작성 시 등록한 비밀번호를 입력해주세요 (숫자 4자리):",
     "deleteConfirm": "정말로 이 글을 삭제하시겠습니까?",
     "passLabel": "삭제 비밀번호(4자리)",
-    "passPlaceholder": "1234"
+    "passPlaceholder": "1234",
+    "heicError": "HEIC 변환에 실패했습니다. 다른 이미지를 시도해 주세요.",
+    "uploadError": "이미지 업로드에 실패했습니다.",
+    "postError": "게시글 등록에 실패했습니다.",
+    "deleteError": "삭제 중 오류가 발생했습니다.",
+    "writeHeader": "메시지 작성",
+    "messagesHeader": "모든 게시글",
+    "noMessages": "아직 게시글이 없습니다. 첫 번째 게시글을 작성해 보세요!",
+    "imageAlt": "게시글 이미지",
+    "bbsTitle": "교류 게시판",
+    "bbsDescription": "다마고치 파라다이스 정보 교환 및 시뮬레이터 결과를 공유할 수 있는 교류 게시판입니다!"
   },
   "metadata": {
     "siteTitle": "다마고치 카페 | 다마고치 파라다이스 팬 사이트",

@@ -70,7 +70,17 @@
     "sea": "うみ",
     "sky": "そら",
     "forest": "もり",
-    "uploadImage": "画像から選択"
+    "uploadImage": "画像から選択",
+    "loading": "ロード中...",
+    "composition": "構成:",
+    "eyeSuffix": "目",
+    "controlPanel": "コントロールパネル",
+    "selectBody": "👤 ベースを選ぶ",
+    "selectEyes": "👀 目を選ぶ",
+    "bodyLabel": "ベースキャラ (Tamagotchi)",
+    "eyesLabel": "目の形 (Eyes)",
+    "colorLabel": "色 (Color)",
+    "noResults": "該当なし"
   },
   "evolution": {
     "land": "🐾 りく",
@@ -108,7 +118,17 @@
     "deletePass": "投稿時のパスワードを入力（4桁の数字）:",
     "deleteConfirm": "本当にこの書き込みを削除しますか？",
     "passLabel": "削除パス(4桁)",
-    "passPlaceholder": "1234"
+    "passPlaceholder": "1234",
+    "heicError": "画像のHEIC変換に失敗しました。別の画像をお試しください。",
+    "uploadError": "画像のアップロードに失敗しました。",
+    "postError": "投稿に失敗しました。",
+    "deleteError": "削除エラーが発生しました。",
+    "writeHeader": "メッセージを書き込む",
+    "messagesHeader": "みんなの書き込み",
+    "noMessages": "まだ書き込みがありません。最初のメッセージを投稿しよう！",
+    "imageAlt": "投稿画像",
+    "bbsTitle": "みんなの掲示板",
+    "bbsDescription": "たまごっちパラダイスの情報交換や遺伝シミュレーターの結果をシェアできる、みんなの交流用掲示板です！"
   },
   "metadata": {
     "siteTitle": "たまコーヒーハウス | たまごっちパラダイス攻略＆交流サイト",

@@ -70,7 +70,17 @@
     "sea": "Wasser",
     "sky": "Himmel",
     "forest": "Wald",
-    "uploadImage": "Bild hochladen"
+    "uploadImage": "Bild hochladen",
+    "loading": "Wird geladen...",
+    "composition": "Aufbau:",
+    "eyeSuffix": "Augen",
+    "controlPanel": "Steuerung",
+    "selectBody": "👤 Körper wählen",
+    "selectEyes": "👀 Augen wählen",
+    "bodyLabel": "Basis-Charakter (Tamagotchi)",
+    "eyesLabel": "Augenform (Eyes)",
+    "colorLabel": "Farbe (Color)",
+    "noResults": "Keine Ergebnisse"
   },
   "evolution": {
     "land": "🐾 Land",
@@ -108,7 +118,17 @@
     "deletePass": "Gib das Passwort von deinem Beitrag ein (4 Ziffern):",
     "deleteConfirm": "Bist du dir sicher, dass du diesen Beitrag löschen möchtest?",
     "passLabel": "Löschpasswort (4 Ziffern)",
-    "passPlaceholder": "1234"
+    "passPlaceholder": "1234",
+    "heicError": "HEIC-Konvertierung fehlgeschlagen. Versuche ein anderes Bild.",
+    "uploadError": "Bild-Upload fehlgeschlagen.",
+    "postError": "Senden fehlgeschlagen.",
+    "deleteError": "Fehler beim Löschen.",
+    "writeHeader": "Nachricht schreiben",
+    "messagesHeader": "Alle Nachrichten",
+    "noMessages": "Noch keine Nachrichten. Sei der Erste!",
+    "imageAlt": "Beitragsbild",
+    "bbsTitle": "Schwarzes Brett",
+    "bbsDescription": "Ein schwarzes Brett für Tamagotchi Paradise Fans zum Teilen von Infos und Simulator-Ergebnissen!"
   },
   "metadata": {
     "siteTitle": "Tama Coffee House | Tamagotchi Paradise Fanseite",

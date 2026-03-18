@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from 'react';
+import { useTranslations } from 'next-intl';
 import { TAMA_DATA, COLOR_PALETTES, JADE_EXCLUSIVE, NON_BREEDABLE_EYES, RGBColor } from '../data/simulatorData';
 
 const tamaNames = Object.keys(TAMA_DATA);
@@ -117,6 +118,7 @@ interface SimulatorProps {
 }
 
 export default function Simulator({ minimalMode = false, onComplete }: SimulatorProps) {
+    const t = useTranslations('simulator');
     // Checkbox states (for filters)
     const [excludeJadeExclusive, setExcludeJadeExclusive] = useState(false);
     const [worldTab, setWorldTab] = useState<'all' | 'land' | 'sea' | 'sky' | 'forest'>(minimalMode ? 'land' : 'all');
@@ -382,24 +384,24 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
         <div className="y2k-container" style={{ marginTop: '20px', padding: minimalMode ? '15px' : '30px', maxWidth: minimalMode ? '100%' : '800px' }}>
             {!minimalMode && (
                 <h2 className="y2k-title" style={{ fontSize: '2.5rem' }}>
-                    遺伝シミュレーター
+                    {t('title')}
                 </h2>
             )}
             {minimalMode && (
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start', gap: '10px', marginBottom: '10px', flexWrap: 'nowrap' }}>
                     <h2 className="y2k-title" style={{ fontSize: '1.2rem', margin: 0, whiteSpace: 'nowrap' }}>
-                        キャラカスタム
+                        {t('charCustom')}
                     </h2>
                     <button 
                         className="y2k-button" 
                         style={{ padding: '4px 14px', backgroundColor: 'var(--primary-color)', color: '#fff', fontSize: '0.85rem', fontWeight: 'bold', margin: 0, border: '2px solid var(--border-color)', borderRadius: '8px', whiteSpace: 'nowrap' }}
                         onClick={() => {
                             if (onComplete && previewUrl) {
-                                onComplete({ name: `${selectedColor} ${selectedBase} / ${selectedEye}目`, imageUrl: previewUrl });
+                                onComplete({ name: `${selectedColor} ${selectedBase} / ${selectedEye}${t('eyeSuffix')}`, imageUrl: previewUrl });
                             }
                         }}
                     >
-                        ✓ 完成
+                        {t('complete')}
                     </button>
                 </div>
             )}
@@ -415,7 +417,7 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
                     marginBottom: minimalMode ? '10px' : '20px',
                     ...(minimalMode ? { position: 'relative', top: 'auto', flex: '1 1 auto', width: '100%', maxWidth: '100%' } : {})
                 }}>
-                    {!minimalMode && <div className="y2k-window-header" style={{ background: 'var(--primary-color)', color: '#fffaf0' }}>[ プレビュー ]</div>}
+                    {!minimalMode && <div className="y2k-window-header" style={{ background: 'var(--primary-color)', color: '#fffaf0' }}>[ {t('preview')} ]</div>}
                     <div className="y2k-window-body" style={{
                         display: 'flex',
                         flexDirection: 'column',
@@ -428,7 +430,7 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
                         backgroundPosition: '0 0, 10px 10px',
                         backgroundSize: '20px 20px',
                     }}>
-                        {loading && <div style={{ marginBottom: '10px', fontFamily: 'var(--font-retro)' }}>ロード中...</div>}
+                        {loading && <div style={{ marginBottom: '10px', fontFamily: 'var(--font-retro)' }}>{t('loading')}</div>}
 
                         {previewUrl && (
                             <div style={{
@@ -456,14 +458,14 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
                             fontSize: '0.8rem',
                             wordBreak: 'break-all'
                         }}>
-                            構成:<br />{selectedColor} {selectedBase} / {selectedEye} 目
+                            {t('composition')}<br />{selectedColor} {selectedBase} / {selectedEye} {t('eyeSuffix')}
                         </div>
                     </div>
                 </div>
 
                 {/* コントロールパネル */}
                 <div className="y2k-window simulator-controls" style={minimalMode ? { flex: '1 1 auto', width: '100%', maxWidth: '100%' } : {}}>
-                    {!minimalMode && <div className="y2k-window-header">コントロールパネル</div>}
+                    {!minimalMode && <div className="y2k-window-header">{t('controlPanel')}</div>}
                     <div className="y2k-window-body" style={{ padding: minimalMode ? '10px' : '15px' }}>
 
                         {/* チェックボックス類 */}
@@ -471,21 +473,21 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
                             <div style={{ marginBottom: '15px', display: 'flex', gap: '10px', fontSize: '0.9rem', flexWrap: 'wrap' }}>
                                 <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                                     <input type="checkbox" checked={excludeJadeExclusive} onChange={e => setExcludeJadeExclusive(e.target.checked)} />
-                                    Jade Forest限定を除外
+                                    {t('excludeJade')}
                                 </label>
                             </div>
                         )}
 
                         {!minimalMode && (
                             <div style={{ marginBottom: '15px', display: 'flex', gap: '10px' }}>
-                                <button className="y2k-button" onClick={randomizeAll} style={{ padding: '5px 10px', fontSize: '0.9rem' }}>🎲 全てランダム</button>
+                                <button className="y2k-button" onClick={randomizeAll} style={{ padding: '5px 10px', fontSize: '0.9rem' }}>{t('randomAll')}</button>
                             </div>
                         )}
 
                         {/* フィールド絞り込みタブ */}
                         <div style={{ marginBottom: '10px', display: 'flex', gap: '5px', overflowX: 'auto', paddingBottom: '5px' }}>
                             {(minimalMode ? ['land', 'sea', 'sky', 'forest'] as const : ['all', 'land', 'sea', 'sky', 'forest'] as const).map(tab => {
-                                const labels = { all: 'すべて', land: 'りく', sea: 'うみ', sky: 'そら', forest: 'もり' };
+                                const labels = { all: t('all'), land: t('land'), sea: t('sea'), sky: t('sky'), forest: t('forest') };
                                 return (
                                     <button
                                         key={tab}
@@ -521,7 +523,7 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
                                         padding: '5px'
                                     }}
                                 >
-                                    👤 ベースを選ぶ
+                                    {t('selectBody')}
                                 </button>
                                 <button
                                     className="y2k-button"
@@ -534,13 +536,13 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
                                         padding: '5px'
                                     }}
                                 >
-                                    👀 目を選ぶ
+                                    {t('selectEyes')}
                                 </button>
                             </div>
 
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
                                 <h3 style={{ fontSize: '1rem', margin: 0, fontFamily: 'var(--font-retro)' }}>
-                                    {activeTab === 'base' ? 'ベースキャラ (Tamagotchi)' : '目の形 (Eyes)'}
+                                    {activeTab === 'base' ? t('bodyLabel') : t('eyesLabel')}
                                 </h3>
                                 {!minimalMode && (
                                     <button
@@ -559,7 +561,7 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
                                 display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(60px, 1fr))', gap: '5px',
                                 maxHeight: minimalMode ? '160px' : '350px', overflowY: 'auto', padding: '5px', border: '2px solid #ccc', borderRadius: '5px', backgroundColor: '#fff'
                             }}>
-                                {availableTamas.length === 0 && <div style={{ padding: '10px', fontSize: '0.8rem', color: '#888' }}>該当なし</div>}
+                                {availableTamas.length === 0 && <div style={{ padding: '10px', fontSize: '0.8rem', color: '#888' }}>{t('noResults')}</div>}
                                 {(activeTab === 'base' ? availableTamas : availableEyes).map(opt => {
                                     const isSelected = activeTab === 'base' ? selectedBase === opt : selectedEye === opt;
                                     const selectColor = activeTab === 'base' ? 'var(--primary-color)' : 'var(--secondary-color)';

@@ -70,7 +70,17 @@
     "sea": "海洋",
     "sky": "天空",
     "forest": "森林",
-    "uploadImage": "上傳圖片"
+    "uploadImage": "上傳圖片",
+    "loading": "載入中...",
+    "composition": "組成：",
+    "eyeSuffix": "的眼睛",
+    "controlPanel": "控制面板",
+    "selectBody": "👤 選擇身體",
+    "selectEyes": "👀 選擇眼睛",
+    "bodyLabel": "基本角色 (Tamagotchi)",
+    "eyesLabel": "眼睛形狀 (Eyes)",
+    "colorLabel": "顏色 (Color)",
+    "noResults": "無結果"
   },
   "evolution": {
     "land": "🐾 陸地",
@@ -108,7 +118,17 @@
     "deletePass": "輸入您發文時設定的密碼（4位數字）：",
     "deleteConfirm": "確定要刪除這篇貼文嗎？",
     "passLabel": "刪除密碼（4位數）",
-    "passPlaceholder": "1234"
+    "passPlaceholder": "1234",
+    "heicError": "HEIC轉換失敗，請嘗試其他圖片。",
+    "uploadError": "圖片上傳失敗。",
+    "postError": "發文失敗。",
+    "deleteError": "刪除時發生錯誤。",
+    "writeHeader": "撰寫訊息",
+    "messagesHeader": "所有留言",
+    "noMessages": "還沒有留言，來當第一個留言的人吧！",
+    "imageAlt": "貼文圖片",
+    "bbsTitle": "交流討論區",
+    "bbsDescription": "可以分享「塔麻可吉樂園」的資訊與模擬器結果的交流討論區！"
   },
   "metadata": {
     "siteTitle": "塔麻可吉咖啡館 | 塔麻可吉樂園粉絲網站",

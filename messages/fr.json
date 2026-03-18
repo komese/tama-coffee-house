@@ -70,7 +70,17 @@
     "sea": "Mer",
     "sky": "Ciel",
     "forest": "Forêt",
-    "uploadImage": "Téléverser"
+    "uploadImage": "Téléverser",
+    "loading": "Chargement...",
+    "composition": "Composition :",
+    "eyeSuffix": "yeux",
+    "controlPanel": "Panneau de contrôle",
+    "selectBody": "👤 Choisir le corps",
+    "selectEyes": "👀 Choisir les yeux",
+    "bodyLabel": "Personnage (Tamagotchi)",
+    "eyesLabel": "Forme des yeux (Eyes)",
+    "colorLabel": "Couleur (Color)",
+    "noResults": "Aucun résultat"
   },
   "evolution": {
     "land": "🐾 Terre",
@@ -108,7 +118,17 @@
     "deletePass": "Mdp (4 chiffres) lors de votre publication :",
     "deleteConfirm": "Vraiment supprimer ?",
     "passLabel": "Mot de passe (4 chiffres)",
-    "passPlaceholder": "1234"
+    "passPlaceholder": "1234",
+    "heicError": "Échec de la conversion HEIC. Essayez une autre image.",
+    "uploadError": "Échec du téléversement.",
+    "postError": "Échec de la publication.",
+    "deleteError": "Erreur lors de la suppression.",
+    "writeHeader": "Écrire un message",
+    "messagesHeader": "Tous les messages",
+    "noMessages": "Aucun message. Soyez le premier !",
+    "imageAlt": "Image postée",
+    "bbsTitle": "Forum",
+    "bbsDescription": "Un forum pour partager des infos et résultats du simulateur Tamagotchi Paradise !"
   },
   "metadata": {
     "siteTitle": "Tama Coffee House | Site de Fans Tamagotchi Paradise",

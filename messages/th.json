@@ -70,7 +70,17 @@
     "sea": "ทะเล",
     "sky": "ท้องฟ้า",
     "forest": "ป่า",
-    "uploadImage": "อัปโหลดรูปภาพ"
+    "uploadImage": "อัปโหลดรูปภาพ",
+    "loading": "กำลังโหลด...",
+    "composition": "องค์ประกอบ:",
+    "eyeSuffix": "ดวงตา",
+    "controlPanel": "แผงควบคุม",
+    "selectBody": "👤 เลือกตัว",
+    "selectEyes": "👀 เลือกตา",
+    "bodyLabel": "ตัวละครพื้นฐาน (Tamagotchi)",
+    "eyesLabel": "รูปทรงตา (Eyes)",
+    "colorLabel": "สี (Color)",
+    "noResults": "ไม่พบผลลัพธ์"
   },
   "evolution": {
     "land": "🐾 ดินแดน",
@@ -108,7 +118,17 @@
     "deletePass": "รหัสผ่านเมื่อคุณโพสต์ (4 ตัวเลข):",
     "deleteConfirm": "คุณแน่ใจหรือไม่ว่าต้องการลบโพสต์นี้?",
     "passLabel": "รหัสผ่านลบ",
-    "passPlaceholder": "1234"
+    "passPlaceholder": "1234",
+    "heicError": "แปลงไฟล์ HEIC ไม่สำเร็จ โปรดลองรูปภาพอื่น",
+    "uploadError": "อัปโหลดรูปภาพไม่สำเร็จ",
+    "postError": "โพสต์ไม่สำเร็จ",
+    "deleteError": "เกิดข้อผิดพลาดในการลบ",
+    "writeHeader": "เขียนข้อความ",
+    "messagesHeader": "ข้อความทั้งหมด",
+    "noMessages": "ยังไม่มีข้อความ เป็นคนแรกที่โพสต์เลย!",
+    "imageAlt": "รูปภาพที่โพสต์",
+    "bbsTitle": "กระดานข้อความ",
+    "bbsDescription": "กระดานสนทนาสำหรับแลกเปลี่ยนข้อมูลและแชร์ผลจำลอง Tamagotchi Paradise!"
   },
   "metadata": {
     "siteTitle": "Tama Coffee House | เว็บไซต์แฟนคลับ Tamagotchi Paradise",

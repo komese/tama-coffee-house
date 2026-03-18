@@ -93,7 +93,7 @@ export default function BBS() {
                     fileExt = 'jpeg';
                 } catch (conversionError) {
                     console.error('HEIC conversion error:', conversionError);
-                    alert('画像のHEIC変換に失敗しました。別の画像をお試しください。');
+                    alert(t('heicError'));
                     setSaving(false);
                     return;
                 }
@@ -110,7 +110,7 @@ export default function BBS() {
 
             if (uploadError) {
                 console.error('Error uploading image:', uploadError);
-                alert('画像のアップロードに失敗しました。');
+                alert(t('uploadError'));
                 setSaving(false);
                 return;
             }
@@ -136,7 +136,7 @@ export default function BBS() {
 
         if (error) {
             console.error('Error posting message:', error);
-            alert('投稿に失敗しました。');
+            alert(t('postError'));
         } else if (data && data.length > 0) {
             const newId = data[0].id;
 
@@ -158,7 +158,7 @@ export default function BBS() {
     };
 
     const handleDelete = async (id: string) => {
-        if (!confirm('本当にこの書き込みを削除しますか？')) return;
+        if (!confirm(t('deleteConfirm'))) return;
 
         // LocalStorage 방식이므로 본인 확인은 클라이언트 UI에서 이루어짐.
         // 하지만 DB 보안(RLS)상으로는 누구나 삭제 가능하므로 실제 앱에서는 조심해야 함.
@@ -169,7 +169,7 @@ export default function BBS() {
 
         if (error) {
             console.error('Error deleting message:', error);
-            alert('削除エラーが発生しました。');
+            alert(t('deleteError'));
         } else {
             // ローカルリストからも消しておく
             setMyMessageIds(prev => {
@@ -196,7 +196,7 @@ export default function BBS() {
             </h1>
 
             <div className="y2k-window" style={{ marginBottom: '20px' }}>
-                <div className="y2k-window-header">メッセージを書き込む</div>
+                <div className="y2k-window-header">{t('writeHeader')}</div>
                 <div className="y2k-window-body">
                     <form onSubmit={handlePost} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                         <div>
@@ -224,7 +224,7 @@ export default function BBS() {
                             />
                         </div>
                         <div>
-                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>がぞう (任意):</label>
+                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>{t('imageUpload')}</label>
                             <input
                                 id="image-upload"
                                 type="file"
@@ -241,10 +241,10 @@ export default function BBS() {
             </div>
 
             <div className="y2k-window">
-                <div className="y2k-window-header">みんなの書き込み</div>
+                <div className="y2k-window-header">{t('messagesHeader')}</div>
                 <div className="y2k-window-body">
-                    {loading && <p>読み込み中...</p>}
-                    {!loading && messages.length === 0 && <p>まだ書き込みがありません。最初のメッセージを投稿しよう！</p>}
+                    {loading && <p>{t('loading')}</p>}
+                    {!loading && messages.length === 0 && <p>{t('noMessages')}</p>}
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                         {messages.map((msg) => (
@@ -276,7 +276,7 @@ export default function BBS() {
                                     <div style={{ marginTop: '10px' }}>
                                         <img
                                             src={msg.image_url}
-                                            alt="投稿画像"
+                                            alt={t('imageAlt')}
                                             style={{ maxWidth: '100%', width: 'auto', maxHeight: '150px', objectFit: 'contain', border: '1px solid #ccc', borderRadius: '4px', backgroundColor: '#f9f9f9', display: 'block' }}
                                         />
                                     </div>
