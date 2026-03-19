@@ -134,8 +134,9 @@
     "siteTitle": "다마고치 카페 | 다마고치 파라다이스 팬 사이트",
     "siteDescription": "다마고치 파라다이스 팬 사이트 다마고치 카페에 오신 것을 환영합니다! 유전 시뮬레이터, 진화 조건, 가계도 메이커, 교류 게시판 등의 기능이 있습니다.",
     "simulatorTitle": "유전 시뮬레이터",
-    "familyTreeTitle": "가계도 만들기",
-    "landTitle": "육지 진화 조건",
+    "familyTreeTitle": "가계도 메이커",
+    "familyTreeDescription": "나만의 다마고치 혈통을 기록하고 이미지를 저장해 SNS에 공유하세요! 역대 파트너와 아이들의 연결을 한눈에 돌아볼 수 있는 편리한 도구입니다.",
+    "landTitle": "육지 진화 조건 리스트",
     "seaTitle": "바다 진화 조건",
     "skyTitle": "하늘 진화 조건",
     "forestTitle": "숲 진화 조건"

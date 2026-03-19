@@ -134,8 +134,9 @@
     "siteTitle": "Tama Coffee House | Fan Site Tamagotchi Paradise",
     "siteDescription": "Benvenuti su Tama Coffee House! Un fan site con simulatore di genetica, guide, albero genealogico e bacheca.",
     "simulatorTitle": "Simulatore di Genetica",
-    "familyTreeTitle": "Albero Genealogico",
-    "landTitle": "Guida della Terra",
+    "familyTreeTitle": "Creatore Albero Genealogico",
+    "familyTreeDescription": "Registra e salva la stirpe del tuo Tamagotchi e condividila sui social! Uno strumento utile per ripercorrere a colpo d'occhio i legami di partner e figli passati.",
+    "landTitle": "Guida Evoluzione Terra",
     "seaTitle": "Guida del Mare",
     "skyTitle": "Guida del Cielo",
     "forestTitle": "Guida della Foresta"

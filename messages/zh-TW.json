@@ -133,9 +133,10 @@
   "metadata": {
     "siteTitle": "塔麻可吉咖啡館 | 塔麻可吉樂園粉絲網站",
     "siteDescription": "歡迎來到塔麻可吉咖啡館！這是塔麻可吉樂園的粉絲網站，提供遺傳模擬器、進化圖鑑、族譜製作和交流佈告欄等功能。",
-    "simulatorTitle": "遺傳模擬器",
-    "familyTreeTitle": "族譜製作",
-    "landTitle": "陸地進化圖鑑",
+    "simulatorTitle": "基因模擬器",
+    "familyTreeTitle": "家譜製作器",
+    "familyTreeDescription": "記錄並保存專屬的塔麻可吉血統，並分享到社群平台！可以一覽歷代伴侶與孩子間聯繫的實用工具。",
+    "landTitle": "陸地進化條件表",
     "seaTitle": "海洋進化圖鑑",
     "skyTitle": "天空進化圖鑑",
     "forestTitle": "森林進化圖鑑"
