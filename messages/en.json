@@ -134,11 +134,13 @@
     "siteTitle": "Tama Coffee House | Tamagotchi Paradise Fan Site",
     "siteDescription": "Welcome to Tama Coffee House! A fan site for Tamagotchi Paradise with a genetics simulator, evolution guides, family tree maker, and community board.",
     "simulatorTitle": "Genetics Simulator",
+    "simulatorDescription": "Mix and match Tamagotchi body shapes, eyes, and colors to predict what kind of child will be born with this genetics simulator!",
     "familyTreeTitle": "Family Tree Maker",
     "familyTreeDescription": "Record and save your custom Tamagotchi lineage and share it on SNS! A handy tool to easily look back on the connections of past partners and children.",
     "landTitle": "Land Evolution Guide",
     "seaTitle": "Sea Evolution Guide",
     "skyTitle": "Sky Evolution Guide",
-    "forestTitle": "Forest Evolution Guide"
+    "forestTitle": "Forest Evolution Guide",
+    "evolutionDescription": "A comprehensive list of all evolution conditions (Land, Sea, Sky, Forest) for Tamagotchi Paradise! Handy for raising your favorite characters."
   }
 }

@@ -134,11 +134,13 @@
     "siteTitle": "Tama Coffee House | Tamagotchi Paradise Fanseite",
     "siteDescription": "Willkommen im Tama Coffee House! Eine Fanseite für Tamagotchi Paradise mit Genetik-Simulator, Evolutionsführern, Stammbaum-Ersteller und schwarzem Brett.",
     "simulatorTitle": "Genetik-Simulator",
+    "simulatorDescription": "Kombiniere Tamagotchi Körperformen, Augen und Farben, um mit diesem Genetik-Simulator vorherzusagen, welches Kind geboren wird!",
     "familyTreeTitle": "Stammbaum-Ersteller",
     "familyTreeDescription": "Notiere und speichere die Abstammungslinie deines eigenen Tamagotchis und teile sie auf Social Media! Ein praktisches Tool, um die Verbindungen früherer Partner und Kinder auf einen Blick zu sehen.",
     "landTitle": "Land Evolutions-Guide",
     "seaTitle": "Wasser Evolutionsführung",
     "skyTitle": "Himmel Evolutionsführung",
-    "forestTitle": "Wald Evolutionsführung"
+    "forestTitle": "Wald Evolutionsführung",
+    "evolutionDescription": "Eine umfassende Liste aller Evolutionsbedingungen (Land, Meer, Himmel, Wald) für Tamagotchi Paradise! Hilfreich für die Aufzucht."
   }
 }
