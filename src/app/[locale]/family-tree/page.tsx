@@ -7,6 +7,7 @@ import html2canvas from 'html2canvas';
 import { LAND_DATA, SEA_DATA, SKY_DATA, FOREST_DATA } from '@/data/evolutionData';
 import { TAMA_DATA } from '@/data/simulatorData';
 import Simulator from '@/components/Simulator';
+import HowToPlayPopup from '@/components/HowToPlayPopup';
 
 // アダルト期・特殊期かつ画像が存在するキャラクターのみを抽出
 const ALL_CHARACTERS = [...LAND_DATA, ...SEA_DATA, ...SKY_DATA, ...FOREST_DATA].filter(c => c.iconUrl && (c.stage === 'アダルト' || c.stage === '特殊'));
@@ -119,6 +120,7 @@ export default function FamilyTreePage() {
     { id: 'gen-1', partner: { name: '', imageUrl: null }, child: { name: '', imageUrl: null } }
   ]);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [showHowTo, setShowHowTo] = useState(false);
 
   // localStorageから復元（初回マウント時）
   useEffect(() => {
@@ -373,6 +375,9 @@ export default function FamilyTreePage() {
     <div className="y2k-container" style={{ maxWidth: '1000px', margin: '30px auto 0' }}>
       <h1 className="y2k-title" style={{ textAlign: 'center', lineHeight: '1.2', fontSize: '2.5rem' }}>
         {t('title')}
+        <button onClick={() => setShowHowTo(true)} className="howto-btn-trigger">
+          {t('howToPlay')}
+        </button>
       </h1>
 
       <div style={{ textAlign: 'center', marginBottom: '20px' }}>
@@ -638,6 +643,7 @@ export default function FamilyTreePage() {
         </div>
       )}
 
+      {showHowTo && <HowToPlayPopup onClose={() => setShowHowTo(false)} />}
     </div>
   );
 }
@@ -680,6 +686,7 @@ function CharacterBox({ title, data, onChange, onClick, showName, namePlaceholde
           style={{ width: '100%', padding: '5px', fontSize: '0.8rem', textAlign: 'center' }}
         />
       )}
+
     </div>
   );
 }
