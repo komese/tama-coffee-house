@@ -406,7 +406,7 @@ a:hover {
 
 /* Trigger button next to title */
 .howto-btn-trigger {
-  background: #ffb74d;
+  background: var(--primary-color);
   color: #fff;
   border: none;
   border-radius: 20px;
@@ -421,7 +421,7 @@ a:hover {
 }
 .howto-btn-trigger:hover {
   transform: scale(1.06);
-  background: #ffa726;
+  background: var(--accent-color);
 }
 .howto-btn-trigger:active {
   transform: scale(0.96);
