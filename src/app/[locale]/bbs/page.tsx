@@ -20,6 +20,7 @@ export default function BBS() {
     const [myMessageIds, setMyMessageIds] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
 
     // 初回マウント時にメッセージを取得＆LocalStorageから自分の投稿IDリストを復元
     useEffect(() => {
@@ -277,7 +278,8 @@ export default function BBS() {
                                         <img
                                             src={msg.image_url}
                                             alt={t('imageAlt')}
-                                            style={{ maxWidth: '100%', width: 'auto', maxHeight: '150px', objectFit: 'contain', border: '1px solid #ccc', borderRadius: '4px', backgroundColor: '#f9f9f9', display: 'block' }}
+                                            onClick={() => setLightboxUrl(msg.image_url)}
+                                            style={{ maxWidth: '100%', width: 'auto', maxHeight: '150px', objectFit: 'contain', border: '1px solid #ccc', borderRadius: '4px', backgroundColor: '#f9f9f9', display: 'block', cursor: 'pointer' }}
                                         />
                                     </div>
                                 )}
@@ -286,6 +288,33 @@ export default function BBS() {
                     </div>
                 </div>
             </div>
+
+            {lightboxUrl && (
+                <div
+                    className="popup-overlay"
+                    onClick={() => setLightboxUrl(null)}
+                    style={{ cursor: 'zoom-out' }}
+                >
+                    <img
+                        src={lightboxUrl}
+                        alt={t('imageAlt')}
+                        onClick={(e) => e.stopPropagation()}
+                        style={{
+                            maxWidth: '90vw',
+                            maxHeight: '90vh',
+                            objectFit: 'contain',
+                            borderRadius: '8px',
+                            boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+                            cursor: 'default'
+                        }}
+                    />
+                    <button
+                        className="popup-close-btn"
+                        onClick={() => setLightboxUrl(null)}
+                        style={{ position: 'fixed', top: '20px', right: '20px', fontSize: '36px', color: '#fff' }}
+                    >×</button>
+                </div>
+            )}
         </div>
     );
 }
