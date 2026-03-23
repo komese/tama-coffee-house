@@ -174,10 +174,10 @@
     "cat_toy": "놀이기구",
     "cat_deco": "행성 장식",
     "cat_lab": "연구소 코드",
-    "copy": "복사",
     "searchResults": "검색 결과: {count}건",
     "noResults": "아이템을 찾을 수 없습니다",
-    "backHome": "← 홈으로 돌아가기"
+    "backHome": "← 홈으로 돌아가기",
+    "enterCode": "코드 입력!"
   },
   "nav": {
     "codes": "코드 목록"

@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
-import { SHOP_CODE_DATA, CodeCategory } from '@/data/shopCodeData';
+import { SHOP_CODE_DATA, CodeCategory, CodeItem } from '@/data/shopCodeData';
 
 const CATEGORIES: { key: CodeCategory; emoji: string }[] = [
   { key: 'food', emoji: '🍖' },
@@ -18,7 +18,7 @@ export default function CodesPage() {
   const locale = useLocale();
   const [activeTab, setActiveTab] = useState<CodeCategory>('food');
   const [searchQuery, setSearchQuery] = useState('');
-  const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [selectedItem, setSelectedItem] = useState<CodeItem | null>(null);
 
   const filteredItems = useMemo(() => {
     let items = SHOP_CODE_DATA.filter(item => item.category === activeTab);
@@ -32,25 +32,6 @@ export default function CodesPage() {
     }
     return items;
   }, [activeTab, searchQuery]);
-
-  const handleCopy = async (code: string) => {
-    const cleanCode = code.replace(/\s/g, '');
-    try {
-      await navigator.clipboard.writeText(cleanCode);
-      setCopiedCode(code);
-      setTimeout(() => setCopiedCode(null), 2000);
-    } catch {
-      // fallback
-      const textarea = document.createElement('textarea');
-      textarea.value = cleanCode;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand('copy');
-      document.body.removeChild(textarea);
-      setCopiedCode(code);
-      setTimeout(() => setCopiedCode(null), 2000);
-    }
-  };
 
   return (
     <div className="y2k-container" style={{ maxWidth: '900px', margin: '30px auto 0' }}>
@@ -101,13 +82,18 @@ export default function CodesPage() {
           ) : (
             <div className="codes-grid">
               {filteredItems.map(item => (
-                <div key={item.id} className="code-card">
+                <div
+                  key={item.id}
+                  className="code-card"
+                  onClick={() => setSelectedItem(item)}
+                  style={{ cursor: 'pointer' }}
+                >
                   {item.imageId && (
                     <div className="code-card-img">
                       <img
                         src={`/images/items/${item.imageId}.png`}
                         alt={locale === 'ja' ? item.nameJa : item.nameEn}
-                        style={{ maxWidth: '48px', maxHeight: '48px', objectFit: 'contain', imageRendering: 'pixelated' }}
+                        style={{ maxWidth: '64px', maxHeight: '64px', objectFit: 'contain', imageRendering: 'pixelated' }}
                       />
                     </div>
                   )}
@@ -122,22 +108,55 @@ export default function CodesPage() {
                       <div className="code-card-price">{item.price} ₲</div>
                     )}
                   </div>
-                  <button
-                    className="code-copy-btn"
-                    onClick={() => handleCopy(item.code)}
-                    title={t('copy')}
-                  >
-                    <span className="code-text">{item.code}</span>
-                    <span className="code-copy-icon">
-                      {copiedCode === item.code ? '✅' : '📋'}
-                    </span>
-                  </button>
+                  <div className="code-card-code">
+                    {item.code}
+                  </div>
                 </div>
               ))}
             </div>
           )}
         </div>
       </div>
+
+      {/* アイテム詳細ポップアップ */}
+      {selectedItem && (
+        <div className="popup-overlay" onClick={() => setSelectedItem(null)}>
+          <div className="code-detail-popup" onClick={e => e.stopPropagation()}>
+            <button className="popup-close-btn" onClick={() => setSelectedItem(null)}>×</button>
+
+            {selectedItem.imageId && (
+              <div className="code-detail-img">
+                <img
+                  src={`/images/items/${selectedItem.imageId}.png`}
+                  alt={locale === 'ja' ? selectedItem.nameJa : selectedItem.nameEn}
+                  style={{ width: '120px', height: '120px', objectFit: 'contain', imageRendering: 'pixelated' }}
+                />
+              </div>
+            )}
+
+            <div className="code-detail-name">
+              {locale === 'ja' ? selectedItem.nameJa : selectedItem.nameEn}
+            </div>
+            {locale !== 'ja' && (
+              <div className="code-detail-name-sub">{selectedItem.nameJa}</div>
+            )}
+            {selectedItem.price && (
+              <div className="code-detail-price">{selectedItem.price} ₲</div>
+            )}
+
+            <div className="code-detail-code">
+              {selectedItem.code}
+            </div>
+
+            <button
+              className="code-enter-btn"
+              onClick={() => setSelectedItem(null)}
+            >
+              {t('enterCode')}
+            </button>
+          </div>
+        </div>
+      )}
 
       <div style={{ textAlign: 'center', marginTop: '20px', marginBottom: '30px' }}>
         <Link href={`/${locale}`} className="y2k-nav-btn">{t('backHome')}</Link>

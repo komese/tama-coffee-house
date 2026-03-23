@@ -174,10 +174,10 @@
     "cat_toy": "ゆうぐ",
     "cat_deco": "惑星デコ",
     "cat_lab": "ラボコード",
-    "copy": "コピー",
     "searchResults": "検索結果: {count}件",
     "noResults": "アイテムが見つかりませんでした",
-    "backHome": "← ホームに戻る"
+    "backHome": "← ホームに戻る",
+    "enterCode": "入力する！"
   },
   "nav": {
     "codes": "コードリスト"

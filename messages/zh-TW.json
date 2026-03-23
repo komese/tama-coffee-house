@@ -174,10 +174,10 @@
     "cat_toy": "遊具",
     "cat_deco": "星球裝飾",
     "cat_lab": "實驗室代碼",
-    "copy": "複製",
     "searchResults": "搜尋結果：{count}項",
     "noResults": "找不到物品",
-    "backHome": "← 回首頁"
+    "backHome": "← 回首頁",
+    "enterCode": "輸入代碼！"
   },
   "nav": {
     "codes": "代碼列表"

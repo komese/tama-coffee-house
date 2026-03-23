@@ -174,10 +174,10 @@
     "cat_toy": "Toys",
     "cat_deco": "Planet Deco",
     "cat_lab": "Lab Codes",
-    "copy": "Copy",
     "searchResults": "Search Results: {count} items",
     "noResults": "No items found",
-    "backHome": "← Back to Home"
+    "backHome": "← Back to Home",
+    "enterCode": "Inserisci Codice!"
   },
   "nav": {
     "codes": "Codes"
