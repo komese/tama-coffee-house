@@ -663,3 +663,50 @@ a:hover {
     height: 100px;
   }
 }
+
+/* ===== BBS Reactions ===== */
+.bbs-reactions {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.bbs-reaction-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border: 2px solid #e8e0d8;
+  border-radius: 20px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.15s;
+  line-height: 1;
+}
+.bbs-reaction-btn:hover {
+  border-color: var(--primary-color);
+  background: #fff8f0;
+  transform: scale(1.08);
+}
+.bbs-reaction-btn:active {
+  transform: scale(0.95);
+}
+.bbs-reaction-btn.reacted {
+  border-color: var(--primary-color);
+  background: #fff3e0;
+}
+
+.bbs-reaction-emoji {
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+.bbs-reaction-count {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  min-width: 10px;
+  text-align: center;
+}

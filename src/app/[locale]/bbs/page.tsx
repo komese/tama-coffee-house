@@ -1,8 +1,10 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { supabase } from '../../../lib/supabaseClient';
+
+const REACTION_EMOJIS = ['👍', '❤', '🤣', '🤯'] as const;
 
 export default function BBS() {
     const t = useTranslations('bbs');
@@ -21,6 +23,19 @@ export default function BBS() {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
+    const [myReactions, setMyReactions] = useState<Record<string, string[]>>({});
+
+    // LocalStorageから自分のリアクション履歴を復元
+    useEffect(() => {
+        try {
+            const savedReactions = localStorage.getItem('tama_bbs_my_reactions');
+            if (savedReactions) {
+                setMyReactions(JSON.parse(savedReactions));
+            }
+        } catch (e) {
+            console.error('Failed to parse reactions from local storage', e);
+        }
+    }, []);
 
     // 初回マウント時にメッセージを取得＆LocalStorageから自分の投稿IDリストを復元
     useEffect(() => {
@@ -35,7 +50,7 @@ export default function BBS() {
             console.error('Failed to parse my posts from local storage', e);
         }
 
-        // リアルタイム更新のサブスクリプションを設定（オプション）
+        // リアルタイム更新のサブスクリプションを設定
         const subscription = supabase
             .channel(`public:${targetTable}`)
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: targetTable }, payload => {
@@ -43,6 +58,9 @@ export default function BBS() {
             })
             .on('postgres_changes', { event: 'DELETE', schema: 'public', table: targetTable }, payload => {
                 setMessages(prev => prev.filter(msg => msg.id !== payload.old.id));
+            })
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: targetTable }, payload => {
+                setMessages(prev => prev.map(msg => msg.id === payload.new.id ? { ...msg, ...payload.new } : msg));
             })
             .subscribe();
 
@@ -66,6 +84,51 @@ export default function BBS() {
         setLoading(false);
     };
 
+    const handleReaction = useCallback(async (msgId: string, emoji: string) => {
+        // 既にこの絵文字でリアクション済みか確認
+        const myReactionsForMsg = myReactions[msgId] || [];
+        const alreadyReacted = myReactionsForMsg.includes(emoji);
+
+        // リアクション対象のメッセージを取得
+        const msg = messages.find(m => m.id === msgId);
+        if (!msg) return;
+
+        const currentReactions = msg.reactions || {};
+        const currentCount = currentReactions[emoji] || 0;
+        const newCount = alreadyReacted ? Math.max(0, currentCount - 1) : currentCount + 1;
+
+        const updatedReactions = { ...currentReactions, [emoji]: newCount };
+
+        // DB更新
+        const { error } = await supabase
+            .from(targetTable)
+            .update({ reactions: updatedReactions })
+            .eq('id', msgId);
+
+        if (error) {
+            console.error('Error updating reaction:', error);
+            return;
+        }
+
+        // ローカルのメッセージリストも更新
+        setMessages(prev => prev.map(m =>
+            m.id === msgId ? { ...m, reactions: updatedReactions } : m
+        ));
+
+        // 自分のリアクション履歴を更新
+        setMyReactions(prev => {
+            const updated = { ...prev };
+            const list = updated[msgId] || [];
+            if (alreadyReacted) {
+                updated[msgId] = list.filter(e => e !== emoji);
+            } else {
+                updated[msgId] = [...list, emoji];
+            }
+            localStorage.setItem('tama_bbs_my_reactions', JSON.stringify(updated));
+            return updated;
+        });
+    }, [messages, myReactions, targetTable]);
+
     const handlePost = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!newName.trim() || (!newContent.trim() && !imageFile)) return;
@@ -81,15 +144,12 @@ export default function BBS() {
             // HEIC/HEIFの変換処理
             if (fileExt === 'heic' || fileExt === 'heif' || imageFile.type === 'image/heic' || imageFile.type === 'image/heif') {
                 try {
-                    // クライアントサイドでのみ実行されるように動的インポート
                     const heic2any = (await import('heic2any')).default;
                     const convertedBlob = await heic2any({
                         blob: imageFile,
                         toType: 'image/jpeg',
                         quality: 0.8,
                     });
-                    
-                    // heic2anyはBlob、またはアニメーション等でBlobの配列を返す可能性がある
                     uploadFile = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
                     fileExt = 'jpeg';
                 } catch (conversionError) {
@@ -130,10 +190,11 @@ export default function BBS() {
                     author_name: newName.trim(),
                     content: newContent.trim(),
                     image_url: imageUrl,
-                    delete_password: null // 使わない
+                    delete_password: null,
+                    reactions: {}
                 }
             ])
-            .select(); // 挿入したデータを返すように指定
+            .select();
 
         if (error) {
             console.error('Error posting message:', error);
@@ -141,7 +202,6 @@ export default function BBS() {
         } else if (data && data.length > 0) {
             const newId = data[0].id;
 
-            // LocalStorageに自分の投稿であることを記録する
             setMyMessageIds(prev => {
                 const updated = [...prev, newId];
                 localStorage.setItem('tama_bbs_my_posts', JSON.stringify(updated));
@@ -151,7 +211,6 @@ export default function BBS() {
             setNewName('');
             setNewContent('');
             setImageFile(null);
-            // reset file input
             const fileInput = document.getElementById('image-upload') as HTMLInputElement;
             if (fileInput) fileInput.value = '';
         }
@@ -161,8 +220,6 @@ export default function BBS() {
     const handleDelete = async (id: string) => {
         if (!confirm(t('deleteConfirm'))) return;
 
-        // LocalStorage 방식이므로 본인 확인은 클라이언트 UI에서 이루어짐.
-        // 하지만 DB 보안(RLS)상으로는 누구나 삭제 가능하므로 실제 앱에서는 조심해야 함.
         const { error } = await supabase
             .from(targetTable)
             .delete()
@@ -172,7 +229,6 @@ export default function BBS() {
             console.error('Error deleting message:', error);
             alert(t('deleteError'));
         } else {
-            // ローカルリストからも消しておく
             setMyMessageIds(prev => {
                 const updated = prev.filter(mid => mid !== id);
                 localStorage.setItem('tama_bbs_my_posts', JSON.stringify(updated));
@@ -283,6 +339,23 @@ export default function BBS() {
                                         />
                                     </div>
                                 )}
+                                {/* リアクションボタン */}
+                                <div className="bbs-reactions">
+                                    {REACTION_EMOJIS.map(emoji => {
+                                        const count = (msg.reactions || {})[emoji] || 0;
+                                        const reacted = (myReactions[msg.id] || []).includes(emoji);
+                                        return (
+                                            <button
+                                                key={emoji}
+                                                className={`bbs-reaction-btn ${reacted ? 'reacted' : ''}`}
+                                                onClick={() => handleReaction(msg.id, emoji)}
+                                            >
+                                                <span className="bbs-reaction-emoji">{emoji}</span>
+                                                {count > 0 && <span className="bbs-reaction-count">{count}</span>}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
                             </div>
                         ))}
                     </div>
