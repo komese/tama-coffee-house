@@ -82,18 +82,12 @@ export default function CodesPage() {
           ) : (
             <div className="codes-grid">
               {filteredItems.map(item => (
-                <div
-                  key={item.id}
-                  className="code-card"
-                  onClick={() => setSelectedItem(item)}
-                  style={{ cursor: 'pointer' }}
-                >
+                <div key={item.id} className="code-card">
                   {item.imageId && (
                     <div className="code-card-img">
                       <img
                         src={`/images/items/${item.imageId}.png`}
                         alt={locale === 'ja' ? item.nameJa : item.nameEn}
-                        style={{ maxWidth: '64px', maxHeight: '64px', objectFit: 'contain', imageRendering: 'pixelated' }}
                       />
                     </div>
                   )}
@@ -108,8 +102,14 @@ export default function CodesPage() {
                       <div className="code-card-price">{item.price} ₲</div>
                     )}
                   </div>
-                  <div className="code-card-code">
-                    {item.code}
+                  <div className="code-card-right">
+                    <div className="code-card-code">{item.code}</div>
+                    <button
+                      className="code-enter-btn-inline"
+                      onClick={() => setSelectedItem(item)}
+                    >
+                      {t('enterCode')}
+                    </button>
                   </div>
                 </div>
               ))}
@@ -129,7 +129,6 @@ export default function CodesPage() {
                 <img
                   src={`/images/items/${selectedItem.imageId}.png`}
                   alt={locale === 'ja' ? selectedItem.nameJa : selectedItem.nameEn}
-                  style={{ width: '120px', height: '120px', objectFit: 'contain', imageRendering: 'pixelated' }}
                 />
               </div>
             )}
@@ -147,13 +146,6 @@ export default function CodesPage() {
             <div className="code-detail-code">
               {selectedItem.code}
             </div>
-
-            <button
-              className="code-enter-btn"
-              onClick={() => setSelectedItem(null)}
-            >
-              {t('enterCode')}
-            </button>
           </div>
         </div>
       )}
