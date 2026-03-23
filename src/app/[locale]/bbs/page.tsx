@@ -107,6 +107,7 @@ export default function BBS() {
 
         if (error) {
             console.error('Error updating reaction:', error);
+            alert('Reaction error: ' + error.message);
             return;
         }
 
