@@ -5,7 +5,8 @@
     "simulator": "เครื่องจำลอง",
     "evolution": "คู่มือการวิวัฒนาการ",
     "familyTree": "แผนผังครอบครัว",
-    "bbs": "กระดานสนทนา"
+    "bbs": "กระดานสนทนา",
+    "codes": "รหัส"
   },
   "footer": {
     "title": "☕ TAMA COFFEE HOUSE ☕",
@@ -23,7 +24,8 @@
     "land": "🐾 ดินแดน",
     "sea": "💧 ทะเล",
     "sky": "☁️ ท้องฟ้า",
-    "forest": "🌲 ป่า"
+    "forest": "🌲 ป่า",
+    "codes": "🔑 รายการรหัส"
   },
   "familyTree": {
     "title": "ผู้สร้างแผนผังครอบครัว",
@@ -159,6 +161,25 @@
     "seaTitle": "คู่มือการวิวัฒนาการทะเล",
     "skyTitle": "คู่มือการวิวัฒนาการท้องฟ้า",
     "forestTitle": "คู่มือการวิวัฒนาการป่า",
-    "evolutionDescription": "รายชื่อเงื่อนไขวิวัฒนาการทั้งหมด (ดินแดน, ทะเล, ท้องฟ้า, ป่า) สำหรับ Tamagotchi Paradise! มีประโยชน์สำหรับการเลี้ยงทามาก็อตจิ"
+    "evolutionDescription": "รายชื่อเงื่อนไขวิวัฒนาการทั้งหมด (ดินแดน, ทะเล, ท้องฟ้า, ป่า) สำหรับ Tamagotchi Paradise! มีประโยชน์สำหรับการเลี้ยงทามาก็อตจิ",
+    "codesTitle": "Shop & Lab Code List | Tama Coffee House",
+    "codesDescription": "Complete list of Shop and Lab codes for Tamagotchi Paradise. Search and copy codes for food, snacks, toys, planet decorations, and lab characters."
+  },
+  "codes": {
+    "title": "Shop & Lab Code List",
+    "subtitle": "All item codes for Tamagotchi Paradise",
+    "searchPlaceholder": "🔍 Search by item name or code...",
+    "cat_food": "Food",
+    "cat_snack": "Snacks",
+    "cat_toy": "Toys",
+    "cat_deco": "Planet Deco",
+    "cat_lab": "Lab Codes",
+    "copy": "Copy",
+    "searchResults": "Search Results: {count} items",
+    "noResults": "No items found",
+    "backHome": "← Back to Home"
+  },
+  "nav": {
+    "codes": "Codes"
   }
 }

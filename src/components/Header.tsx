@@ -35,6 +35,7 @@ export default function Header() {
                 {cleanPath !== '/simulator' && <Link href="/simulator" className="y2k-nav-btn">{t('simulator')}</Link>}
                 {!cleanPath.startsWith('/evolution') && <Link href="/#evolution" className="y2k-nav-btn">{t('evolution')}</Link>}
                 {cleanPath !== '/family-tree' && <Link href="/family-tree" className="y2k-nav-btn">{t('familyTree')}</Link>}
+                {cleanPath !== '/codes' && <Link href="/codes" className="y2k-nav-btn">{t('codes')}</Link>}
                 {cleanPath !== '/bbs' && <Link href="/bbs" className="y2k-nav-btn">{t('bbs')}</Link>}
                 {cleanPath !== '/bbs' && (
                     <select

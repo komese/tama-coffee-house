@@ -5,7 +5,8 @@
     "simulator": "Simulatore",
     "evolution": "Guida all'Evoluzione",
     "familyTree": "Albero Genealogico",
-    "bbs": "Bacheca"
+    "bbs": "Bacheca",
+    "codes": "Codici"
   },
   "footer": {
     "title": "☕ TAMA COFFEE HOUSE ☕",
@@ -23,7 +24,8 @@
     "land": "🐾 Terra",
     "sea": "💧 Mare",
     "sky": "☁️ Cielo",
-    "forest": "🌲 Foresta"
+    "forest": "🌲 Foresta",
+    "codes": "🔑 Lista Codici"
   },
   "familyTree": {
     "title": "Creatore di Albero Genealogico",
@@ -159,6 +161,25 @@
     "seaTitle": "Guida del Mare",
     "skyTitle": "Guida del Cielo",
     "forestTitle": "Guida della Foresta",
-    "evolutionDescription": "Elenco completo delle condizioni di evoluzione (Terra, Mare, Cielo, Foresta) per Tamagotchi Paradise! Utile per allevare i tuoi preferiti."
+    "evolutionDescription": "Elenco completo delle condizioni di evoluzione (Terra, Mare, Cielo, Foresta) per Tamagotchi Paradise! Utile per allevare i tuoi preferiti.",
+    "codesTitle": "Shop & Lab Code List | Tama Coffee House",
+    "codesDescription": "Complete list of Shop and Lab codes for Tamagotchi Paradise. Search and copy codes for food, snacks, toys, planet decorations, and lab characters."
+  },
+  "codes": {
+    "title": "Shop & Lab Code List",
+    "subtitle": "All item codes for Tamagotchi Paradise",
+    "searchPlaceholder": "🔍 Search by item name or code...",
+    "cat_food": "Food",
+    "cat_snack": "Snacks",
+    "cat_toy": "Toys",
+    "cat_deco": "Planet Deco",
+    "cat_lab": "Lab Codes",
+    "copy": "Copy",
+    "searchResults": "Search Results: {count} items",
+    "noResults": "No items found",
+    "backHome": "← Back to Home"
+  },
+  "nav": {
+    "codes": "Codes"
   }
 }

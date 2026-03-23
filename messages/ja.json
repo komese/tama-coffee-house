@@ -5,7 +5,8 @@
     "simulator": "遺伝シミュ",
     "evolution": "進化じょうけん",
     "familyTree": "家系図メーカー",
-    "bbs": "みんなの掲示板"
+    "bbs": "みんなの掲示板",
+    "codes": "コードリスト"
   },
   "footer": {
     "title": "☕ TAMA COFFEE HOUSE ☕",
@@ -23,7 +24,8 @@
     "land": "🐾 りく",
     "sea": "💧 みず",
     "sky": "☁️ そら",
-    "forest": "🌲 もり"
+    "forest": "🌲 もり",
+    "codes": "🔑 コードリスト"
   },
   "familyTree": {
     "title": "家系図メーカー",
@@ -159,6 +161,25 @@
     "seaTitle": "みずの進化条件リスト",
     "skyTitle": "そらの進化条件リスト",
     "forestTitle": "もりの進化条件リスト",
-    "evolutionDescription": "たまごっちパラダイスの全キャラクターの進化条件（りく・うみ・そら・もり）を一覧で網羅！お目当てのキャラへの育成に役立てよう。"
+    "evolutionDescription": "たまごっちパラダイスの全キャラクターの進化条件（りく・うみ・そら・もり）を一覧で網羅！お目当てのキャラへの育成に役立てよう。",
+    "codesTitle": "ショップ・ラボコードリスト | たまコーヒーハウス",
+    "codesDescription": "たまごっちパラダイスのショップコード・ラボコード一覧。たべもの・おやつ・ゆうぐ・惑星デコ・ラボコードを検索＆コピーできます。"
+  },
+  "codes": {
+    "title": "ショップ・ラボコードリスト",
+    "subtitle": "たまごっちパラダイスの全アイテムコード一覧",
+    "searchPlaceholder": "🔍 アイテム名・コードで検索...",
+    "cat_food": "たべもの",
+    "cat_snack": "おやつ",
+    "cat_toy": "ゆうぐ",
+    "cat_deco": "惑星デコ",
+    "cat_lab": "ラボコード",
+    "copy": "コピー",
+    "searchResults": "検索結果: {count}件",
+    "noResults": "アイテムが見つかりませんでした",
+    "backHome": "← ホームに戻る"
+  },
+  "nav": {
+    "codes": "コードリスト"
   }
 }

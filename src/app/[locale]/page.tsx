@@ -28,6 +28,7 @@ export default function Home() {
           </div>
 
           <Link href="/family-tree" className="y2k-button" style={{ alignSelf: 'center', marginTop: '15px' }}>{t('familyTree')}</Link>
+          <Link href="/codes" className="y2k-button" style={{ alignSelf: 'center', marginTop: '15px' }}>{t('codes')}</Link>
           <Link href="/bbs" className="y2k-button" style={{ alignSelf: 'center', marginTop: '15px' }}>{t('bbs')}</Link>
         </div>
       </div>

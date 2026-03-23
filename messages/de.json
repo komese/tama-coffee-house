@@ -5,7 +5,8 @@
     "simulator": "Simulator",
     "evolution": "Evolutionsführung",
     "familyTree": "Stammbaum",
-    "bbs": "Schwarzes Brett"
+    "bbs": "Schwarzes Brett",
+    "codes": "Codes"
   },
   "footer": {
     "title": "☕ TAMA COFFEE HOUSE ☕",
@@ -23,7 +24,8 @@
     "land": "🐾 Land",
     "sea": "💧 Wasser",
     "sky": "☁️ Himmel",
-    "forest": "🌲 Wald"
+    "forest": "🌲 Wald",
+    "codes": "🔑 Code-Liste"
   },
   "familyTree": {
     "title": "Stammbaum-Ersteller",
@@ -159,6 +161,25 @@
     "seaTitle": "Wasser Evolutionsführung",
     "skyTitle": "Himmel Evolutionsführung",
     "forestTitle": "Wald Evolutionsführung",
-    "evolutionDescription": "Eine umfassende Liste aller Evolutionsbedingungen (Land, Meer, Himmel, Wald) für Tamagotchi Paradise! Hilfreich für die Aufzucht."
+    "evolutionDescription": "Eine umfassende Liste aller Evolutionsbedingungen (Land, Meer, Himmel, Wald) für Tamagotchi Paradise! Hilfreich für die Aufzucht.",
+    "codesTitle": "Shop & Lab Code List | Tama Coffee House",
+    "codesDescription": "Complete list of Shop and Lab codes for Tamagotchi Paradise. Search and copy codes for food, snacks, toys, planet decorations, and lab characters."
+  },
+  "codes": {
+    "title": "Shop & Lab Code List",
+    "subtitle": "All item codes for Tamagotchi Paradise",
+    "searchPlaceholder": "🔍 Search by item name or code...",
+    "cat_food": "Food",
+    "cat_snack": "Snacks",
+    "cat_toy": "Toys",
+    "cat_deco": "Planet Deco",
+    "cat_lab": "Lab Codes",
+    "copy": "Copy",
+    "searchResults": "Search Results: {count} items",
+    "noResults": "No items found",
+    "backHome": "← Back to Home"
+  },
+  "nav": {
+    "codes": "Codes"
   }
 }

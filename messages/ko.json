@@ -5,7 +5,8 @@
     "simulator": "시뮬레이터",
     "evolution": "진화 사전",
     "familyTree": "가계도 만들기",
-    "bbs": "교류 게시판"
+    "bbs": "교류 게시판",
+    "codes": "코드 목록"
   },
   "footer": {
     "title": "☕ TAMA COFFEE HOUSE ☕",
@@ -23,7 +24,8 @@
     "land": "🐾 육지",
     "sea": "💧 바다",
     "sky": "☁️ 하늘",
-    "forest": "🌲 숲"
+    "forest": "🌲 숲",
+    "codes": "🔑 코드 목록"
   },
   "familyTree": {
     "title": "가계도 만들기",
@@ -159,6 +161,25 @@
     "seaTitle": "바다 진화 조건",
     "skyTitle": "하늘 진화 조건",
     "forestTitle": "숲 진화 조건",
-    "evolutionDescription": "다마고치 파라다이스의 모든 캐릭터 진화 조건(육지, 바다, 하늘, 숲)을 총망라! 원하는 캐릭터를 육성할 때 참고하세요."
+    "evolutionDescription": "다마고치 파라다이스의 모든 캐릭터 진화 조건(육지, 바다, 하늘, 숲)을 총망라! 원하는 캐릭터를 육성할 때 참고하세요.",
+    "codesTitle": "상점 & 연구소 코드 목록 | Tama Coffee House",
+    "codesDescription": "다마고치 파라다이스의 상점 코드 및 연구소 코드 전체 목록입니다."
+  },
+  "codes": {
+    "title": "상점 & 연구소 코드 목록",
+    "subtitle": "다마고치 파라다이스 전체 아이템 코드 목록",
+    "searchPlaceholder": "🔍 아이템 이름 또는 코드 검색...",
+    "cat_food": "음식",
+    "cat_snack": "간식",
+    "cat_toy": "놀이기구",
+    "cat_deco": "행성 장식",
+    "cat_lab": "연구소 코드",
+    "copy": "복사",
+    "searchResults": "검색 결과: {count}건",
+    "noResults": "아이템을 찾을 수 없습니다",
+    "backHome": "← 홈으로 돌아가기"
+  },
+  "nav": {
+    "codes": "코드 목록"
   }
 }

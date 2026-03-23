@@ -5,7 +5,8 @@
     "simulator": "模擬器",
     "evolution": "進化圖鑑",
     "familyTree": "族譜製作",
-    "bbs": "交流佈告欄"
+    "bbs": "交流佈告欄",
+    "codes": "代碼列表"
   },
   "footer": {
     "title": "☕ TAMA COFFEE HOUSE ☕",
@@ -23,7 +24,8 @@
     "land": "🐾 陸地",
     "sea": "💧 海洋",
     "sky": "☁️ 天空",
-    "forest": "🌲 森林"
+    "forest": "🌲 森林",
+    "codes": "🔑 代碼列表"
   },
   "familyTree": {
     "title": "族譜製作",
@@ -159,6 +161,25 @@
     "seaTitle": "海洋進化圖鑑",
     "skyTitle": "天空進化圖鑑",
     "forestTitle": "森林進化圖鑑",
-    "evolutionDescription": "完整收錄塔麻可吉樂園所有角色的進化條件（陸地、海洋、天空、森林）！培育你心儀角色的最佳幫手。"
+    "evolutionDescription": "完整收錄塔麻可吉樂園所有角色的進化條件（陸地、海洋、天空、森林）！培育你心儀角色的最佳幫手。",
+    "codesTitle": "商店＆實驗室代碼列表 | Tama Coffee House",
+    "codesDescription": "塔麻可吉樂園完整商店代碼和實驗室代碼列表。搜尋並複製食物、零食、遊具、星球裝飾及實驗室角色代碼。"
+  },
+  "codes": {
+    "title": "商店＆實驗室代碼列表",
+    "subtitle": "塔麻可吉樂園所有物品代碼一覽",
+    "searchPlaceholder": "🔍 搜尋物品名稱或代碼...",
+    "cat_food": "食物",
+    "cat_snack": "零食",
+    "cat_toy": "遊具",
+    "cat_deco": "星球裝飾",
+    "cat_lab": "實驗室代碼",
+    "copy": "複製",
+    "searchResults": "搜尋結果：{count}項",
+    "noResults": "找不到物品",
+    "backHome": "← 回首頁"
+  },
+  "nav": {
+    "codes": "代碼列表"
   }
 }
