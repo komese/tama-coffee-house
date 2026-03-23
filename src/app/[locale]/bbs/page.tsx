@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { supabase } from '../../../lib/supabaseClient';
 
-const REACTION_EMOJIS = ['👍', '❤', '🤣', '🤯'] as const;
+const REACTION_EMOJIS = ['👍', '❤️', '🤣', '🤯'] as const;
 
 export default function BBS() {
     const t = useTranslations('bbs');
