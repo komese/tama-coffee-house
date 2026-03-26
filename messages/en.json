@@ -181,5 +181,24 @@
   },
   "nav": {
     "codes": "Codes"
+  },
+  "auth": {
+    "login": "Login",
+    "logout": "Logout",
+    "signUp": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "submitLogin": "Login",
+    "submitSignUp": "Sign Up",
+    "profileSetup": "Profile Setup",
+    "nickname": "Nickname",
+    "avatar": "Avatar",
+    "save": "Save",
+    "saving": "Saving...",
+    "errorAuth": "Authentication Error",
+    "errorProfile": "Profile Save Error",
+    "toggleSignUp": "Don't have an account? Sign up",
+    "toggleLogin": "Already have an account? Login",
+    "loginToPost": "Login to Post"
   }
 }

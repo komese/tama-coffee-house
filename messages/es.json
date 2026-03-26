@@ -181,5 +181,24 @@
   },
   "nav": {
     "codes": "Codes"
+  },
+  "auth": {
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "signUp": "Registrarse",
+    "email": "Correo",
+    "password": "Contraseña",
+    "submitLogin": "Iniciar sesión",
+    "submitSignUp": "Registrarse",
+    "profileSetup": "Configuración de perfil",
+    "nickname": "Apodo",
+    "avatar": "Avatar",
+    "save": "Guardar",
+    "saving": "Guardando...",
+    "errorAuth": "Error de autenticación",
+    "errorProfile": "Error al guardar el perfil",
+    "toggleSignUp": "¿No tienes cuenta? Regístrate",
+    "toggleLogin": "¿Ya tienes una cuenta? Iniciar sesión",
+    "loginToPost": "Inicia sesión para publicar"
   }
 }

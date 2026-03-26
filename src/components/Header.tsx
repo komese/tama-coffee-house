@@ -1,8 +1,11 @@
 "use client";
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTranslations, useLocale } from 'next-intl';
+import AuthModal from './AuthModal';
+import ProfileSetup from './ProfileSetup';
 
 export default function Header() {
     const pathname = usePathname();
@@ -17,6 +20,41 @@ export default function Header() {
         const newPath = newLocale === 'ja' ? cleanPath : `/${newLocale}${cleanPath === '/' ? '' : cleanPath}`;
         document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000`;
         window.location.href = newPath;
+    };
+
+    const [session, setSession] = useState<any>(null);
+    const [profile, setProfile] = useState<{ nickname: string, avatar_url: string | null } | null>(null);
+    const [showAuthModal, setShowAuthModal] = useState(false);
+    const [showProfileSetup, setShowProfileSetup] = useState(false);
+
+    useEffect(() => {
+        const { supabase } = require('../lib/supabaseClient');
+        supabase.auth.getSession().then(({ data: { session } }: any) => {
+            setSession(session);
+            if (session) fetchProfile(session.user.id, supabase);
+        });
+
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
+            setSession(session);
+            if (session) fetchProfile(session.user.id, supabase);
+            else setProfile(null);
+        });
+
+        return () => subscription.unsubscribe();
+    }, []);
+
+    const fetchProfile = async (userId: string, supabaseClient: any) => {
+        const { data } = await supabaseClient
+            .from('profiles')
+            .select('nickname, avatar_url')
+            .eq('id', userId)
+            .single();
+        if (data) setProfile(data);
+    };
+
+    const handleLogout = async () => {
+        const { supabase } = require('../lib/supabaseClient');
+        await supabase.auth.signOut();
     };
 
     return (
@@ -37,6 +75,35 @@ export default function Header() {
                 {cleanPath !== '/family-tree' && <Link href="/family-tree" className="y2k-nav-btn">{t('familyTree')}</Link>}
                 {cleanPath !== '/codes' && <Link href="/codes" className="y2k-nav-btn">{t('codes')}</Link>}
                 {cleanPath !== '/bbs' && <Link href="/bbs" className="y2k-nav-btn">{t('bbs')}</Link>}
+                
+                {/* ログイン関係のUI */}
+                {!session ? (
+                    <button onClick={() => setShowAuthModal(true)} className="y2k-nav-btn" style={{ background: '#ffefd5', color: '#8b4513' }}>
+                        ログイン
+                    </button>
+                ) : (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div 
+                            onClick={() => setShowProfileSetup(true)}
+                            title="プロフィール設定"
+                            style={{
+                                width: '30px', height: '30px', borderRadius: '50%', backgroundColor: '#eee',
+                                overflow: 'hidden', cursor: 'pointer', border: '2px solid var(--accent-color)',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center'
+                            }}
+                        >
+                            {profile?.avatar_url ? (
+                                <img src={profile.avatar_url} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            ) : (
+                                <span style={{ fontSize: '1.2rem' }}>👤</span>
+                            )}
+                        </div>
+                        <button onClick={handleLogout} className="y2k-nav-btn" style={{ padding: '2px 8px', fontSize: '0.8rem', background: '#ffe4e1', color: '#8b0000' }}>
+                            ログアウト
+                        </button>
+                    </div>
+                )}
+
                 {cleanPath !== '/bbs' && (
                     <select
                         value={locale}
@@ -65,6 +132,24 @@ export default function Header() {
                     </select>
                 )}
             </nav>
+
+            {/* モーダル */}
+            {showAuthModal && (
+                <AuthModal 
+                    onClose={() => setShowAuthModal(false)} 
+                    onAuthSuccess={() => { setShowAuthModal(false); setShowProfileSetup(true); }} 
+                />
+            )}
+            {showProfileSetup && session && (
+                <ProfileSetup 
+                    userId={session.user.id} 
+                    onClose={() => setShowProfileSetup(false)} 
+                    onProfileUpdated={() => {
+                        const { supabase } = require('../lib/supabaseClient');
+                        fetchProfile(session.user.id, supabase);
+                    }} 
+                />
+            )}
         </header>
     );
 }

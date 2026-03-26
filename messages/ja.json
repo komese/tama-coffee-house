@@ -181,5 +181,24 @@
   },
   "nav": {
     "codes": "コードリスト"
+  },
+  "auth": {
+    "login": "ログイン",
+    "logout": "ログアウト",
+    "signUp": "新規登録",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "submitLogin": "ログインする",
+    "submitSignUp": "登録する",
+    "profileSetup": "プロフィール設定",
+    "nickname": "ニックネーム",
+    "avatar": "アイコン画像",
+    "save": "保存",
+    "saving": "保存中...",
+    "errorAuth": "認証エラー",
+    "errorProfile": "プロフィール保存エラー",
+    "toggleSignUp": "アカウントをお持ちでない方はこちら",
+    "toggleLogin": "すでにアカウントをお持ちの方はこちら",
+    "loginToPost": "ログインして投稿"
   }
 }

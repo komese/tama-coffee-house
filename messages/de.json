@@ -181,5 +181,24 @@
   },
   "nav": {
     "codes": "Codes"
+  },
+  "auth": {
+    "login": "Anmelden",
+    "logout": "Abmelden",
+    "signUp": "Registrieren",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "submitLogin": "Anmelden",
+    "submitSignUp": "Registrieren",
+    "profileSetup": "Profileinstellungen",
+    "nickname": "Spitzname",
+    "avatar": "Avatar",
+    "save": "Speichern",
+    "saving": "Speichern...",
+    "errorAuth": "Authentifizierungsfehler",
+    "errorProfile": "Fehler beim Speichern des Profils",
+    "toggleSignUp": "Noch kein Konto? Registrieren",
+    "toggleLogin": "Bereits ein Konto? Anmelden",
+    "loginToPost": "Zum Posten anmelden"
   }
 }

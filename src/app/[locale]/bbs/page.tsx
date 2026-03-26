@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { supabase } from '../../../lib/supabaseClient';
+import AuthModal from '@/components/AuthModal';
 
 const REACTION_EMOJIS = ['👍', '❤️', '🤣', '🤯'] as const;
 
@@ -24,6 +25,12 @@ export default function BBS() {
     const [saving, setSaving] = useState(false);
     const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
     const [myReactions, setMyReactions] = useState<Record<string, string[]>>({});
+    
+    // Auth & Profile states
+    const [session, setSession] = useState<any>(null);
+    const [myProfile, setMyProfile] = useState<{ nickname: string, avatar_url: string | null } | null>(null);
+    const [profilesMap, setProfilesMap] = useState<Record<string, { nickname: string, avatar_url: string | null }>>({});
+    const [showAuthModal, setShowAuthModal] = useState(false);
 
     // LocalStorageから自分のリアクション履歴を復元
     useEffect(() => {
@@ -50,11 +57,24 @@ export default function BBS() {
             console.error('Failed to parse my posts from local storage', e);
         }
 
+        // Auth状態の取得
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            setSession(session);
+            if (session) fetchMyProfile(session.user.id);
+        });
+
+        const authSubscription = supabase.auth.onAuthStateChange((_event, session) => {
+            setSession(session);
+            if (session) fetchMyProfile(session.user.id);
+            else setMyProfile(null);
+        });
+
         // リアルタイム更新のサブスクリプションを設定
         const subscription = supabase
             .channel(`public:${targetTable}`)
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: targetTable }, payload => {
                 setMessages(prev => [payload.new, ...prev]);
+                if (payload.new.author_id) fetchMissingProfiles([payload.new.author_id]);
             })
             .on('postgres_changes', { event: 'DELETE', schema: 'public', table: targetTable }, payload => {
                 setMessages(prev => prev.filter(msg => msg.id !== payload.old.id));
@@ -66,8 +86,28 @@ export default function BBS() {
 
         return () => {
             supabase.removeChannel(subscription);
+            authSubscription.data.subscription.unsubscribe();
         };
     }, []);
+
+    const fetchMyProfile = async (userId: string) => {
+        const { data } = await supabase.from('profiles').select('nickname, avatar_url').eq('id', userId).single();
+        if (data) setMyProfile(data);
+    };
+
+    const fetchMissingProfiles = async (authorIds: string[]) => {
+        const missingIds = authorIds.filter(id => id && !profilesMap[id]);
+        if (missingIds.length === 0) return;
+
+        const { data } = await supabase.from('profiles').select('id, nickname, avatar_url').in('id', missingIds);
+        if (data && data.length > 0) {
+            setProfilesMap(prev => {
+                const newMap = { ...prev };
+                data.forEach(p => newMap[p.id] = p);
+                return newMap;
+            });
+        }
+    };
 
     const fetchMessages = async () => {
         setLoading(true);
@@ -78,8 +118,10 @@ export default function BBS() {
 
         if (error) {
             console.error('Error fetching messages:', error);
-        } else {
-            setMessages(data || []);
+        } else if (data) {
+            setMessages(data);
+            const authorIds = Array.from(new Set(data.map(m => m.author_id).filter(id => id)));
+            fetchMissingProfiles(authorIds);
         }
         setLoading(false);
     };
@@ -132,7 +174,10 @@ export default function BBS() {
 
     const handlePost = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!newName.trim() || (!newContent.trim() && !imageFile)) return;
+        
+        // ログイン時はプロフィールの名前を使い、非ログイン時はフォームの名前を使う
+        const finalAuthorName = session && myProfile ? myProfile.nickname : newName.trim();
+        if (!finalAuthorName || (!newContent.trim() && !imageFile)) return;
 
         setSaving(true);
         let imageUrl = null;
@@ -188,7 +233,8 @@ export default function BBS() {
             .from(targetTable)
             .insert([
                 {
-                    author_name: newName.trim(),
+                    author_name: finalAuthorName,
+                    author_id: session ? session.user.id : null,
                     content: newContent.trim(),
                     image_url: imageUrl,
                     delete_password: null,
@@ -257,18 +303,44 @@ export default function BBS() {
                 <div className="y2k-window-header">{t('writeHeader')}</div>
                 <div className="y2k-window-body">
                     <form onSubmit={handlePost} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                        <div>
-                            <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>{t('nameLabel')}:</label>
-                            <input
-                                type="text"
-                                className="y2k-input"
-                                value={newName}
-                                onChange={(e) => setNewName(e.target.value)}
-                                placeholder={t('namePlaceholder')}
-                                maxLength={20}
-                                required
-                            />
-                        </div>
+                        {session && myProfile ? (
+                            <div style={{ marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                <div style={{
+                                    width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#eee',
+                                    overflow: 'hidden', border: '2px solid var(--accent-color)',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                }}>
+                                    {myProfile.avatar_url ? (
+                                        <img src={myProfile.avatar_url} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    ) : (
+                                        <span style={{ fontSize: '1.2rem' }}>👤</span>
+                                    )}
+                                </div>
+                                <span style={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>{myProfile.nickname} <span style={{fontSize: '0.8rem', color: '#666', fontWeight: 'normal'}}>として投稿</span></span>
+                            </div>
+                        ) : (
+                            <div>
+                                <label style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px', fontWeight: 'bold' }}>
+                                    <span>{t('nameLabel')}:</span>
+                                    <button 
+                                        type="button" 
+                                        onClick={() => setShowAuthModal(true)} 
+                                        style={{ background: 'none', border: 'none', color: 'var(--primary-color)', textDecoration: 'underline', cursor: 'pointer', fontSize: '0.8rem' }}
+                                    >
+                                        ※ アカウントをお持ちの方はこちら
+                                    </button>
+                                </label>
+                                <input
+                                    type="text"
+                                    className="y2k-input"
+                                    value={newName}
+                                    onChange={(e) => setNewName(e.target.value)}
+                                    placeholder={t('namePlaceholder')}
+                                    maxLength={20}
+                                    required={!session}
+                                />
+                            </div>
+                        )}
                         <div>
                             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>{t('contentLabel')}:</label>
                             <textarea
@@ -314,9 +386,31 @@ export default function BBS() {
                                 boxShadow: '2px 2px 0px rgba(92, 64, 51, 0.1)'
                             }}>
                                 <div style={{ borderBottom: '1px dashed #ccc', paddingBottom: '5px', marginBottom: '8px', fontSize: '0.9rem', color: '#555', display: 'flex', justifyContent: 'space-between' }}>
-                                    <div>
-                                        <span style={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>{msg.author_name}</span>
-                                        <span style={{ marginLeft: '10px' }}>{formatDate(msg.created_at)}</span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                        {(msg.author_id && profilesMap[msg.author_id]) ? (
+                                            <>
+                                                <div style={{
+                                                    width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#eee',
+                                                    overflow: 'hidden', border: '1px solid var(--accent-color)',
+                                                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                                                }}>
+                                                    {profilesMap[msg.author_id].avatar_url ? (
+                                                        <img src={profilesMap[msg.author_id].avatar_url!} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                    ) : (
+                                                        <span style={{ fontSize: '1rem' }}>👤</span>
+                                                    )}
+                                                </div>
+                                                <div>
+                                                    <span style={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>{profilesMap[msg.author_id].nickname}</span>
+                                                    <span style={{ marginLeft: '10px', fontSize: '0.8rem' }}>{formatDate(msg.created_at)}</span>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div>
+                                                <span style={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>{msg.author_name}</span>
+                                                <span style={{ marginLeft: '10px', fontSize: '0.8rem' }}>{formatDate(msg.created_at)}</span>
+                                            </div>
+                                        )}
                                     </div>
                                     {myMessageIds.includes(msg.id) && (
                                         <button
@@ -388,6 +482,10 @@ export default function BBS() {
                         style={{ position: 'fixed', top: '20px', right: '20px', fontSize: '36px', color: '#fff' }}
                     >×</button>
                 </div>
+            )}
+            
+            {showAuthModal && (
+                <AuthModal onClose={() => setShowAuthModal(false)} />
             )}
         </div>
     );
