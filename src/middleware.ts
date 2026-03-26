@@ -5,8 +5,8 @@ export default createMiddleware(routing);
 
 export const config = {
   matcher: [
-    '/',
-    '/(ja|en|zh-TW|ko|pt-BR|de|fr|es|it|th)/:path*',
-    '/((?!_next|_vercel|.*\\..*).*)'
+    // api, _next, _vercel, および拡張子を含む静的ファイル（.*\\..*）を完全に除外し、
+    // それ以外の全てのリクエスト（/, /ja/bbs 等）のみミドルウェアを実行する
+    '/((?!api|_next|_vercel|.*\\..*).*)'
   ]
 };
