@@ -87,7 +87,7 @@ export default function Header() {
                             onClick={() => setShowProfileSetup(true)}
                             title="プロフィール設定"
                             style={{
-                                width: '30px', height: '30px', borderRadius: '50%', backgroundColor: '#eee',
+                                width: '30px', height: '30px', borderRadius: '10px', backgroundColor: '#eee',
                                 overflow: 'hidden', cursor: 'pointer', border: '2px solid var(--accent-color)',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center'
                             }}

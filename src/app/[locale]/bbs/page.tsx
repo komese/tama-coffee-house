@@ -7,6 +7,17 @@ import AuthModal from '@/components/AuthModal';
 
 const REACTION_EMOJIS = ['👍', '❤️', '🤣', '🤯'] as const;
 
+type Message = {
+    id: string | number;
+    author_name: string;
+    author_id: string | null;
+    parent_id?: string | number | null;
+    content: string;
+    image_url: string | null;
+    created_at: string;
+    reactions: any;
+};
+
 export default function BBS() {
     const t = useTranslations('bbs');
     const locale = useLocale();
@@ -20,11 +31,12 @@ export default function BBS() {
     const [newName, setNewName] = useState('');
     const [newContent, setNewContent] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
-    const [myMessageIds, setMyMessageIds] = useState<string[]>([]);
+    const [myMessageIds, setMyMessageIds] = useState<Array<string | number>>([]);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
     const [myReactions, setMyReactions] = useState<Record<string, string[]>>({});
+    const [replyTarget, setReplyTarget] = useState<{id: string | number, name: string} | null>(null);
     
     // Auth & Profile states
     const [session, setSession] = useState<any>(null);
@@ -126,7 +138,7 @@ export default function BBS() {
         setLoading(false);
     };
 
-    const handleReaction = useCallback(async (msgId: string, emoji: string) => {
+    const handleReaction = useCallback(async (msgId: string | number, emoji: string) => {
         // 既にこの絵文字でリアクション済みか確認
         const myReactionsForMsg = myReactions[msgId] || [];
         const alreadyReacted = myReactionsForMsg.includes(emoji);
@@ -229,13 +241,15 @@ export default function BBS() {
             imageUrl = publicUrlData.publicUrl;
         }
 
+        const finalContent = replyTarget ? `> ${replyTarget.name}さん\n${newContent.trim()}` : newContent.trim();
         const { data, error } = await supabase
             .from(targetTable)
             .insert([
                 {
                     author_name: finalAuthorName,
                     author_id: session ? session.user.id : null,
-                    content: newContent.trim(),
+                    parent_id: replyTarget ? replyTarget.id : null,
+                    content: finalContent,
                     image_url: imageUrl,
                     delete_password: null,
                     reactions: {}
@@ -258,13 +272,14 @@ export default function BBS() {
             setNewName('');
             setNewContent('');
             setImageFile(null);
+            setReplyTarget(null);
             const fileInput = document.getElementById('image-upload') as HTMLInputElement;
             if (fileInput) fileInput.value = '';
         }
         setSaving(false);
     };
 
-    const handleDelete = async (id: string) => {
+    const handleDelete = async (id: string | number) => {
         if (!confirm(t('deleteConfirm'))) return;
 
         const { error } = await supabase
@@ -303,10 +318,16 @@ export default function BBS() {
                 <div className="y2k-window-header">{t('writeHeader')}</div>
                 <div className="y2k-window-body">
                     <form onSubmit={handlePost} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        {replyTarget && (
+                            <div style={{ padding: '8px', backgroundColor: '#e6e6fa', border: '1px solid var(--primary-color)', borderRadius: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.9rem' }}>
+                                <span><strong>{replyTarget.name}</strong> さんへ返信中...</span>
+                                <button type="button" onClick={() => setReplyTarget(null)} style={{ background: 'none', border: 'none', color: '#888', cursor: 'pointer', textDecoration: 'underline' }}>キャンセル</button>
+                            </div>
+                        )}
                         {session && myProfile ? (
                             <div style={{ marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '10px' }}>
                                 <div style={{
-                                    width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#eee',
+                                    width: '40px', height: '40px', borderRadius: '12px', backgroundColor: '#eee',
                                     overflow: 'hidden', border: '2px solid var(--accent-color)',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center'
                                 }}>
@@ -343,6 +364,12 @@ export default function BBS() {
                         )}
                         <div>
                             <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>{t('contentLabel')}:</label>
+                            {replyTarget && (
+                                <div style={{ marginBottom: '8px', padding: '8px 12px', backgroundColor: '#f0f8ff', border: '1px dashed #add8e6', borderRadius: '4px', fontSize: '0.9rem', color: '#005f9e', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                    <span><strong>&gt; {replyTarget.name}さん</strong> への返信</span>
+                                    <button type="button" onClick={() => setReplyTarget(null)} style={{ background: 'none', border: 'none', color: '#005f9e', textDecoration: 'underline', cursor: 'pointer' }}>キャンセル</button>
+                                </div>
+                            )}
                             <textarea
                                 className="y2k-input"
                                 value={newContent}
@@ -363,7 +390,7 @@ export default function BBS() {
                                 style={{ fontSize: '0.9rem' }}
                             />
                         </div>
-                        <button type="submit" className="y2k-button" disabled={saving || !newName.trim() || (!newContent.trim() && !imageFile)}>
+                        <button type="submit" className="y2k-button" disabled={saving || (!(session && myProfile) && !newName.trim()) || (!newContent.trim() && !imageFile)}>
                             {saving ? t('loading') : t('submit')}
                         </button>
                     </form>
@@ -377,8 +404,8 @@ export default function BBS() {
                     {!loading && messages.length === 0 && <p>{t('noMessages')}</p>}
 
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                        {messages.map((msg) => (
-                            <div key={msg.id} style={{
+                        {messages.map((m) => (
+                            <div key={m.id} style={{
                                 padding: '15px',
                                 border: '1px solid var(--accent-color)',
                                 borderRadius: '8px',
@@ -387,63 +414,74 @@ export default function BBS() {
                             }}>
                                 <div style={{ borderBottom: '1px dashed #ccc', paddingBottom: '5px', marginBottom: '8px', fontSize: '0.9rem', color: '#555', display: 'flex', justifyContent: 'space-between' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                        {(msg.author_id && profilesMap[msg.author_id]) ? (
+                                        {(m.author_id && profilesMap[m.author_id]) ? (
                                             <>
                                                 <div style={{
-                                                    width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#eee',
+                                                    width: '32px', height: '32px', borderRadius: '10px', backgroundColor: '#eee',
                                                     overflow: 'hidden', border: '1px solid var(--accent-color)',
                                                     display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
                                                 }}>
-                                                    {profilesMap[msg.author_id].avatar_url ? (
-                                                        <img src={profilesMap[msg.author_id].avatar_url!} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                    {profilesMap[m.author_id].avatar_url ? (
+                                                        <img src={profilesMap[m.author_id].avatar_url!} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                     ) : (
                                                         <span style={{ fontSize: '1rem' }}>👤</span>
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <span style={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>{profilesMap[msg.author_id].nickname}</span>
-                                                    <span style={{ marginLeft: '10px', fontSize: '0.8rem' }}>{formatDate(msg.created_at)}</span>
+                                                    <span style={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>{profilesMap[m.author_id].nickname}</span>
+                                                    <span style={{ marginLeft: '10px', fontSize: '0.8rem' }}>{formatDate(m.created_at)}</span>
                                                 </div>
                                             </>
                                         ) : (
                                             <div>
-                                                <span style={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>{msg.author_name}</span>
-                                                <span style={{ marginLeft: '10px', fontSize: '0.8rem' }}>{formatDate(msg.created_at)}</span>
+                                                <span style={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>{m.author_name}</span>
+                                                <span style={{ marginLeft: '10px', fontSize: '0.8rem' }}>{formatDate(m.created_at)}</span>
                                             </div>
                                         )}
                                     </div>
-                                    {myMessageIds.includes(msg.id) && (
+                                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                                         <button
-                                            onClick={() => handleDelete(msg.id)}
-                                            style={{ background: 'none', border: 'none', color: '#ff6b6b', textDecoration: 'underline', cursor: 'pointer', fontSize: '0.8rem' }}
+                                            onClick={() => {
+                                                const targetName = m.author_id && profilesMap[m.author_id] ? profilesMap[m.author_id].nickname : m.author_name;
+                                                setReplyTarget({ id: m.id, name: targetName });
+                                                window.scrollTo({ top: 0, behavior: 'smooth' });
+                                            }}
+                                            style={{ background: 'none', border: 'none', color: 'var(--primary-color)', textDecoration: 'underline', cursor: 'pointer', fontSize: '0.8rem' }}
                                         >
-                                            {t('delete')}
+                                            返信する
                                         </button>
-                                    )}
+                                        {(myMessageIds.includes(m.id) || (session && m.author_id === session.user.id)) && (
+                                            <button
+                                                onClick={() => handleDelete(m.id)}
+                                                style={{ background: 'none', border: 'none', color: '#ff6b6b', textDecoration: 'underline', cursor: 'pointer', fontSize: '0.8rem' }}
+                                            >
+                                                {t('delete')}
+                                            </button>
+                                        )}
+                                    </div>
                                 </div>
                                 <div style={{ whiteSpace: 'pre-wrap', lineHeight: '1.4' }}>
-                                    {msg.content}
+                                    {m.content}
                                 </div>
-                                {msg.image_url && (
+                                {m.image_url && (
                                     <div style={{ marginTop: '10px' }}>
                                         <img
-                                            src={msg.image_url}
+                                            src={m.image_url}
                                             alt={t('imageAlt')}
-                                            onClick={() => setLightboxUrl(msg.image_url)}
+                                            onClick={() => setLightboxUrl(m.image_url)}
                                             style={{ maxWidth: '100%', width: 'auto', maxHeight: '150px', objectFit: 'contain', border: '1px solid #ccc', borderRadius: '4px', backgroundColor: '#f9f9f9', display: 'block', cursor: 'pointer' }}
                                         />
                                     </div>
                                 )}
-                                {/* リアクションボタン */}
                                 <div className="bbs-reactions">
                                     {REACTION_EMOJIS.map(emoji => {
-                                        const count = (msg.reactions || {})[emoji] || 0;
-                                        const reacted = (myReactions[msg.id] || []).includes(emoji);
+                                        const count = (m.reactions || {})[emoji] || 0;
+                                        const reacted = (myReactions[m.id] || []).includes(emoji);
                                         return (
                                             <button
                                                 key={emoji}
                                                 className={`bbs-reaction-btn ${reacted ? 'reacted' : ''}`}
-                                                onClick={() => handleReaction(msg.id, emoji)}
+                                                onClick={() => handleReaction(m.id, emoji)}
                                             >
                                                 <span className="bbs-reaction-emoji">{emoji}</span>
                                                 {count > 0 && <span className="bbs-reaction-count">{count}</span>}
