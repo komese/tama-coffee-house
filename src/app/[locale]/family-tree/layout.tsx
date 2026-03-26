@@ -7,6 +7,17 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     return {
         title: t('familyTreeTitle'),
         description: t('familyTreeDescription'),
+        openGraph: {
+            title: t('familyTreeTitle'),
+            description: t('familyTreeDescription'),
+            images: [{ url: '/images/og/og-family-tree.png', width: 1024, height: 640 }],
+        },
+        twitter: {
+            card: 'summary_large_image',
+            title: t('familyTreeTitle'),
+            description: t('familyTreeDescription'),
+            images: ['/images/og/og-family-tree.png'],
+        },
     };
 }
 
