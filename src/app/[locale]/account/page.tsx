@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter, useParams } from 'next/navigation';
+import AuthModal from '@/components/AuthModal';
 import Cropper from 'react-easy-crop';
 import { LAND_DATA, SEA_DATA, SKY_DATA, FOREST_DATA } from '@/data/evolutionData';
 
@@ -56,6 +57,9 @@ export default function AccountPage() {
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
     const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
+    // AuthModal State
+    const [showAuthModal, setShowAuthModal] = useState(false);
+
     // Cropper State
     const [imageSrc, setImageSrc] = useState<string | null>(null);
     const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -72,7 +76,8 @@ export default function AccountPage() {
         const fetchAll = async () => {
             const { data: { session: currentSession } } = await supabase.auth.getSession();
             if (!currentSession) {
-                router.push(`/${locale}`);
+                setShowAuthModal(true);
+                setLoading(false);
                 return;
             }
             setSession(currentSession);
@@ -179,6 +184,19 @@ export default function AccountPage() {
     };
 
     if (loading) return <div style={{ textAlign: 'center', marginTop: '50px' }}>Loading...</div>;
+
+    if (!session) {
+        return (
+            <div style={{ minHeight: '100vh', background: 'var(--bg-color)' }}>
+                {showAuthModal && (
+                    <AuthModal 
+                        onClose={() => router.push(`/${locale}`)} 
+                        onAuthSuccess={() => window.location.reload()} 
+                    />
+                )}
+            </div>
+        );
+    }
 
     return (
         <div className="y2k-container" style={{ maxWidth: '800px', margin: '30px auto 0', display: 'flex', flexDirection: 'column', gap: '20px' }}>
