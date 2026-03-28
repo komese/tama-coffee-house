@@ -327,20 +327,20 @@ export default function AccountPage() {
                     ) : (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                             {replies.map(reply => (
-                                <div key={reply.id} style={{ border: reply.is_admin_reply ? '2px solid #9c27b0' : '1px solid #ccc', padding: '10px', borderRadius: '8px', backgroundColor: reply.is_admin_reply ? '#f3e5f5' : '#fff' }}>
+                                <div key={reply.id} style={{ border: reply.is_admin_reply ? '2px solid #0288d1' : '1px solid #ccc', padding: '10px', borderRadius: '8px', backgroundColor: reply.is_admin_reply ? '#e1f5fe' : '#fff' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px', fontSize: '0.9rem' }}>
                                         <div style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px' }}>
                                             {reply.is_admin_reply ? (
-                                                <span style={{ color: '#6a1b9a' }}>👑 管理人からのお返事</span>
+                                                <span style={{ color: '#0277bd' }}>管理人からのお返事</span>
                                             ) : (
                                                 <>{reply.author_name} さんからの返信</>
                                             )}
                                         </div>
                                         <span style={{ color: '#888' }}>{formatDate(reply.created_at)}</span>
                                     </div>
-                                    <div style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: '0.9rem', color: reply.is_admin_reply ? '#4a148c' : 'inherit' }}>{reply.content}</div>
+                                    <div style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: '0.9rem', color: reply.is_admin_reply ? '#01579b' : 'inherit' }}>{reply.content}</div>
                                     {reply.is_admin_reply && reply.original_content && (
-                                        <div style={{ marginTop: '10px', fontSize: '0.8rem', color: '#666', borderTop: '1px dashed #ce93d8', paddingTop: '8px' }}>
+                                        <div style={{ marginTop: '10px', fontSize: '0.8rem', color: '#666', borderTop: '1px dashed #81d4fa', paddingTop: '8px' }}>
                                             <strong>あなたが送った目安箱：</strong><br />
                                             <span style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', display: 'inline-block', marginTop: '4px' }}>{reply.original_content}</span>
                                         </div>
