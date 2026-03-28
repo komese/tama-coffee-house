@@ -17,21 +17,58 @@ export default function FeedbackPage() {
 
     const [session, setSession] = useState<any>(null);
     const [myProfile, setMyProfile] = useState<{ nickname: string, avatar_url: string | null } | null>(null);
+    const [history, setHistory] = useState<any[]>([]);
+
+    const fetchAllData = async () => {
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        
+        // 1. Fetch Profile
+        if (currentSession) {
+            setSession(currentSession);
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('nickname, avatar_url')
+                .eq('id', currentSession.user.id)
+                .single();
+            if (profile) setMyProfile(profile);
+        }
+
+        // 2. Fetch History
+        let localFeedbackIds: string[] = [];
+        try {
+            const local = localStorage.getItem('tama_feedbacks');
+            if (local) localFeedbackIds = JSON.parse(local);
+        } catch(e) {}
+
+        let allFeedbacks: any[] = [];
+
+        // Fetch using RPC for local storage IDs (Guest & Users)
+        if (localFeedbackIds.length > 0) {
+            const { data: localFeedbacks } = await supabase.rpc('get_my_feedbacks', { feedback_ids: localFeedbackIds });
+            if (localFeedbacks) {
+                allFeedbacks = [...localFeedbacks];
+            }
+        }
+
+        // Fetch using author_id for logged in users
+        if (currentSession) {
+            const { data: userFeedbacks } = await supabase
+                .from('feedbacks')
+                .select('*')
+                .eq('author_id', currentSession.user.id);
+            if (userFeedbacks) {
+                allFeedbacks = [...allFeedbacks, ...userFeedbacks];
+            }
+        }
+
+        // Deduplicate and Sort
+        const uniqueFeedbacks = Array.from(new Map(allFeedbacks.map(item => [item.id, item])).values());
+        uniqueFeedbacks.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+        setHistory(uniqueFeedbacks);
+    };
 
     useEffect(() => {
-        const fetchUser = async () => {
-            const { data: { session: currentSession } } = await supabase.auth.getSession();
-            if (currentSession) {
-                setSession(currentSession);
-                const { data: profile } = await supabase
-                    .from('profiles')
-                    .select('nickname, avatar_url')
-                    .eq('id', currentSession.user.id)
-                    .single();
-                if (profile) setMyProfile(profile);
-            }
-        };
-        fetchUser();
+        fetchAllData();
     }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -43,15 +80,27 @@ export default function FeedbackPage() {
 
         try {
             const { data: { session } } = await supabase.auth.getSession();
-            const { error } = await supabase
+            const { data, error } = await supabase
                 .from('feedbacks')
                 .insert([{
                     content: content.trim(),
                     author_id: session?.user?.id || null,
-                }]);
+                }]).select();
 
             if (error) throw error;
+            
+            // 成功時にIDをlocalStorageへ記録する
+            if (data && data.length > 0) {
+                const newId = data[0].id;
+                try {
+                    const local = localStorage.getItem('tama_feedbacks');
+                    const localIds = local ? JSON.parse(local) : [];
+                    localStorage.setItem('tama_feedbacks', JSON.stringify([...localIds, newId]));
+                } catch(e) { console.error('Failed to save feedback id to local storage', e); }
+            }
+
             setSent(true);
+            fetchAllData(); // 履歴を再取得して表示更新する
         } catch (err: any) {
             console.error(err);
             setErrorMsg('送信に失敗しました。時間をおいて再度お試しください。');
@@ -145,9 +194,41 @@ export default function FeedbackPage() {
             
             <div style={{ textAlign: 'center', marginTop: '20px' }}>
                 <Link prefetch={false} href={`/${locale}`} style={{ color: 'var(--primary-color)', textDecoration: 'underline' }}>
-                    &larr; 戻る
+                    &larr; トップページに戻る
                 </Link>
             </div>
+
+            {/* お便り履歴と返信表示エリア */}
+            {history.length > 0 && (
+                <div style={{ marginTop: '40px' }}>
+                    <h2 className="y2k-title" style={{ fontSize: '1.5rem', marginBottom: '15px' }}>送付済みのお便り</h2>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                        {history.map(item => (
+                            <div key={item.id} className="y2k-window" style={{ marginBottom: 0, border: item.admin_reply ? '3px solid #0288d1' : '3px solid #ccc' }}>
+                                <div className="y2k-window-body" style={{ backgroundColor: item.admin_reply ? '#e1f5fe' : '#fff', padding: '15px' }}>
+                                    <div style={{ marginBottom: '10px', fontSize: '0.9rem', color: '#555', borderBottom: item.admin_reply ? '1px dashed #81d4fa' : '1px dashed #ccc', paddingBottom: '8px' }}>
+                                        <span style={{ fontWeight: 'bold' }}>あなたが送った内容：</span><br />
+                                        <span style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', display: 'inline-block', marginTop: '4px' }}>{item.content}</span>
+                                    </div>
+                                    {item.admin_reply ? (
+                                        <div style={{ marginTop: '10px' }}>
+                                            <div style={{ fontWeight: 'bold', color: '#0277bd', marginBottom: '5px' }}>管理人からのお返事：</div>
+                                            <div style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', color: '#01579b', fontSize: '0.95rem' }}>{item.admin_reply}</div>
+                                            <div style={{ marginTop: '8px', fontSize: '0.8rem', color: '#888', textAlign: 'right' }}>
+                                                {new Date(item.admin_replied_at).toLocaleString('ja-JP')}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div style={{ color: '#888', fontSize: '0.85rem', fontStyle: 'italic', textAlign: 'center', marginTop: '10px' }}>
+                                            （管理人のお返事待ちです☕️）
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
