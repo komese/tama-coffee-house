@@ -98,12 +98,27 @@ export default function AccountPage() {
             const targetTable = tableMap[locale] || 'messages';
 
             const { data: myData } = await supabase.from(targetTable).select('id').eq('author_id', currentSession.user.id);
+            let existingIds: string[] = [];
             if (myData && myData.length > 0) {
-                const myIds = myData.map(d => d.id);
+                existingIds = myData.map(d => d.id);
+            }
+            
+            // ゲスト時代の投稿も統合する
+            try {
+                const local = localStorage.getItem('tama_bbs_my_posts');
+                if (local) {
+                    const localIds = JSON.parse(local);
+                    if (Array.isArray(localIds)) {
+                        existingIds = Array.from(new Set([...existingIds, ...localIds]));
+                    }
+                }
+            } catch(e) { console.error(e); }
+
+            if (existingIds.length > 0) {
                 const { data: fetchReplies } = await supabase
                     .from(targetTable)
                     .select('id, content, nickname, created_at, parent_id, author_id, author_avatar_url')
-                    .in('parent_id', myIds)
+                    .in('parent_id', existingIds)
                     .order('created_at', { ascending: false });
 
                 if (fetchReplies) {
@@ -114,6 +129,7 @@ export default function AccountPage() {
                 localStorage.setItem('tama_bbs_last_checked', Date.now().toString());
                 window.dispatchEvent(new Event('tama_bbs_read'));
             }
+            
             setLoading(false);
         };
         fetchAll();
