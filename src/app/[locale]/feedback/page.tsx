@@ -80,24 +80,23 @@ export default function FeedbackPage() {
 
         try {
             const { data: { session } } = await supabase.auth.getSession();
-            const { data, error } = await supabase
+            const newId = crypto.randomUUID();
+            const { error } = await supabase
                 .from('feedbacks')
                 .insert([{
+                    id: newId,
                     content: content.trim(),
                     author_id: session?.user?.id || null,
-                }]).select();
+                }]);
 
             if (error) throw error;
             
             // 成功時にIDをlocalStorageへ記録する
-            if (data && data.length > 0) {
-                const newId = data[0].id;
-                try {
-                    const local = localStorage.getItem('tama_feedbacks');
-                    const localIds = local ? JSON.parse(local) : [];
-                    localStorage.setItem('tama_feedbacks', JSON.stringify([...localIds, newId]));
-                } catch(e) { console.error('Failed to save feedback id to local storage', e); }
-            }
+            try {
+                const local = localStorage.getItem('tama_feedbacks');
+                const localIds = local ? JSON.parse(local) : [];
+                localStorage.setItem('tama_feedbacks', JSON.stringify([...localIds, newId]));
+            } catch(e) { console.error('Failed to save feedback id to local storage', e); }
 
             setSent(true);
             fetchAllData(); // 履歴を再取得して表示更新する
