@@ -4,6 +4,13 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import { supabase } from '../../../lib/supabaseClient';
 import AuthModal from '@/components/AuthModal';
+import { LAND_DATA, SEA_DATA, SKY_DATA, FOREST_DATA } from '@/data/evolutionData';
+
+const allCharacters = [
+    ...LAND_DATA, ...SEA_DATA, ...SKY_DATA, ...FOREST_DATA
+].filter((char, index, self) =>
+    index === self.findIndex((t) => (t.iconUrl === char.iconUrl))
+);
 
 const REACTION_EMOJIS = ['👍', '❤️', '🤣', '🤯'] as const;
 
@@ -14,6 +21,7 @@ type Message = {
     parent_id?: string | number | null;
     content: string;
     image_url: string | null;
+    author_avatar_url?: string | null;
     created_at: string;
     reactions: any;
 };
@@ -38,6 +46,11 @@ export default function BBS() {
     const [myReactions, setMyReactions] = useState<Record<string, string[]>>({});
     const [replyTarget, setReplyTarget] = useState<{id: string | number, name: string} | null>(null);
     
+    // Guest Icon State
+    const DEFAULT_GUEST_ICON = '/images/characters/01_べびまるっち.png';
+    const [guestAvatarUrl, setGuestAvatarUrl] = useState<string | null>(DEFAULT_GUEST_ICON);
+    const [showPicker, setShowPicker] = useState(false);
+
     // Auth & Profile states
     const [session, setSession] = useState<any>(null);
     const [myProfile, setMyProfile] = useState<{ nickname: string, avatar_url: string | null } | null>(null);
@@ -248,6 +261,7 @@ export default function BBS() {
                 {
                     author_name: finalAuthorName,
                     author_id: session ? session.user.id : null,
+                    author_avatar_url: session ? null : guestAvatarUrl,
                     parent_id: replyTarget ? replyTarget.id : null,
                     content: finalContent,
                     image_url: imageUrl,
@@ -263,6 +277,12 @@ export default function BBS() {
         } else if (data && data.length > 0) {
             const newId = data[0].id;
 
+            setMessages(prev => {
+                // もしSupabaseのリアルタイム通信が先に反映していた場合の重複防止
+                if (prev.find(m => m.id === newId)) return prev;
+                return [data[0], ...prev];
+            });
+
             setMyMessageIds(prev => {
                 const updated = [...prev, newId];
                 localStorage.setItem('tama_bbs_my_posts', JSON.stringify(updated));
@@ -271,6 +291,7 @@ export default function BBS() {
 
             setNewName('');
             setNewContent('');
+            setGuestAvatarUrl(DEFAULT_GUEST_ICON);
             setImageFile(null);
             setReplyTarget(null);
             const fileInput = document.getElementById('image-upload') as HTMLInputElement;
@@ -291,6 +312,7 @@ export default function BBS() {
             console.error('Error deleting message:', error);
             alert(t('deleteError'));
         } else {
+            setMessages(prev => prev.filter(msg => msg.id !== id));
             setMyMessageIds(prev => {
                 const updated = prev.filter(mid => mid !== id);
                 localStorage.setItem('tama_bbs_my_posts', JSON.stringify(updated));
@@ -360,6 +382,31 @@ export default function BBS() {
                                     maxLength={20}
                                     required={!session}
                                 />
+                                
+                                <div style={{ marginTop: '15px' }}>
+                                    <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '0.9rem' }}>アイコン設定 (任意):</label>
+                                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                                        <div style={{ width: '40px', height: '40px', borderRadius: '12px', border: '2px solid var(--accent-color)', overflow: 'hidden' }}>
+                                            <img src={guestAvatarUrl || DEFAULT_GUEST_ICON} alt="icon" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        </div>
+                                        <button type="button" onClick={() => setShowPicker(!showPicker)} className="y2k-button" style={{ fontSize: '0.8rem', padding: '5px 10px' }}>
+                                            たまごっち一覧から選ぶ
+                                        </button>
+                                    </div>
+                                    {showPicker && (
+                                        <div style={{ padding: '10px', marginTop: '10px', border: '1px solid #ccc', backgroundColor: '#f9f9f9', borderRadius: '8px', maxHeight: '150px', overflowY: 'auto', display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
+                                            {allCharacters.map(char => (
+                                                <img
+                                                    key={char.id} src={char.iconUrl} alt={char.name} title={char.name}
+                                                    onClick={() => { setGuestAvatarUrl(char.iconUrl); setShowPicker(false); }}
+                                                    style={{ width: '40px', height: '40px', cursor: 'pointer', border: '1px solid transparent', borderRadius: '8px' }}
+                                                    onMouseOver={(e) => e.currentTarget.style.border = '1px solid var(--primary-color)'}
+                                                    onMouseOut={(e) => e.currentTarget.style.border = '1px solid transparent'}
+                                                />
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         )}
                         <div>
@@ -428,15 +475,27 @@ export default function BBS() {
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <span style={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>{profilesMap[m.author_id].nickname}</span>
+                                                    <span style={{ fontWeight: 'bold', color: 'var(--primary-color)', display: 'flex', alignItems: 'center' }}>
+                                                        {profilesMap[m.author_id].nickname}
+                                                        <img src="/images/verified_mark.png" alt="認証済み" title="認証済みユーザー" style={{ width: '18px', height: '18px', objectFit: 'contain', marginLeft: '6px' }} />
+                                                    </span>
                                                     <span style={{ marginLeft: '10px', fontSize: '0.8rem' }}>{formatDate(m.created_at)}</span>
                                                 </div>
                                             </>
                                         ) : (
-                                            <div>
-                                                <span style={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>{m.author_name}</span>
-                                                <span style={{ marginLeft: '10px', fontSize: '0.8rem' }}>{formatDate(m.created_at)}</span>
-                                            </div>
+                                            <>
+                                                <div style={{
+                                                    width: '32px', height: '32px', borderRadius: '10px', backgroundColor: '#eee',
+                                                    overflow: 'hidden', border: '1px solid #ddd',
+                                                    display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
+                                                }}>
+                                                    <img src={m.author_avatar_url || '/images/characters/01_べびまるっち.png'} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                </div>
+                                                <div>
+                                                    <span style={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>{m.author_name}</span>
+                                                    <span style={{ marginLeft: '10px', fontSize: '0.8rem' }}>{formatDate(m.created_at)}</span>
+                                                </div>
+                                            </>
                                         )}
                                     </div>
                                     <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>

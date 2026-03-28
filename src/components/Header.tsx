@@ -66,15 +66,15 @@ export default function Header() {
                 fontFamily: 'var(--font-main)',
                 letterSpacing: '1px'
             }}>
-                <Link href="/" style={{ color: 'var(--primary-color)' }}>{t('siteName')}</Link>
+                <Link prefetch={false} href="/" style={{ color: 'var(--primary-color)' }}>{t('siteName')}</Link>
             </div>
             <nav className="header-nav">
-                {cleanPath !== '/' && <Link href="/" className="y2k-nav-btn">{t('home')}</Link>}
-                {cleanPath !== '/simulator' && <Link href="/simulator" className="y2k-nav-btn">{t('simulator')}</Link>}
-                {!cleanPath.startsWith('/evolution') && <Link href="/#evolution" className="y2k-nav-btn">{t('evolution')}</Link>}
-                {cleanPath !== '/family-tree' && <Link href="/family-tree" className="y2k-nav-btn">{t('familyTree')}</Link>}
-                {cleanPath !== '/codes' && <Link href="/codes" className="y2k-nav-btn">{t('codes')}</Link>}
-                {cleanPath !== '/bbs' && <Link href="/bbs" className="y2k-nav-btn">{t('bbs')}</Link>}
+                {cleanPath !== '/' && <Link prefetch={false} href="/" className="y2k-nav-btn">{t('home')}</Link>}
+                {cleanPath !== '/simulator' && <Link prefetch={false} href="/simulator" className="y2k-nav-btn">{t('simulator')}</Link>}
+                {!cleanPath.startsWith('/evolution') && <Link prefetch={false} href="/#evolution" className="y2k-nav-btn">{t('evolution')}</Link>}
+                {cleanPath !== '/family-tree' && <Link prefetch={false} href="/family-tree" className="y2k-nav-btn">{t('familyTree')}</Link>}
+                {cleanPath !== '/codes' && <Link prefetch={false} href="/codes" className="y2k-nav-btn">{t('codes')}</Link>}
+                {cleanPath !== '/bbs' && <Link prefetch={false} href="/bbs" className="y2k-nav-btn">{t('bbs')}</Link>}
                 
                 {/* ログイン関係のUI */}
                 {!session ? (
