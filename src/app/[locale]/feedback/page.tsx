@@ -42,8 +42,8 @@ export default function FeedbackPage() {
     };
 
     return (
-        <div className="y2k-container" style={{ maxWidth: '600px', margin: '40px auto', padding: '0 20px' }}>
-            <div className="y2k-window">
+        <div className="y2k-container" style={{ maxWidth: '600px', margin: '40px auto', padding: '20px' }}>
+            <div className="y2k-window" style={{ margin: 0 }}>
                 <div className="y2k-window-header" style={{ backgroundColor: '#4b0082', color: 'white' }}>
                     📩 管理人への目安箱（ご意見・ご要望）
                 </div>
