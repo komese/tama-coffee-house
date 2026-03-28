@@ -114,6 +114,8 @@ export default function AccountPage() {
                 }
             } catch(e) { console.error(e); }
 
+            let allReplies: any[] = [];
+
             if (existingIds.length > 0) {
                 const { data: fetchReplies } = await supabase
                     .from(targetTable)
@@ -122,13 +124,37 @@ export default function AccountPage() {
                     .order('created_at', { ascending: false });
 
                 if (fetchReplies) {
-                    setReplies(fetchReplies);
+                    allReplies = [...fetchReplies];
                 }
 
                 // 通知バッジを消す（既読にする）
                 localStorage.setItem('tama_bbs_last_checked', Date.now().toString());
                 window.dispatchEvent(new Event('tama_bbs_read'));
             }
+
+            // 目安箱の管理人返信を取得
+            const { data: adminReplies } = await supabase
+                .from('feedbacks')
+                .select('id, content, admin_reply, admin_replied_at')
+                .eq('author_id', currentSession.user.id)
+                .not('admin_reply', 'is', null);
+
+            if (adminReplies && adminReplies.length > 0) {
+                const formattedAdminReplies = adminReplies.map(r => ({
+                    id: `feedback_${r.id}`,
+                    content: r.admin_reply,
+                    original_content: r.content,
+                    author_name: '管理人',
+                    is_admin_reply: true,
+                    created_at: r.admin_replied_at || new Date().toISOString()
+                }));
+                allReplies = [...allReplies, ...formattedAdminReplies];
+            }
+
+            // 日付で降順にソート（新しいものが上）
+            allReplies.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+            
+            setReplies(allReplies);
             
             setLoading(false);
         };
@@ -301,16 +327,24 @@ export default function AccountPage() {
                     ) : (
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                             {replies.map(reply => (
-                                <div key={reply.id} style={{ border: '1px solid #ccc', padding: '10px', borderRadius: '8px', backgroundColor: '#fff' }}>
+                                <div key={reply.id} style={{ border: reply.is_admin_reply ? '2px solid #9c27b0' : '1px solid #ccc', padding: '10px', borderRadius: '8px', backgroundColor: reply.is_admin_reply ? '#f3e5f5' : '#fff' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px', fontSize: '0.9rem' }}>
                                         <div style={{ fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                            {reply.image_url && !reply.author_id /* For anonymous reply without icon logic, wait, anonymous uses author_name */}
-                                            {/* We dont have full profile for the replier here unless we join, but we only have author_name in messages table! */}
-                                            {reply.author_name} さんからの返信
+                                            {reply.is_admin_reply ? (
+                                                <span style={{ color: '#6a1b9a' }}>👑 管理人からのお返事</span>
+                                            ) : (
+                                                <>{reply.author_name} さんからの返信</>
+                                            )}
                                         </div>
                                         <span style={{ color: '#888' }}>{formatDate(reply.created_at)}</span>
                                     </div>
-                                    <div style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: '0.9rem' }}>{reply.content}</div>
+                                    <div style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: '0.9rem', color: reply.is_admin_reply ? '#4a148c' : 'inherit' }}>{reply.content}</div>
+                                    {reply.is_admin_reply && reply.original_content && (
+                                        <div style={{ marginTop: '10px', fontSize: '0.8rem', color: '#666', borderTop: '1px dashed #ce93d8', paddingTop: '8px' }}>
+                                            <strong>あなたが送った目安箱：</strong><br />
+                                            <span style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', display: 'inline-block', marginTop: '4px' }}>{reply.original_content}</span>
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>
