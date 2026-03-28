@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
@@ -14,6 +14,25 @@ export default function FeedbackPage() {
     const [sending, setSending] = useState(false);
     const [sent, setSent] = useState(false);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+    const [session, setSession] = useState<any>(null);
+    const [myProfile, setMyProfile] = useState<{ nickname: string, avatar_url: string | null } | null>(null);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            const { data: { session: currentSession } } = await supabase.auth.getSession();
+            if (currentSession) {
+                setSession(currentSession);
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('nickname, avatar_url')
+                    .eq('id', currentSession.user.id)
+                    .single();
+                if (profile) setMyProfile(profile);
+            }
+        };
+        fetchUser();
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -70,6 +89,26 @@ export default function FeedbackPage() {
                             {errorMsg && (
                                 <div style={{ color: 'red', fontSize: '0.9rem', padding: '10px', backgroundColor: '#ffe5e5', borderRadius: '5px' }}>
                                     {errorMsg}
+                                </div>
+                            )}
+
+                            {session && myProfile && (
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '5px', padding: '12px', backgroundColor: '#f0f8ff', borderRadius: '8px', border: '1px dashed #add8e6' }}>
+                                    <div style={{ width: '40px', height: '40px', borderRadius: '12px', border: '2px solid var(--accent-color)', overflow: 'hidden', flexShrink: 0 }}>
+                                        {myProfile.avatar_url ? (
+                                            <img src={myProfile.avatar_url} alt="icon" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                        ) : (
+                                            <div style={{ width: '100%', height: '100%', backgroundColor: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>👤</div>
+                                        )}
+                                    </div>
+                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                        <span style={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>
+                                            {myProfile.nickname} <span style={{fontSize: '0.8rem', color: '#666', fontWeight: 'normal'}}>として送信</span>
+                                        </span>
+                                        <span style={{ fontSize: '0.75rem', color: '#888' }}>
+                                            ※送信内容は誰にも公開されません
+                                        </span>
+                                    </div>
                                 </div>
                             )}
 
