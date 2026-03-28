@@ -117,7 +117,7 @@ export default function AccountPage() {
             if (existingIds.length > 0) {
                 const { data: fetchReplies } = await supabase
                     .from(targetTable)
-                    .select('id, content, nickname, created_at, parent_id, author_id, author_avatar_url')
+                    .select('id, content, author_name, created_at, parent_id, author_id, author_avatar_url')
                     .in('parent_id', existingIds)
                     .order('created_at', { ascending: false });
 
