@@ -100,14 +100,19 @@ export default function AccountPage() {
             const { data: myData } = await supabase.from(targetTable).select('id').eq('author_id', currentSession.user.id);
             if (myData && myData.length > 0) {
                 const myIds = myData.map(d => d.id);
-                const { data: repliesData } = await supabase.from(targetTable)
-                    .select('*')
+                const { data: fetchReplies } = await supabase
+                    .from(targetTable)
+                    .select('id, content, nickname, created_at, parent_id, author_id, author_avatar_url')
                     .in('parent_id', myIds)
                     .order('created_at', { ascending: false });
-                
-                if (repliesData) {
-                    setReplies(repliesData);
+
+                if (fetchReplies) {
+                    setReplies(fetchReplies);
                 }
+
+                // 通知バッジを消す（既読にする）
+                localStorage.setItem('tama_bbs_last_checked', Date.now().toString());
+                window.dispatchEvent(new Event('tama_bbs_read'));
             }
             setLoading(false);
         };

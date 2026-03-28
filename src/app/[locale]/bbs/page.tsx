@@ -69,18 +69,18 @@ export default function BBS() {
         }
     }, []);
 
-    // 初回マウント時にメッセージを取得＆LocalStorageから自分の投稿IDリストを復元
+    // 初回マウント時にメッセージを取得＆LocalStorageから自分の投稿IDリストを復元＆既読状態を更新
     useEffect(() => {
         fetchMessages();
 
-        try {
-            const saved = localStorage.getItem('tama_bbs_my_posts');
-            if (saved) {
-                setMyMessageIds(JSON.parse(saved));
-            }
-        } catch (e) {
-            console.error('Failed to parse my posts from local storage', e);
+        const savedPosts = localStorage.getItem('tama_bbs_my_posts');
+        if (savedPosts) {
+            setMyMessageIds(JSON.parse(savedPosts));
         }
+
+        // 通知バッジを消す（既読にする）
+        localStorage.setItem('tama_bbs_last_checked', Date.now().toString());
+        window.dispatchEvent(new Event('tama_bbs_read'));
 
         // Auth状態の取得
         supabase.auth.getSession().then(({ data: { session } }) => {

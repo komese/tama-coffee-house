@@ -52,6 +52,54 @@ export default function Header() {
         if (data) setProfile(data);
     };
 
+    const [unreadCount, setUnreadCount] = useState(0);
+
+    useEffect(() => {
+        let mounted = true;
+        const fetchUnread = async () => {
+            try {
+                const saved = localStorage.getItem('tama_bbs_my_posts');
+                if (!saved) return;
+                const myIds = JSON.parse(saved);
+                if (!Array.isArray(myIds) || myIds.length === 0) return;
+
+                const lastCheckedStr = localStorage.getItem('tama_bbs_last_checked');
+                // 初回は3日前を基準とする
+                const lastChecked = lastCheckedStr ? parseInt(lastCheckedStr, 10) : Date.now() - (3 * 24 * 60 * 60 * 1000);
+                const lastCheckedIso = new Date(lastChecked).toISOString();
+
+                const targetTable = locale === 'ja' ? 'messages' : `${locale}_messages`;
+                const { supabase } = require('../lib/supabaseClient');
+
+                const { count, error } = await supabase
+                    .from(targetTable)
+                    .select('*', { count: 'exact', head: true })
+                    .in('parent_id', myIds)
+                    .gt('created_at', lastCheckedIso);
+
+                if (!error && count !== null && mounted) {
+                    setUnreadCount(count);
+                }
+            } catch (err) {
+                console.error('Failed to fetch unread count', err);
+            }
+        };
+
+        fetchUnread();
+
+        const handleRead = () => { if (mounted) setUnreadCount(0); };
+        window.addEventListener('tama_bbs_read', handleRead);
+        
+        const handleVisibility = () => { if (document.visibilityState === 'visible' && mounted) fetchUnread(); };
+        document.addEventListener('visibilitychange', handleVisibility);
+
+        return () => {
+            mounted = false;
+            window.removeEventListener('tama_bbs_read', handleRead);
+            document.removeEventListener('visibilitychange', handleVisibility);
+        };
+    }, [locale]);
+
     const handleLogout = async () => {
         const { supabase } = require('../lib/supabaseClient');
         await supabase.auth.signOut();
@@ -77,32 +125,53 @@ export default function Header() {
                 {cleanPath !== '/bbs' && <Link prefetch={false} href="/bbs" className="y2k-nav-btn">{t('bbs')}</Link>}
                 
                 {/* ログイン関係のUI */}
-                {!session ? (
-                    <button onClick={() => setShowAuthModal(true)} className="y2k-nav-btn" style={{ background: '#ffefd5', color: '#8b4513' }}>
-                        ログイン
-                    </button>
-                ) : (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <div 
-                            onClick={() => setShowProfileSetup(true)}
-                            title="プロフィール設定"
-                            style={{
-                                width: '30px', height: '30px', borderRadius: '10px', backgroundColor: '#eee',
-                                overflow: 'hidden', cursor: 'pointer', border: '2px solid var(--accent-color)',
-                                display: 'flex', alignItems: 'center', justifyContent: 'center'
-                            }}
-                        >
-                            {profile?.avatar_url ? (
-                                <img src={profile.avatar_url} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                            ) : (
-                                <span style={{ fontSize: '1.2rem' }}>👤</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {!session ? (
+                        <button onClick={() => setShowAuthModal(true)} className="y2k-nav-btn" style={{ background: '#ffefd5', color: '#8b4513' }}>
+                            ログイン
+                        </button>
+                    ) : null}
+
+                    {(session || unreadCount > 0) && (
+                        <div style={{ position: 'relative' }}>
+                            <div 
+                                onClick={() => session ? setShowProfileSetup(true) : window.location.assign(`/${locale}/account`)}
+                                title="プロフィール設定 / 通知"
+                                style={{
+                                    width: '30px', height: '30px', borderRadius: '10px', backgroundColor: '#eee',
+                                    overflow: 'hidden', cursor: 'pointer', border: '2px solid var(--accent-color)',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                }}
+                            >
+                                {profile?.avatar_url ? (
+                                    <img src={profile.avatar_url} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ) : (
+                                    <span style={{ fontSize: '1.2rem' }}>👤</span>
+                                )}
+                            </div>
+                            
+                            {unreadCount > 0 && (
+                                <div style={{
+                                    position: 'absolute', top: '-4px', right: '-4px',
+                                    backgroundColor: '#ff4444', color: 'white',
+                                    borderRadius: '50%', minWidth: '18px', height: '18px',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    fontSize: '11px', fontWeight: 'bold',
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.3)', padding: '0 4px',
+                                    pointerEvents: 'none', border: '1px solid white'
+                                }}>
+                                    {unreadCount > 99 ? '99+' : unreadCount}
+                                </div>
                             )}
                         </div>
+                    )}
+                    
+                    {session && (
                         <button onClick={handleLogout} className="y2k-nav-btn" style={{ padding: '2px 8px', fontSize: '0.8rem', background: '#ffe4e1', color: '#8b0000' }}>
                             ログアウト
                         </button>
-                    </div>
-                )}
+                    )}
+                </div>
 
                 {cleanPath !== '/bbs' && (
                     <select
