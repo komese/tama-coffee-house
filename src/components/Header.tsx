@@ -55,6 +55,7 @@ export default function Header() {
     const [unreadCount, setUnreadCount] = useState(0);
 
     useEffect(() => {
+        if (!session) return; // ログイン時のみ実行
         let mounted = true;
         const fetchUnread = async () => {
             try {
@@ -98,7 +99,7 @@ export default function Header() {
             window.removeEventListener('tama_bbs_read', handleRead);
             document.removeEventListener('visibilitychange', handleVisibility);
         };
-    }, [locale]);
+    }, [locale, session]);
 
     const handleLogout = async () => {
         const { supabase } = require('../lib/supabaseClient');
@@ -132,7 +133,8 @@ export default function Header() {
                         </button>
                     ) : null}
 
-                    {(session || unreadCount > 0) && (
+                    {/* アカウントアイコン＆バッジ（ログイン時のみ表示） */}
+                    {session && (
                         <div style={{ position: 'relative' }}>
                             <div 
                                 onClick={() => session ? setShowProfileSetup(true) : window.location.assign(`/${locale}/account`)}
