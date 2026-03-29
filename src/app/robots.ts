@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
-    const baseUrl = 'https://tama-coffee-house.vercel.app'; // Vercelデプロイ後の仮URLをセット
+    const baseUrl = 'https://tama-coffee-house.vercel.app'; 
 
     return {
         rules: [
@@ -10,19 +10,15 @@ export default function robots(): MetadataRoute.Robots {
                 allow: '/',
             },
             {
-                userAgent: 'Bytespider',
-                disallow: '/',
-            },
-            {
-                userAgent: 'Amazonbot',
-                disallow: '/',
-            },
-            {
-                userAgent: 'ClaudeBot',
-                disallow: '/',
-            },
-            {
-                userAgent: 'GPTBot',
+                // 主要なアクセス過多なボットやスクレイパーを一斉にブロック
+                userAgent: [
+                    'Bytespider', 'Amazonbot', 'ClaudeBot', 'GPTBot',
+                    'PetalBot', 'SemrushBot', 'AhrefsBot', 'MJ12bot',
+                    'DotBot', 'Baiduspider', 'YandexBot', 'Barkrowler',
+                    'BLEXBot', 'MegaIndex.ru', 'bingbot', 'TurnitinBot',
+                    'DataForSeoBot', 'SeekportBot', 'CensysInspect', 'AwarioRssBot',
+                    'YisouSpider', 'Sogou web spider', '360Spider'
+                ],
                 disallow: '/',
             }
         ],

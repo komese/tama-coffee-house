@@ -251,7 +251,7 @@ export default function ProfileSetup({ userId, onClose, onProfileUpdated }: { us
                         <button type="submit" className="y2k-button" disabled={saving || !nickname.trim()} style={{ marginTop: '10px' }}>
                             {saving ? t('saving') : t('save')}
                         </button>
-                        <Link href={`/${locale}/account`} className="y2k-button" onClick={onClose} style={{ textAlign: 'center', backgroundColor: '#e6e6fa', color: '#4b0082', marginTop: '10px', textDecoration: 'none', display: 'block' }}>
+                        <Link prefetch={false} href={`/${locale}/account`} className="y2k-button" onClick={onClose} style={{ textAlign: 'center', backgroundColor: '#e6e6fa', color: '#4b0082', marginTop: '10px', textDecoration: 'none', display: 'block' }}>
                             アカウント管理
                         </Link>
                     </form>

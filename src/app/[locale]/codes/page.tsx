@@ -151,7 +151,7 @@ export default function CodesPage() {
       )}
 
       <div style={{ textAlign: 'center', marginTop: '20px', marginBottom: '30px' }}>
-        <Link href={`/${locale}`} className="y2k-nav-btn">{t('backHome')}</Link>
+        <Link prefetch={false} href={`/${locale}`} className="y2k-nav-btn">{t('backHome')}</Link>
       </div>
     </div>
   );

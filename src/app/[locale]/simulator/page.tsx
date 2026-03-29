@@ -17,7 +17,7 @@ export default async function SimulatorPage() {
     return (
         <main style={{ padding: '20px' }}>
             <div style={{ maxWidth: '800px', margin: '0 auto', marginBottom: '20px' }}>
-                <Link href="/" style={{ color: 'var(--accent-color)', fontWeight: 'bold', textDecoration: 'underline' }}>
+                <Link prefetch={false} href="/" style={{ color: 'var(--accent-color)', fontWeight: 'bold', textDecoration: 'underline' }}>
                     {t('backHome')}
                 </Link>
             </div>

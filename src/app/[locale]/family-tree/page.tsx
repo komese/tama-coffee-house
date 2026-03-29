@@ -548,7 +548,7 @@ export default function FamilyTreePage() {
       </div>
       
       <div style={{ textAlign: 'center', marginTop: '20px' }}>
-        <Link href="/" className="y2k-button" style={{ padding: '8px 15px', fontSize: '0.9rem' }}>{t('backHome')}</Link>
+        <Link prefetch={false} href="/" className="y2k-button" style={{ padding: '8px 15px', fontSize: '0.9rem' }}>{t('backHome')}</Link>
       </div>
 
       {/* 画像プレビューモーダル */}
