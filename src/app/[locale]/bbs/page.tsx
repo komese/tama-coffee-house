@@ -211,6 +211,19 @@ export default function BBS() {
         if (imageFile) {
             let uploadFile: File | Blob = imageFile;
             let fileExt = imageFile.name.split('.').pop()?.toLowerCase() || '';
+            
+            // ピリオドがない（拡張子がない）ファイル名の場合のフォールバック
+            if (!imageFile.name.includes('.')) {
+                if (imageFile.type === 'image/png') fileExt = 'png';
+                else if (imageFile.type === 'image/jpeg' || imageFile.type === 'image/jpg') fileExt = 'jpeg';
+                else if (imageFile.type === 'image/gif') fileExt = 'gif';
+                else fileExt = 'png';
+            }
+
+            let fileContentType = imageFile.type;
+            if (!fileContentType) {
+                fileContentType = fileExt === 'jpeg' || fileExt === 'jpg' ? 'image/jpeg' : `image/${fileExt}`;
+            }
 
             // HEIC/HEIFの変換処理
             if (fileExt === 'heic' || fileExt === 'heif' || imageFile.type === 'image/heic' || imageFile.type === 'image/heif') {
@@ -237,12 +250,14 @@ export default function BBS() {
             const { error: uploadError } = await supabase.storage
                 .from('bbs-images')
                 .upload(filePath, uploadFile, {
-                    contentType: fileExt === 'jpeg' ? 'image/jpeg' : imageFile.type
+                    contentType: fileExt === 'jpeg' ? 'image/jpeg' : fileContentType
                 });
 
             if (uploadError) {
                 console.error('Error uploading image:', uploadError);
-                alert(t('uploadError'));
+                // エラー内容の詳細を付与して何が原因か突き止めやすくする
+                const errDetail = uploadError.message ? uploadError.message : (typeof uploadError === 'string' ? uploadError : JSON.stringify(uploadError));
+                alert(`${t('uploadError')} 詳細: ${errDetail}`);
                 setSaving(false);
                 return;
             }
