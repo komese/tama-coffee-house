@@ -13,6 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         { path: '/evolution/sea', changeFrequency: 'monthly', priority: 0.8 },
         { path: '/evolution/sky', changeFrequency: 'monthly', priority: 0.8 },
         { path: '/evolution/forest', changeFrequency: 'monthly', priority: 0.8 },
+        { path: '/codes', changeFrequency: 'monthly', priority: 0.8 },
         { path: '/bbs', changeFrequency: 'daily', priority: 0.7 },
     ];
 
