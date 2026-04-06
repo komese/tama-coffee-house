@@ -5,6 +5,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { supabase } from '../../../lib/supabaseClient';
 import AuthModal from '@/components/AuthModal';
 import { LAND_DATA, SEA_DATA, SKY_DATA, FOREST_DATA } from '@/data/evolutionData';
+import Avatar from 'boring-avatars';
 
 const allCharacters = [
     ...LAND_DATA, ...SEA_DATA, ...SKY_DATA, ...FOREST_DATA
@@ -44,12 +45,45 @@ export default function BBS() {
     const [saving, setSaving] = useState(false);
     const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
     const [myReactions, setMyReactions] = useState<Record<string, string[]>>({});
-    const [replyTarget, setReplyTarget] = useState<{id: string | number, name: string} | null>(null);
-    
+    const [replyTarget, setReplyTarget] = useState<{ id: string | number, name: string } | null>(null);
+
     // Guest Icon State
     const DEFAULT_GUEST_ICON = '/images/characters/01_べびまるっち.png';
     const [guestAvatarUrl, setGuestAvatarUrl] = useState<string | null>(DEFAULT_GUEST_ICON);
     const [showPicker, setShowPicker] = useState(false);
+    const [tripPassword, setTripPassword] = useState('');
+    const [previewSeed, setPreviewSeed] = useState('');
+
+    useEffect(() => {
+        let active = true;
+        if (!tripPassword) {
+            setPreviewSeed(newName || '?');
+            return;
+        }
+        const hashPwd = async () => {
+            try {
+                const msgUint8 = new TextEncoder().encode(tripPassword);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+                if (!active) return;
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                setPreviewSeed(hashArray.map(b => b.toString(16).padStart(2, '0')).join(''));
+            } catch {
+                if (active) setPreviewSeed(newName || '?');
+            }
+        };
+        hashPwd();
+        return () => { active = false; };
+    }, [newName, tripPassword]);
+
+    // 名前とパスワードの保持
+    useEffect(() => {
+        if (newName) localStorage.setItem('tama_bbs_author_name', newName);
+    }, [newName]);
+
+    useEffect(() => {
+        if (tripPassword) localStorage.setItem('tama_bbs_trip_password', tripPassword);
+        else localStorage.removeItem('tama_bbs_trip_password');
+    }, [tripPassword]);
 
     // Auth & Profile states
     const [session, setSession] = useState<any>(null);
@@ -77,6 +111,11 @@ export default function BBS() {
         if (savedPosts) {
             setMyMessageIds(JSON.parse(savedPosts));
         }
+
+        const savedName = localStorage.getItem('tama_bbs_author_name');
+        if (savedName) setNewName(savedName);
+        const savedPass = localStorage.getItem('tama_bbs_trip_password');
+        if (savedPass) setTripPassword(savedPass);
 
         // 通知バッジを消す（既読にする）
         localStorage.setItem('tama_bbs_last_checked', Date.now().toString());
@@ -199,19 +238,31 @@ export default function BBS() {
 
     const handlePost = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         // ログイン時はプロフィールの名前を使い、非ログイン時はフォームの名前を使う
         const finalAuthorName = session && myProfile ? myProfile.nickname : newName.trim();
         if (!finalAuthorName || (!newContent.trim() && !imageFile)) return;
 
         setSaving(true);
         let imageUrl = null;
+        let finalGuestAvatarSeed = null;
+
+        if (!session && tripPassword) {
+            try {
+                const msgUint8 = new TextEncoder().encode(tripPassword);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                finalGuestAvatarSeed = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            } catch (err) {
+                console.error("Hash error:", err);
+            }
+        }
 
         // 画像のアップロード処理
         if (imageFile) {
             let uploadFile: File | Blob = imageFile;
             let fileExt = imageFile.name.split('.').pop()?.toLowerCase() || '';
-            
+
             // ピリオドがない（拡張子がない）ファイル名の場合のフォールバック
             if (!imageFile.name.includes('.')) {
                 if (imageFile.type === 'image/png') fileExt = 'png';
@@ -276,7 +327,7 @@ export default function BBS() {
                 {
                     author_name: finalAuthorName,
                     author_id: session ? session.user.id : null,
-                    author_avatar_url: session ? null : guestAvatarUrl,
+                    author_avatar_url: session ? null : (finalGuestAvatarSeed ? `${guestAvatarUrl}|${finalGuestAvatarSeed}` : guestAvatarUrl),
                     parent_id: replyTarget ? replyTarget.id : null,
                     content: finalContent,
                     image_url: imageUrl,
@@ -304,7 +355,6 @@ export default function BBS() {
                 return updated;
             });
 
-            setNewName('');
             setNewContent('');
             setGuestAvatarUrl(DEFAULT_GUEST_ICON);
             setImageFile(null);
@@ -374,15 +424,20 @@ export default function BBS() {
                                         <span style={{ fontSize: '1.2rem' }}>👤</span>
                                     )}
                                 </div>
-                                <span style={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>{myProfile.nickname} <span style={{fontSize: '0.8rem', color: '#666', fontWeight: 'normal'}}>として投稿</span></span>
+                                <span style={{ fontWeight: 'bold', color: 'var(--primary-color)', display: 'flex', alignItems: 'center' }}>
+                                    <span style={{ marginRight: '6px' }}>{myProfile.nickname}</span>
+                                    <img src="/images/verified_mark.png" alt="認証済み" title="認証済みユーザー" style={{ width: '18px', height: '18px', objectFit: 'contain', marginRight: '6px' }} />
+                                    <Avatar name={session.user.id} variant="beam" size={37} colors={['#F28B82', '#FBBC04', '#81C995', '#78D9EC', '#B39DDB']} />
+                                    <span style={{ fontSize: '0.8rem', color: '#666', fontWeight: 'normal', marginLeft: '10px' }}>として投稿</span>
+                                </span>
                             </div>
                         ) : (
                             <div>
                                 <label style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '5px', fontWeight: 'bold' }}>
                                     <span>{t('nameLabel')}:</span>
-                                    <button 
-                                        type="button" 
-                                        onClick={() => setShowAuthModal(true)} 
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowAuthModal(true)}
                                         style={{ background: 'none', border: 'none', color: 'var(--primary-color)', textDecoration: 'underline', cursor: 'pointer', fontSize: '0.8rem' }}
                                     >
                                         ※ アカウントをお持ちの方はこちら
@@ -391,22 +446,42 @@ export default function BBS() {
                                 <input
                                     type="text"
                                     className="y2k-input"
+                                    style={{ width: '100%', boxSizing: 'border-box' }}
                                     value={newName}
                                     onChange={(e) => setNewName(e.target.value)}
                                     placeholder={t('namePlaceholder')}
                                     maxLength={20}
                                     required={!session}
                                 />
-                                
+
                                 <div style={{ marginTop: '15px' }}>
                                     <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', fontSize: '0.9rem' }}>アイコン設定 (任意):</label>
-                                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                                    <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
                                         <div style={{ width: '40px', height: '40px', borderRadius: '12px', border: '2px solid var(--accent-color)', overflow: 'hidden' }}>
                                             <img src={guestAvatarUrl || DEFAULT_GUEST_ICON} alt="icon" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                         </div>
                                         <button type="button" onClick={() => setShowPicker(!showPicker)} className="y2k-button" style={{ fontSize: '0.8rem', padding: '5px 10px' }}>
                                             たまごっち一覧から選ぶ
                                         </button>
+                                        <div style={{ marginLeft: '10px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <input
+                                                type="text"
+                                                className="y2k-input"
+                                                style={{ width: '180px', padding: '5px 8px', fontSize: '0.85rem' }}
+                                                value={tripPassword}
+                                                onChange={(e) => setTripPassword(e.target.value)}
+                                                placeholder="自分だけのパスワード"
+                                                maxLength={20}
+                                            />
+                                            <div style={{ width: '37px', display: 'flex', justifyContent: 'center' }}>
+                                                {tripPassword && (
+                                                    <Avatar name={previewSeed} variant="beam" size={37} colors={['#F28B82', '#FBBC04', '#81C995', '#78D9EC', '#B39DDB']} />
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style={{ marginTop: '5px', fontSize: '0.8rem', color: '#666' }}>
+                                        ※パスワードは、ほかの人がぜったいに分からないものにしてね！
                                     </div>
                                     {showPicker && (
                                         <div style={{ padding: '10px', marginTop: '10px', border: '1px solid #ccc', backgroundColor: '#f9f9f9', borderRadius: '8px', maxHeight: '150px', overflowY: 'auto', display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
@@ -492,7 +567,8 @@ export default function BBS() {
                                                 <div>
                                                     <span style={{ fontWeight: 'bold', color: 'var(--primary-color)', display: 'flex', alignItems: 'center' }}>
                                                         {profilesMap[m.author_id].nickname}
-                                                        <img src="/images/verified_mark.png" alt="認証済み" title="認証済みユーザー" style={{ width: '18px', height: '18px', objectFit: 'contain', marginLeft: '6px' }} />
+                                                        <img src="/images/verified_mark.png" alt="認証済み" title="認証済みユーザー" style={{ width: '18px', height: '18px', objectFit: 'contain', marginLeft: '6px', marginRight: '6px' }} />
+                                                        <Avatar name={m.author_id} variant="beam" size={37} colors={['#F28B82', '#FBBC04', '#81C995', '#78D9EC', '#B39DDB']} />
                                                     </span>
                                                     <span style={{ marginLeft: '10px', fontSize: '0.8rem' }}>{formatDate(m.created_at)}</span>
                                                 </div>
@@ -504,10 +580,15 @@ export default function BBS() {
                                                     overflow: 'hidden', border: '1px solid #ddd',
                                                     display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0
                                                 }}>
-                                                    <img src={m.author_avatar_url || '/images/characters/01_べびまるっち.png'} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                    <img src={(m.author_avatar_url || '').split('|')[0] || '/images/characters/01_べびまるっち.png'} alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                                                 </div>
                                                 <div>
-                                                    <span style={{ fontWeight: 'bold', color: 'var(--primary-color)' }}>{m.author_name}</span>
+                                                    <span style={{ fontWeight: 'bold', color: 'var(--primary-color)', display: 'flex', alignItems: 'center' }}>
+                                                        <span style={{ marginRight: '6px' }}>{m.author_name}</span>
+                                                        {m.author_avatar_url && m.author_avatar_url.includes('|') && (
+                                                            <Avatar name={m.author_avatar_url.split('|')[1]} variant="beam" size={37} colors={['#F28B82', '#FBBC04', '#81C995', '#78D9EC', '#B39DDB']} />
+                                                        )}
+                                                    </span>
                                                     <span style={{ marginLeft: '10px', fontSize: '0.8rem' }}>{formatDate(m.created_at)}</span>
                                                 </div>
                                             </>
@@ -595,7 +676,7 @@ export default function BBS() {
                     >×</button>
                 </div>
             )}
-            
+
             {showAuthModal && (
                 <AuthModal onClose={() => setShowAuthModal(false)} />
             )}

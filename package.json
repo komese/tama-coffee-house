@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.98.0",
+    "boring-avatars": "^2.0.4",
     "heic2any": "^0.0.4",
     "html2canvas": "^1.4.1",
     "next": "16.1.6",
