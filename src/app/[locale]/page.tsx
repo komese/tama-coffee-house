@@ -28,7 +28,7 @@ export default function Home() {
           </div>
 
           <Link prefetch={false} href="/family-tree" className="y2k-button" style={{ alignSelf: 'center', marginTop: '15px' }}>{t('familyTree')}</Link>
-          <Link prefetch={false} href="/beginner" className="y2k-button" style={{ alignSelf: 'center', marginTop: '15px' }}>{t('beginner')}</Link>
+          <Link prefetch={false} href="/beginner" className="y2k-button" style={{ alignSelf: 'center', marginTop: '15px' }}>🔰 序盤の進め方</Link>
           <Link prefetch={false} href="/codes" className="y2k-button" style={{ alignSelf: 'center', marginTop: '15px' }}>{t('codes')}</Link>
           <Link prefetch={false} href="/events" className="y2k-button" style={{ alignSelf: 'center', marginTop: '15px' }}>🎉イベントリスト</Link>
           <Link prefetch={false} href="/bbs" className="y2k-button" style={{ alignSelf: 'center', marginTop: '15px' }}>{t('bbs')}</Link>
