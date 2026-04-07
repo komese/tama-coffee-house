@@ -123,6 +123,7 @@ export default function Header() {
                 {!cleanPath.startsWith('/evolution') && <Link prefetch={false} href="/#evolution" className="y2k-nav-btn">{t('evolution')}</Link>}
                 {cleanPath !== '/family-tree' && <Link prefetch={false} href="/family-tree" className="y2k-nav-btn">{t('familyTree')}</Link>}
                 {cleanPath !== '/codes' && <Link prefetch={false} href="/codes" className="y2k-nav-btn">{t('codes')}</Link>}
+                {cleanPath !== '/beginner' && <Link prefetch={false} href="/beginner" className="y2k-nav-btn">{t('beginner')}</Link>}
                 {cleanPath !== '/events' && <Link prefetch={false} href="/events" className="y2k-nav-btn">{t('events')}</Link>}
                 {cleanPath !== '/bbs' && <Link prefetch={false} href="/bbs" className="y2k-nav-btn">{t('bbs')}</Link>}
                 
