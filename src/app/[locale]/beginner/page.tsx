@@ -17,7 +17,7 @@ export default function BeginnerGuide() {
             </div>
 
             <div className="y2k-window" style={{ marginBottom: '30px' }}>
-                <div className="y2k-window-header">🥚 最初のたまごっちをしっかりお世話しよう</div>
+                <div className="y2k-window-header">最初のたまごっちをしっかりお世話しよう</div>
                 <div className="y2k-window-body" style={{ lineHeight: '1.8' }}>
                     ゲームを開始したら、<strong>言語、日時、自分の誕生日</strong>を設定します。<br />
                     その後、ズームダイヤルを押すと「エッグバン」が起こり、最初のたまごっちのたまごが誕生します。<br />
