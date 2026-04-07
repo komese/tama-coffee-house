@@ -6,7 +6,8 @@
     "evolution": "Evolution",
     "familyTree": "Family Tree",
     "bbs": "Community Board",
-    "codes": "Codes"
+    "codes": "Codes",
+    "events": "Events"
   },
   "footer": {
     "title": "☕ TAMA COFFEE HOUSE ☕",
@@ -163,7 +164,9 @@
     "forestTitle": "Forest Evolution Guide",
     "evolutionDescription": "A comprehensive list of all evolution conditions (Land, Sea, Sky, Forest) for Tamagotchi Paradise! Handy for raising your favorite characters.",
     "codesTitle": "Shop & Lab Code List | Tama Coffee House",
-    "codesDescription": "Complete list of Shop and Lab codes for Tamagotchi Paradise. Search and copy codes for food, snacks, toys, planet decorations, and lab characters."
+    "codesDescription": "Complete list of Shop and Lab codes for Tamagotchi Paradise. Search and copy codes for food, snacks, toys, planet decorations, and lab characters.",
+    "eventsTitle": "Event List | Tama Coffee House",
+    "eventsDescription": "Check out special and monthly events in Tamagotchi Paradise!"
   },
   "codes": {
     "title": "Shop & Lab Code List",
@@ -200,5 +203,14 @@
     "toggleSignUp": "Don't have an account? Sign up",
     "toggleLogin": "Already have an account? Login",
     "loginToPost": "Login to Post"
+  },
+  "events": {
+    "title": "Event List",
+    "subtitle": "Tamapara Events",
+    "specialTab": "Special Events",
+    "monthlyTab": "Monthly Events",
+    "dateHeader": "When?",
+    "descHeader": "Description",
+    "backHome": "Back to Home"
   }
 }

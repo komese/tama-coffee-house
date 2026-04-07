@@ -29,6 +29,7 @@ export default function Home() {
 
           <Link prefetch={false} href="/family-tree" className="y2k-button" style={{ alignSelf: 'center', marginTop: '15px' }}>{t('familyTree')}</Link>
           <Link prefetch={false} href="/codes" className="y2k-button" style={{ alignSelf: 'center', marginTop: '15px' }}>{t('codes')}</Link>
+          <Link prefetch={false} href="/events" className="y2k-button" style={{ alignSelf: 'center', marginTop: '15px' }}>🎉イベントリスト</Link>
           <Link prefetch={false} href="/bbs" className="y2k-button" style={{ alignSelf: 'center', marginTop: '15px' }}>{t('bbs')}</Link>
           <Link prefetch={false} href="/account" className="y2k-button" style={{ alignSelf: 'center', marginTop: '15px', backgroundColor: '#e6e6fa', color: '#4b0082' }}>アカウント管理</Link>
         </div>

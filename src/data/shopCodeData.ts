@@ -142,4 +142,5 @@ export const SHOP_CODE_DATA: CodeItem[] = [
   { id: 'lab_kanokotchi', nameJa: 'かのこっち', nameEn: 'Kanokotchi', code: '4Y8E CKXP', category: 'lab' },
   { id: 'lab_tokipatchi', nameJa: 'ときぱっち', nameEn: 'Tokipatchi', code: '02UX R90S', category: 'lab' },
   { id: 'lab_shiitaketchi', nameJa: 'しいたけっち', nameEn: 'Shiitaketchi', code: 'E1F7 9X8P', category: 'lab' },
+  { id: 'lab_mametchi', nameJa: 'まめっち', nameEn: 'Mametchi', code: 'K04B 787H', category: 'lab' },
 ];
