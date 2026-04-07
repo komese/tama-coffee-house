@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
+import EventBanner from '../../components/EventBanner';
 
 export default function Home() {
   const t = useTranslations('home');
@@ -13,6 +14,8 @@ export default function Home() {
             {t('subtitleSmall')}
           </span>
         </p>
+
+        <EventBanner />
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '30px', marginTop: '20px' }}>
           <Link prefetch={false} href="/simulator" className="y2k-button">{t('simulator')}</Link>
