@@ -36,7 +36,10 @@ export default function BBS() {
         es: 'es_messages', it: 'it_messages', th: 'th_messages'
     };
     const targetTable = tableMap[locale] || 'messages';
+    const POSTS_PER_PAGE = 20;
     const [messages, setMessages] = useState<any[]>([]);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [totalCount, setTotalCount] = useState(0);
     const [newName, setNewName] = useState('');
     const [newContent, setNewContent] = useState('');
     const [imageFile, setImageFile] = useState<File | null>(null);
@@ -137,7 +140,14 @@ export default function BBS() {
         const subscription = supabase
             .channel(`public:${targetTable}`)
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: targetTable }, payload => {
-                setMessages(prev => [payload.new, ...prev]);
+                // 1ページ目を見ているときだけリアルタイムで新着を挿入する
+                setCurrentPage(cp => {
+                    if (cp === 0) {
+                        setMessages(prev => [payload.new, ...prev]);
+                    }
+                    return cp;
+                });
+                setTotalCount(prev => prev + 1);
                 if (payload.new.author_id) fetchMissingProfiles([payload.new.author_id]);
             })
             .on('postgres_changes', { event: 'DELETE', schema: 'public', table: targetTable }, payload => {
@@ -173,12 +183,22 @@ export default function BBS() {
         }
     };
 
-    const fetchMessages = async () => {
+    const fetchMessages = async (page: number = 0) => {
         setLoading(true);
+        const from = page * POSTS_PER_PAGE;
+        const to = from + POSTS_PER_PAGE - 1;
+
+        // 総件数の取得
+        const { count } = await supabase
+            .from(targetTable)
+            .select('*', { count: 'exact', head: true });
+        if (count !== null) setTotalCount(count);
+
         const { data, error } = await supabase
             .from(targetTable)
             .select('*')
-            .order('created_at', { ascending: false });
+            .order('created_at', { ascending: false })
+            .range(from, to);
 
         if (error) {
             console.error('Error fetching messages:', error);
@@ -647,6 +667,41 @@ export default function BBS() {
                             </div>
                         ))}
                     </div>
+
+                    {/* ページネーション */}
+                    {totalCount > POSTS_PER_PAGE && (
+                        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '15px', marginTop: '25px', padding: '15px 0' }}>
+                            <button
+                                className="y2k-button"
+                                onClick={() => {
+                                    const prev = currentPage - 1;
+                                    setCurrentPage(prev);
+                                    fetchMessages(prev);
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                disabled={currentPage === 0}
+                                style={{ fontSize: '0.9rem', padding: '8px 18px', opacity: currentPage === 0 ? 0.4 : 1 }}
+                            >
+                                ◀ 前へ
+                            </button>
+                            <span style={{ fontWeight: 'bold', color: 'var(--primary-color)', fontSize: '0.95rem' }}>
+                                {currentPage + 1} / {Math.ceil(totalCount / POSTS_PER_PAGE)} ページ
+                            </span>
+                            <button
+                                className="y2k-button"
+                                onClick={() => {
+                                    const next = currentPage + 1;
+                                    setCurrentPage(next);
+                                    fetchMessages(next);
+                                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                                }}
+                                disabled={(currentPage + 1) * POSTS_PER_PAGE >= totalCount}
+                                style={{ fontSize: '0.9rem', padding: '8px 18px', opacity: (currentPage + 1) * POSTS_PER_PAGE >= totalCount ? 0.4 : 1 }}
+                            >
+                                次へ ▶
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
 
