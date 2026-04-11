@@ -1,4 +1,4 @@
-"use client";
+// サーバーコンポーネント（静的生成でEdge Requests削減）
 
 import Link from 'next/link';
 
