@@ -487,6 +487,7 @@ export default function BBS() {
                                     <span style={{ marginRight: '6px' }}>{myProfile.nickname}</span>
                                     <img src="/images/verified_mark.png" alt="認証済み" title="認証済みユーザー" style={{ width: '18px', height: '18px', objectFit: 'contain', marginRight: '6px' }} />
                                     <Avatar name={session.user.id} variant="beam" size={37} colors={['#F28B82', '#FBBC04', '#81C995', '#78D9EC', '#B39DDB']} />
+                                    <Avatar name={session.user.id} variant="marble" size={37} colors={['#F28B82', '#FBBC04', '#81C995', '#78D9EC', '#B39DDB']} />
                                     <span style={{ fontSize: '0.8rem', color: '#666', fontWeight: 'normal', marginLeft: '10px' }}>として投稿</span>
                                 </span>
                             </div>
@@ -532,9 +533,12 @@ export default function BBS() {
                                                 placeholder="自分だけのパスワード"
                                                 maxLength={20}
                                             />
-                                            <div style={{ width: '37px', display: 'flex', justifyContent: 'center' }}>
+                                            <div style={{ width: '76px', display: 'flex', gap: '2px', justifyContent: 'center' }}>
                                                 {tripPassword && (
-                                                    <Avatar name={previewSeed} variant="beam" size={37} colors={['#F28B82', '#FBBC04', '#81C995', '#78D9EC', '#B39DDB']} />
+                                                    <>
+                                                        <Avatar name={previewSeed} variant="beam" size={37} colors={['#F28B82', '#FBBC04', '#81C995', '#78D9EC', '#B39DDB']} />
+                                                        <Avatar name={previewSeed} variant="marble" size={37} colors={['#F28B82', '#FBBC04', '#81C995', '#78D9EC', '#B39DDB']} />
+                                                    </>
                                                 )}
                                             </div>
                                         </div>
@@ -628,6 +632,7 @@ export default function BBS() {
                                                         {profilesMap[m.author_id].nickname}
                                                         <img src="/images/verified_mark.png" alt="認証済み" title="認証済みユーザー" style={{ width: '18px', height: '18px', objectFit: 'contain', marginLeft: '6px', marginRight: '6px' }} />
                                                         <Avatar name={m.author_id} variant="beam" size={37} colors={['#F28B82', '#FBBC04', '#81C995', '#78D9EC', '#B39DDB']} />
+                                                        <Avatar name={m.author_id} variant="marble" size={37} colors={['#F28B82', '#FBBC04', '#81C995', '#78D9EC', '#B39DDB']} />
                                                     </span>
                                                     <span style={{ marginLeft: '10px', fontSize: '0.8rem' }}>{formatDate(m.created_at)}</span>
                                                 </div>
@@ -645,7 +650,10 @@ export default function BBS() {
                                                     <span style={{ fontWeight: 'bold', color: 'var(--primary-color)', display: 'flex', alignItems: 'center' }}>
                                                         <span style={{ marginRight: '6px' }}>{m.author_name}</span>
                                                         {m.author_avatar_url && m.author_avatar_url.includes('|') && (
-                                                            <Avatar name={m.author_avatar_url.split('|')[1]} variant="beam" size={37} colors={['#F28B82', '#FBBC04', '#81C995', '#78D9EC', '#B39DDB']} />
+                                                            <>
+                                                                <Avatar name={m.author_avatar_url.split('|')[1]} variant="beam" size={37} colors={['#F28B82', '#FBBC04', '#81C995', '#78D9EC', '#B39DDB']} />
+                                                                <Avatar name={m.author_avatar_url.split('|')[1]} variant="marble" size={37} colors={['#F28B82', '#FBBC04', '#81C995', '#78D9EC', '#B39DDB']} />
+                                                            </>
                                                         )}
                                                     </span>
                                                     <span style={{ marginLeft: '10px', fontSize: '0.8rem' }}>{formatDate(m.created_at)}</span>
