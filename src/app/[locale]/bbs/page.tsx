@@ -13,6 +13,35 @@ const allCharacters = [
     index === self.findIndex((t) => (t.iconUrl === char.iconUrl))
 );
 
+// 画像圧縮ユーティリティ（最大幅1200px、JPEG品質80%）
+const compressImage = (file: Blob, maxWidth = 1200, quality = 0.8): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+            URL.revokeObjectURL(url);
+            let { width, height } = img;
+            if (width > maxWidth) {
+                height = Math.round((height * maxWidth) / width);
+                width = maxWidth;
+            }
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) { resolve(file); return; }
+            ctx.drawImage(img, 0, 0, width, height);
+            canvas.toBlob(
+                (blob) => blob ? resolve(blob) : reject(new Error('Compression failed')),
+                'image/jpeg',
+                quality
+            );
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+        img.src = url;
+    });
+};
+
 const REACTION_EMOJIS = ['👍', '❤️', '🤣', '🤯'] as const;
 
 type Message = {
@@ -312,6 +341,16 @@ export default function BBS() {
                     alert(t('heicError'));
                     setSaving(false);
                     return;
+                }
+            }
+
+            // 画像圧縮（GIF以外）: 最大幅1200px、JPEG品質80%に変換
+            if (fileExt !== 'gif') {
+                try {
+                    uploadFile = await compressImage(uploadFile);
+                    fileExt = 'jpeg';
+                } catch (compressError) {
+                    console.warn('Image compression failed, uploading original:', compressError);
                 }
             }
 
@@ -643,6 +682,7 @@ export default function BBS() {
                                         <img
                                             src={m.image_url}
                                             alt={t('imageAlt')}
+                                            loading="lazy"
                                             onClick={() => setLightboxUrl(m.image_url)}
                                             style={{ maxWidth: '100%', width: 'auto', maxHeight: '150px', objectFit: 'contain', border: '1px solid #ccc', borderRadius: '4px', backgroundColor: '#f9f9f9', display: 'block', cursor: 'pointer' }}
                                         />
