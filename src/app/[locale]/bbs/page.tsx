@@ -487,7 +487,7 @@ export default function BBS() {
                                     <span style={{ marginRight: '6px' }}>{myProfile.nickname}</span>
                                     <img src="/images/verified_mark.png" alt="認証済み" title="認証済みユーザー" style={{ width: '18px', height: '18px', objectFit: 'contain', marginRight: '6px' }} />
                                     <Avatar name={session.user.id} variant="beam" size={37} colors={['#F28B82', '#FBBC04', '#81C995', '#78D9EC', '#B39DDB']} />
-                                    <Avatar name={session.user.id} variant="marble" size={37} colors={['#F28B82', '#FBBC04', '#81C995', '#78D9EC', '#B39DDB']} />
+                                    <Avatar name={session.user.id + '2'} variant="beam" size={37} colors={['#E27D60', '#85CDCA', '#E8A87C', '#C38D9E', '#41B3A3']} />
                                     <span style={{ fontSize: '0.8rem', color: '#666', fontWeight: 'normal', marginLeft: '10px' }}>として投稿</span>
                                 </span>
                             </div>
@@ -537,7 +537,7 @@ export default function BBS() {
                                                 {tripPassword && (
                                                     <>
                                                         <Avatar name={previewSeed} variant="beam" size={37} colors={['#F28B82', '#FBBC04', '#81C995', '#78D9EC', '#B39DDB']} />
-                                                        <Avatar name={previewSeed} variant="marble" size={37} colors={['#F28B82', '#FBBC04', '#81C995', '#78D9EC', '#B39DDB']} />
+                                                        <Avatar name={previewSeed + '2'} variant="beam" size={37} colors={['#E27D60', '#85CDCA', '#E8A87C', '#C38D9E', '#41B3A3']} />
                                                     </>
                                                 )}
                                             </div>
@@ -632,7 +632,7 @@ export default function BBS() {
                                                         {profilesMap[m.author_id].nickname}
                                                         <img src="/images/verified_mark.png" alt="認証済み" title="認証済みユーザー" style={{ width: '18px', height: '18px', objectFit: 'contain', marginLeft: '6px', marginRight: '6px' }} />
                                                         <Avatar name={m.author_id} variant="beam" size={37} colors={['#F28B82', '#FBBC04', '#81C995', '#78D9EC', '#B39DDB']} />
-                                                        <Avatar name={m.author_id} variant="marble" size={37} colors={['#F28B82', '#FBBC04', '#81C995', '#78D9EC', '#B39DDB']} />
+                                                        <Avatar name={m.author_id + '2'} variant="beam" size={37} colors={['#E27D60', '#85CDCA', '#E8A87C', '#C38D9E', '#41B3A3']} />
                                                     </span>
                                                     <span style={{ marginLeft: '10px', fontSize: '0.8rem' }}>{formatDate(m.created_at)}</span>
                                                 </div>
@@ -652,7 +652,7 @@ export default function BBS() {
                                                         {m.author_avatar_url && m.author_avatar_url.includes('|') && (
                                                             <>
                                                                 <Avatar name={m.author_avatar_url.split('|')[1]} variant="beam" size={37} colors={['#F28B82', '#FBBC04', '#81C995', '#78D9EC', '#B39DDB']} />
-                                                                <Avatar name={m.author_avatar_url.split('|')[1]} variant="marble" size={37} colors={['#F28B82', '#FBBC04', '#81C995', '#78D9EC', '#B39DDB']} />
+                                                                <Avatar name={m.author_avatar_url.split('|')[1] + '2'} variant="beam" size={37} colors={['#E27D60', '#85CDCA', '#E8A87C', '#C38D9E', '#41B3A3']} />
                                                             </>
                                                         )}
                                                     </span>
