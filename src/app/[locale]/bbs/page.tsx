@@ -123,6 +123,10 @@ export default function BBS() {
     const [profilesMap, setProfilesMap] = useState<Record<string, { nickname: string, avatar_url: string | null }>>({});
     const [showAuthModal, setShowAuthModal] = useState(false);
 
+    // 管理者判定（環境変数 NEXT_PUBLIC_ADMIN_EMAIL に設定されたメールアドレスと一致するか）
+    const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+    const isAdmin = !!(session && ADMIN_EMAIL && session.user.email === ADMIN_EMAIL);
+
     // LocalStorageから自分のリアクション履歴を復元
     useEffect(() => {
         try {
@@ -678,6 +682,24 @@ export default function BBS() {
                                                 style={{ background: 'none', border: 'none', color: '#ff6b6b', textDecoration: 'underline', cursor: 'pointer', fontSize: '0.8rem' }}
                                             >
                                                 {t('delete')}
+                                            </button>
+                                        )}
+                                        {isAdmin && !(myMessageIds.includes(m.id) || (session && m.author_id === session.user.id)) && (
+                                            <button
+                                                onClick={() => handleDelete(m.id)}
+                                                style={{
+                                                    background: 'linear-gradient(135deg, #c0392b, #e74c3c)',
+                                                    border: 'none',
+                                                    color: '#fff',
+                                                    cursor: 'pointer',
+                                                    fontSize: '0.75rem',
+                                                    padding: '2px 8px',
+                                                    borderRadius: '4px',
+                                                    fontWeight: 'bold',
+                                                    letterSpacing: '0.05em'
+                                                }}
+                                            >
+                                                🛡️ 管理者削除
                                             </button>
                                         )}
                                     </div>
