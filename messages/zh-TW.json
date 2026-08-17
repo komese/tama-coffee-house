@@ -25,6 +25,8 @@
     "sea": "💧 海洋",
     "sky": "☁️ 天空",
     "forest": "🌲 森林",
+    "nangoku": "🌴 熱帶",
+    "koori": "❄️ 冰原",
     "codes": "🔑 代碼列表"
   },
   "familyTree": {
@@ -90,6 +92,8 @@
     "sea": "海洋",
     "sky": "天空",
     "forest": "森林",
+    "nangoku": "熱帶",
+    "koori": "冰原",
     "uploadImage": "上傳圖片",
     "loading": "載入中...",
     "composition": "組成：",
@@ -107,6 +111,8 @@
     "sea": "💧 海洋",
     "sky": "☁️ 天空",
     "forest": "🌲 森林",
+    "nangoku": "🌴 熱帶",
+    "koori": "❄️ 冰原",
     "listTitle": " 進化條件",
     "baby": "嬰兒期",
     "kids": "兒童期",
@@ -161,6 +167,8 @@
     "seaTitle": "海洋進化圖鑑",
     "skyTitle": "天空進化圖鑑",
     "forestTitle": "森林進化圖鑑",
+    "nangokuTitle": "熱帶進化條件表",
+    "kooriTitle": "冰原進化條件表",
     "evolutionDescription": "完整收錄塔麻可吉樂園所有角色的進化條件（陸地、海洋、天空、森林）！培育你心儀角色的最佳幫手。",
     "codesTitle": "商店＆實驗室代碼列表 | Tama Coffee House",
     "codesDescription": "塔麻可吉樂園完整商店代碼和實驗室代碼列表。搜尋並複製食物、零食、遊具、星球裝飾及實驗室角色代碼。"

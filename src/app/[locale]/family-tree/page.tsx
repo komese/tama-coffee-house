@@ -4,13 +4,13 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import html2canvas from 'html2canvas';
-import { LAND_DATA, SEA_DATA, SKY_DATA, FOREST_DATA } from '@/data/evolutionData';
-import { TAMA_DATA } from '@/data/simulatorData';
+import { LAND_DATA, SEA_DATA, SKY_DATA, FOREST_DATA, NANGOKU_DATA, KOORI_DATA } from '@/data/evolutionData';
+import { TAMA_DATA, computeSpriteLayout } from '@/data/simulatorData';
 import Simulator from '@/components/Simulator';
 import HowToPlayPopup from '@/components/HowToPlayPopup';
 
 // アダルト期・特殊期かつ画像が存在するキャラクターのみを抽出
-const ALL_CHARACTERS = [...LAND_DATA, ...SEA_DATA, ...SKY_DATA, ...FOREST_DATA].filter(c => c.iconUrl && (c.stage === 'アダルト' || c.stage === '特殊'));
+const ALL_CHARACTERS = [...LAND_DATA, ...SEA_DATA, ...SKY_DATA, ...FOREST_DATA, ...NANGOKU_DATA, ...KOORI_DATA].filter(c => c.iconUrl && (c.stage === 'アダルト' || c.stage === '特殊'));
 
 // 進化データのID → シミュレーター内部名マッピング（スプライト合成用）
 const ID_TO_INTERNAL: Record<string, string> = {
@@ -38,6 +38,18 @@ const ID_TO_INTERNAL: Record<string, string> = {
   'forest_15': 'kachitchi', 'forest_16': 'tokipatchi', 'forest_17': 'kuchipatchi', 'forest_18': 'sparrotchi',
   'forest_19': 'shiitaketchi', 'forest_20': 'peatchi', 'forest_21': 'nappatchi', 'forest_22': 'rushraditchi',
   'forest_23': 'tatsutchi',
+  // なんごく
+  'nangoku_7': 'tropicalmeowtchi', 'nangoku_8': 'madillotchi', 'nangoku_9': 'tarantytchi', 'nangoku_10': 'crocotchi',
+  'nangoku_11': 'tropicalmametchi', 'nangoku_12': 'parorotchi', 'nangoku_13': 'tenatchi', 'nangoku_14': 'namakemotchi',
+  'nangoku_15': 'kuikuitchi', 'nangoku_16': 'poizutchi', 'nangoku_17': 'chameleotchi', 'nangoku_18': 'iguanatchi',
+  'nangoku_19': 'yashikitchi', 'nangoku_20': 'tropicalpotsunentchi', 'nangoku_21': 'ananatchi', 'nangoku_22': 'avovotchi',
+  'nangoku_23': 'manapatchi',
+  // こおり
+  'koori_7': 'okojotchi', 'koori_8': 'wolftchi', 'koori_9': 'polakumatchi', 'koori_10': 'azaratchi',
+  'koori_11': 'lemmingtchi', 'koori_12': 'moosetchi', 'koori_13': 'raichotchi', 'koori_14': 'yukiusatchi',
+  'koori_15': 'icyirukatchi', 'koori_16': 'ginjirotchi', 'koori_17': 'rakkotchi', 'koori_18': 'hoppentchi',
+  'koori_19': 'nerinetchi', 'koori_20': 'dangouotchi', 'koori_21': 'yaytytchi', 'koori_22': 'yukiraratchi',
+  'koori_23': 'hobohorntchi',
 };
 
 // スプライト合成関数（体＋目をキャンバスで合成してdataURLを返す）
@@ -56,17 +68,48 @@ async function generateCharacterSprite(internalName: string): Promise<string | n
 
     // 体画像をロード
     const baseImg = await loadImage(`/simulator/character/${internalName}.png`);
-    canvas.width = baseImg.width || 64;
-    canvas.height = baseImg.height || 64;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(baseImg, 0, 0);
+    const baseW = baseImg.width || 64;
+    const baseH = baseImg.height || 64;
 
-    // 目画像をロード＆位置合わせして合成
+    // 口画像をロード（口が体から分離されているキャラのみ）
     const tamaConfig = TAMA_DATA[internalName];
+    let mouthImg: HTMLImageElement | null = null;
+    if (tamaConfig?.mouthPosition) {
+      try {
+        mouthImg = await loadImage(`/simulator/mouth/${internalName}.png`);
+      } catch { /* no mouth */ }
+    }
+
+    // 目画像をロード
+    let eyePosX = 0, eyePosY = 0, eyeImg: HTMLImageElement | null = null;
     if (tamaConfig) {
-      const eyePosX = tamaConfig.eyePosition[0];
-      const eyePosY = tamaConfig.eyePosition[1] + tamaConfig.adjustments;
-      const eyeImg = await loadImage(`/simulator/eyes/${internalName}.png`);
+      eyePosX = tamaConfig.eyePosition[0];
+      eyePosY = tamaConfig.eyePosition[1] + tamaConfig.adjustments;
+      eyeImg = await loadImage(`/simulator/eyes/${internalName}.png`);
+    }
+
+    // レイヤーが体の輪郭からはみ出さないようキャンバスサイズとオフセットを算出
+    // （crocotchiのように口画像自体に透明マージンが無く、体の輪郭より外に口がはみ出すキャラがいるため）
+    const layout = computeSpriteLayout(
+      baseW, baseH,
+      mouthImg && tamaConfig?.mouthPosition
+        ? { x: tamaConfig.mouthPosition[0], y: tamaConfig.mouthPosition[1], w: mouthImg.width, h: mouthImg.height }
+        : null,
+      eyeImg ? { x: eyePosX, y: eyePosY, w: eyeImg.width, h: eyeImg.height } : { x: 0, y: 0, w: 0, h: 0 }
+    );
+    canvas.width = layout.width;
+    canvas.height = layout.height;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(baseImg, layout.offsetX, layout.offsetY);
+
+    if (mouthImg && tamaConfig?.mouthPosition) {
+      ctx.drawImage(mouthImg, tamaConfig.mouthPosition[0] + layout.offsetX, tamaConfig.mouthPosition[1] + layout.offsetY);
+    }
+
+    // 目画像を位置合わせして合成
+    if (eyeImg) {
+      const ex = eyePosX + layout.offsetX;
+      const ey = eyePosY + layout.offsetY;
 
       // マスク処理
       let useMask = false;
@@ -84,13 +127,13 @@ async function generateCharacterSprite(internalName: string): Promise<string | n
         if (tempCtx) {
           tempCtx.drawImage(eyeImg, 0, 0);
           tempCtx.globalCompositeOperation = 'destination-out';
-          tempCtx.drawImage(maskImg, eyePosX, eyePosY, eyeImg.width, eyeImg.height, 0, 0, eyeImg.width, eyeImg.height);
-          ctx.drawImage(tempCanvas, eyePosX, eyePosY);
+          tempCtx.drawImage(maskImg, ex, ey, eyeImg.width, eyeImg.height, 0, 0, eyeImg.width, eyeImg.height);
+          ctx.drawImage(tempCanvas, ex, ey);
         } else {
-          ctx.drawImage(eyeImg, eyePosX, eyePosY);
+          ctx.drawImage(eyeImg, ex, ey);
         }
       } else {
-        ctx.drawImage(eyeImg, eyePosX, eyePosY);
+        ctx.drawImage(eyeImg, ex, ey);
       }
     }
 

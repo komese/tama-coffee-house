@@ -139,3 +139,67 @@ export const FOREST_DATA: EvolutionCharacter[] = [
 
     { id: 'forest_23', name: 'たつっち', stage: '特殊', parentName: 'もりがおヤング・もりとこヤング・もりぴよヤング', condition: 'Jade Forestの機種限定の進化。たまさいぼーの構成にかかわらず、ヤング期にJade Forest以外のりく、みず、そらのいずれか2機種それぞれとツーしんであそんでから進化', description: '', iconUrl: '/images/characters/たつっち.png' }
 ];
+
+export const NANGOKU_DATA: EvolutionCharacter[] = [
+    { id: 'nangoku_1', name: 'べびまるっち', stage: 'ベビー', condition: '初期キャラクター', description: '', iconUrl: '/images/characters/01_べびまるっち.png' },
+    { id: 'nangoku_2', name: 'なんごくキッズ', stage: 'キッズ', parentName: 'べびまるっち', condition: 'なんごくステージで一定時間経過し、なんごくマーク🌺が4つ集まると進化', description: '', iconUrl: '/images/characters/なんごくキッズ_TROPICS.png' },
+
+    { id: 'nangoku_3', name: 'なんごくがおヤング', stage: 'ヤング', parentName: 'なんごくキッズ', condition: 'たまさいぼーの画面に、トロピカルステーキ🥩・ハワイアンバーガー🍔のマークが一番多い状態で進化', description: '', iconUrl: '/images/characters/なんごくがおヤング_TROPICS.png' },
+    { id: 'nangoku_4', name: 'なんごくとこヤング', stage: 'ヤング', parentName: 'なんごくキッズ', condition: 'たまさいぼーの画面に、バナナ🍌・トロピカルフルーツ🍍のマークが一番多い状態で進化', description: '', iconUrl: '/images/characters/なんごくとこヤング_TROPICS.png' },
+    { id: 'nangoku_5', name: 'なんごくぺろヤング', stage: 'ヤング', parentName: 'なんごくキッズ', condition: 'たまさいぼーの画面に、バタフライスナック🦋・ミールアントのマークが一番多い状態で進化', description: '', iconUrl: '/images/characters/なんごくぺろヤング_TROPICS.png' },
+    { id: 'nangoku_6', name: 'なんごくにょきヤング', stage: 'ヤング', parentName: 'なんごくキッズ', condition: 'たまさいぼーの画面に、おにぎり🍙以外の食べ物マークがない状態で進化', description: '', iconUrl: '/images/characters/なんごくにょきヤング_TROPICS.png' },
+
+    { id: 'nangoku_7', name: 'なんごくみゃおっち', stage: 'アダルト', parentName: 'なんごくがおヤング', condition: '・ぐるぐるマーク🌀0個\n・ごきげんマーク☀6個\n・ごはんマーク6個\nすべてを満たした状態で進化', description: '', iconUrl: '/images/characters/なんごくみゃおっち_TROPICS.png' },
+    { id: 'nangoku_8', name: 'まじろっち', stage: 'アダルト', parentName: 'なんごくがおヤング', condition: '【パターン1】\nぐるぐるマーク🌀1個の状態で進化\n【パターン2】\nぐるぐるマーク🌀0個で、ごきげんマーク☀かごはんマークが6個未満の状態で進化', description: '', iconUrl: '/images/characters/まじろっち_TROPICS.png' },
+    { id: 'nangoku_9', name: 'たらんてぃーっち', stage: 'アダルト', parentName: 'なんごくがおヤング', condition: 'ぐるぐるマーク🌀2個から5個の状態で進化', description: '', iconUrl: '/images/characters/たらんてぃーっち_TROPICS.png' },
+    { id: 'nangoku_10', name: 'クロコっち', stage: 'アダルト', parentName: 'なんごくがおヤング', condition: 'ぐるぐるマーク🌀6個の状態で進化', description: '', iconUrl: '/images/characters/クロコっち_TROPICS.png' },
+
+    { id: 'nangoku_11', name: 'なんごくまめっち', stage: 'アダルト', parentName: 'なんごくとこヤング', condition: '・ぐるぐるマーク🌀0個\n・ごきげんマーク☀6個\n・ごはんマーク6個\nすべてを満たした状態で進化', description: '', iconUrl: '/images/characters/なんごくまめっち_TROPICS.png' },
+    { id: 'nangoku_12', name: 'ぱろろっち', stage: 'アダルト', parentName: 'なんごくとこヤング', condition: '【パターン1】\nぐるぐるマーク🌀1個の状態で進化\n【パターン2】\nぐるぐるマーク🌀0個で、ごきげんマーク☀かごはんマークが6個未満の状態で進化', description: '', iconUrl: '/images/characters/ぱろろっち_TROPICS.png' },
+    { id: 'nangoku_13', name: 'てなっち', stage: 'アダルト', parentName: 'なんごくとこヤング', condition: 'ぐるぐるマーク🌀2個から5個の状態で進化', description: '', iconUrl: '/images/characters/てなっち_TROPICS.png' },
+    { id: 'nangoku_14', name: 'なまけもっち', stage: 'アダルト', parentName: 'なんごくとこヤング', condition: 'ぐるぐるマーク🌀6個の状態で進化', description: '', iconUrl: '/images/characters/なまけもっち_TROPICS.png' },
+
+    { id: 'nangoku_15', name: 'くいくいっち', stage: 'アダルト', parentName: 'なんごくぺろヤング', condition: '・ぐるぐるマーク🌀0個\n・ごきげんマーク☀6個\n・ごはんマーク6個\nすべてを満たした状態で進化', description: '', iconUrl: '/images/characters/くいくいっち_TROPICS.png' },
+    { id: 'nangoku_16', name: 'ぽいずっち', stage: 'アダルト', parentName: 'なんごくぺろヤング', condition: '【パターン1】\nぐるぐるマーク🌀1個の状態で進化\n【パターン2】\nぐるぐるマーク🌀0個で、ごきげんマーク☀かごはんマークが6個未満の状態で進化', description: '', iconUrl: '/images/characters/ぽいずっち_TROPICS.png' },
+    { id: 'nangoku_17', name: 'かめれおっち', stage: 'アダルト', parentName: 'なんごくぺろヤング', condition: 'ぐるぐるマーク🌀2個から5個の状態で進化', description: '', iconUrl: '/images/characters/かめれおっち_TROPICS.png' },
+    { id: 'nangoku_18', name: 'いぐあなっち', stage: 'アダルト', parentName: 'なんごくぺろヤング', condition: 'ぐるぐるマーク🌀6個の状態で進化', description: '', iconUrl: '/images/characters/いぐあなっち_TROPICS.png' },
+
+    { id: 'nangoku_19', name: 'やしきっち', stage: 'アダルト', parentName: 'なんごくにょきヤング', condition: '・ぐるぐるマーク🌀0個\n・ごきげんマーク☀6個\n・ごはんマーク6個\nすべてを満たした状態で進化', description: '', iconUrl: '/images/characters/やしきっち_TROPICS.png' },
+    { id: 'nangoku_20', name: 'なんごくぽつねんっち', stage: 'アダルト', parentName: 'なんごくにょきヤング', condition: '【パターン1】\nぐるぐるマーク🌀1個の状態で進化\n【パターン2】\nぐるぐるマーク🌀0個で、ごきげんマーク☀かごはんマークが6個未満の状態で進化', description: '', iconUrl: '/images/characters/なんごくぽつねんっち_TROPICS.png' },
+    { id: 'nangoku_21', name: 'あななっち', stage: 'アダルト', parentName: 'なんごくにょきヤング', condition: 'ぐるぐるマーク🌀2個から5個の状態で進化', description: '', iconUrl: '/images/characters/あななっち_TROPICS.png' },
+    { id: 'nangoku_22', name: 'あぼぼっち', stage: 'アダルト', parentName: 'なんごくにょきヤング', condition: 'ぐるぐるマーク🌀6個の状態で進化', description: '', iconUrl: '/images/characters/あぼぼっち_TROPICS.png' },
+
+    { id: 'nangoku_23', name: 'まなぱっち', stage: '特殊', parentName: 'なんごくがおヤング・なんごくとこヤング・なんごくぺろヤング', condition: 'Orange Tropicsの機種限定の進化。たまさいぼーの構成にかかわらず、ヤング期にOrange Tropics以外の2種類のたまごっちのデバイスとツーしんをすると進化', description: '', iconUrl: '/images/characters/まなぱっち_TROPICS.png' }
+];
+
+export const KOORI_DATA: EvolutionCharacter[] = [
+    { id: 'koori_1', name: 'べびまるっち', stage: 'ベビー', condition: '初期キャラクター', description: '', iconUrl: '/images/characters/01_べびまるっち.png' },
+    { id: 'koori_2', name: 'こおりのキッズ', stage: 'キッズ', parentName: 'べびまるっち', condition: 'こおりステージで一定時間経過し、こおりマーク❄️が4つ集まると進化', description: '', iconUrl: '/images/characters/こおりのキッズ_GLACIER.png' },
+
+    { id: 'koori_3', name: 'こおりのがおヤング', stage: 'ヤング', parentName: 'こおりのキッズ', condition: 'たまさいぼーの画面に、缶づめのお肉🥫・ビーフストロガノフのマークが一番多い状態で進化', description: '', iconUrl: '/images/characters/こおりのがおヤング_GLACIER.png' },
+    { id: 'koori_4', name: 'こおりのとこヤング', stage: 'ヤング', parentName: 'こおりのキッズ', condition: 'たまさいぼーの画面に、レッドベリー・ボルシチのマークが一番多い状態で進化', description: '', iconUrl: '/images/characters/こおりのとこヤング_GLACIER.png' },
+    { id: 'koori_5', name: 'こおりのすいヤング', stage: 'ヤング', parentName: 'こおりのキッズ', condition: 'たまさいぼーの画面に、すじこ・きたのシーフードのマークが一番多い状態で進化', description: '', iconUrl: '/images/characters/こおりのすいヤング_GLACIER.png' },
+    { id: 'koori_6', name: 'こおりのふよヤング', stage: 'ヤング', parentName: 'こおりのキッズ', condition: 'たまさいぼーの画面に、おにぎり🍙以外の食べ物マークがない状態で進化', description: '', iconUrl: '/images/characters/こおりのふよヤング_GLACIER.png' },
+
+    { id: 'koori_7', name: 'おこじょっち', stage: 'アダルト', parentName: 'こおりのがおヤング', condition: '・ぐるぐるマーク🌀0個\n・ごきげんマーク☀6個\n・ごはんマーク6個\nすべてを満たした状態で進化', description: '', iconUrl: '/images/characters/おこじょっち_GLACIER.png' },
+    { id: 'koori_8', name: 'ウルフっち', stage: 'アダルト', parentName: 'こおりのがおヤング', condition: '【パターン1】\nぐるぐるマーク🌀1個の状態で進化\n【パターン2】\nぐるぐるマーク🌀0個で、ごきげんマーク☀かごはんマークが6個未満の状態で進化', description: '', iconUrl: '/images/characters/ウルフっち_GLACIER.png' },
+    { id: 'koori_9', name: 'ぽらくまっち', stage: 'アダルト', parentName: 'こおりのがおヤング', condition: 'ぐるぐるマーク🌀2個から5個の状態で進化', description: '', iconUrl: '/images/characters/ぽらくまっち_GLACIER.png' },
+    { id: 'koori_10', name: 'アザラっち', stage: 'アダルト', parentName: 'こおりのがおヤング', condition: 'ぐるぐるマーク🌀6個の状態で進化', description: '', iconUrl: '/images/characters/アザラっち_GLACIER.png' },
+
+    { id: 'koori_11', name: 'レミングっち', stage: 'アダルト', parentName: 'こおりのとこヤング', condition: '・ぐるぐるマーク🌀0個\n・ごきげんマーク☀6個\n・ごはんマーク6個\nすべてを満たした状態で進化', description: '', iconUrl: '/images/characters/レミングっち_GLACIER.png' },
+    { id: 'koori_12', name: 'ムースっち', stage: 'アダルト', parentName: 'こおりのとこヤング', condition: '【パターン1】\nぐるぐるマーク🌀1個の状態で進化\n【パターン2】\nぐるぐるマーク🌀0個で、ごきげんマーク☀かごはんマークが6個未満の状態で進化', description: '', iconUrl: '/images/characters/ムースっち_GLACIER.png' },
+    { id: 'koori_13', name: 'らいちょっち', stage: 'アダルト', parentName: 'こおりのとこヤング', condition: 'ぐるぐるマーク🌀2個から5個の状態で進化', description: '', iconUrl: '/images/characters/らいちょっち_GLACIER.png' },
+    { id: 'koori_14', name: 'ゆきうさっち', stage: 'アダルト', parentName: 'こおりのとこヤング', condition: 'ぐるぐるマーク🌀6個の状態で進化', description: '', iconUrl: '/images/characters/ゆきうさっち_GLACIER.png' },
+
+    { id: 'koori_15', name: 'シロいるかっち', stage: 'アダルト', parentName: 'こおりのすいヤング', condition: '・ぐるぐるマーク🌀0個\n・ごきげんマーク☀6個\n・ごはんマーク6個\nすべてを満たした状態で進化', description: '', iconUrl: '/images/characters/シロいるかっち_GLACIER.png' },
+    { id: 'koori_16', name: 'ぎんじろっち', stage: 'アダルト', parentName: 'こおりのすいヤング', condition: '【パターン1】\nぐるぐるマーク🌀1個の状態で進化\n【パターン2】\nぐるぐるマーク🌀0個で、ごきげんマーク☀かごはんマークが6個未満の状態で進化', description: '', iconUrl: '/images/characters/ぎんじろっち_GLACIER.png' },
+    { id: 'koori_17', name: 'らっこっち', stage: 'アダルト', parentName: 'こおりのすいヤング', condition: 'ぐるぐるマーク🌀2個から5個の状態で進化', description: '', iconUrl: '/images/characters/らっこっち_GLACIER.png' },
+    { id: 'koori_18', name: 'ほっぺんっち', stage: 'アダルト', parentName: 'こおりのすいヤング', condition: 'ぐるぐるマーク🌀6個の状態で進化', description: '', iconUrl: '/images/characters/ほっぺんっち_GLACIER.png' },
+
+    { id: 'koori_19', name: 'ネリネっち', stage: 'アダルト', parentName: 'こおりのふよヤング', condition: '・ぐるぐるマーク🌀0個\n・ごきげんマーク☀6個\n・ごはんマーク6個\nすべてを満たした状態で進化', description: '', iconUrl: '/images/characters/ネリネっち_GLACIER.png' },
+    { id: 'koori_20', name: 'だんごうおっち', stage: 'アダルト', parentName: 'こおりのふよヤング', condition: '【パターン1】\nぐるぐるマーク🌀1個の状態で進化\n【パターン2】\nぐるぐるマーク🌀0個で、ごきげんマーク☀かごはんマークが6個未満の状態で進化', description: '', iconUrl: '/images/characters/だんごうおっち_GLACIER.png' },
+    { id: 'koori_21', name: 'イェーイティっち', stage: 'アダルト', parentName: 'こおりのふよヤング', condition: 'ぐるぐるマーク🌀2個から5個の状態で進化', description: '', iconUrl: '/images/characters/イェーイティっち_GLACIER.png' },
+    { id: 'koori_22', name: 'ゆきららっち', stage: 'アダルト', parentName: 'こおりのふよヤング', condition: 'ぐるぐるマーク🌀6個の状態で進化', description: '', iconUrl: '/images/characters/ゆきららっち_GLACIER.png' },
+
+    { id: 'koori_23', name: 'ほぼほーんっち', stage: '特殊', parentName: 'こおりのがおヤング・こおりのとこヤング・こおりのすいヤング', condition: 'White Glacierの機種限定の進化。たまさいぼーの構成にかかわらず、ヤング期にWhite Glacier以外の2種類のたまごっちのデバイスとツーしんをすると進化', description: '', iconUrl: '/images/characters/ほぼほーんっち_GLACIER.png' }
+];

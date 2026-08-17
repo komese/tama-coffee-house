@@ -25,6 +25,8 @@
     "sea": "💧 바다",
     "sky": "☁️ 하늘",
     "forest": "🌲 숲",
+    "nangoku": "🌴 열대",
+    "koori": "❄️ 빙하",
     "codes": "🔑 코드 목록"
   },
   "familyTree": {
@@ -90,6 +92,8 @@
     "sea": "바다",
     "sky": "하늘",
     "forest": "숲",
+    "nangoku": "열대",
+    "koori": "빙하",
     "uploadImage": "이미지 업로드",
     "loading": "로딩 중...",
     "composition": "구성:",
@@ -107,6 +111,8 @@
     "sea": "💧 바다",
     "sky": "☁️ 하늘",
     "forest": "🌲 숲",
+    "nangoku": "🌴 열대",
+    "koori": "❄️ 빙하",
     "listTitle": " 진화 조건",
     "baby": "유아기",
     "kids": "반항기",
@@ -161,6 +167,8 @@
     "seaTitle": "바다 진화 조건",
     "skyTitle": "하늘 진화 조건",
     "forestTitle": "숲 진화 조건",
+    "nangokuTitle": "열대 진화 조건 리스트",
+    "kooriTitle": "빙하 진화 조건 리스트",
     "evolutionDescription": "다마고치 파라다이스의 모든 캐릭터 진화 조건(육지, 바다, 하늘, 숲)을 총망라! 원하는 캐릭터를 육성할 때 참고하세요.",
     "codesTitle": "상점 & 연구소 코드 목록 | Tama Coffee House",
     "codesDescription": "다마고치 파라다이스의 상점 코드 및 연구소 코드 전체 목록입니다."

@@ -3,13 +3,15 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { LAND_DATA, SEA_DATA, SKY_DATA, FOREST_DATA, EvolutionCharacter } from '../data/evolutionData';
+import { LAND_DATA, SEA_DATA, SKY_DATA, FOREST_DATA, NANGOKU_DATA, KOORI_DATA, EvolutionCharacter } from '../data/evolutionData';
 
 const TABS = [
     { id: 'land', path: '/evolution/land' },
     { id: 'sea', path: '/evolution/sea' },
     { id: 'sky', path: '/evolution/sky' },
     { id: 'forest', path: '/evolution/forest' },
+    { id: 'nangoku', path: '/evolution/nangoku' },
+    { id: 'koori', path: '/evolution/koori' },
 ];
 
 export default function EvolutionList({ initialTab = 'land' }: { initialTab?: string }) {
@@ -23,6 +25,8 @@ export default function EvolutionList({ initialTab = 'land' }: { initialTab?: st
         case 'sea': currentData = SEA_DATA; break;
         case 'sky': currentData = SKY_DATA; break;
         case 'forest': currentData = FOREST_DATA; break;
+        case 'nangoku': currentData = NANGOKU_DATA; break;
+        case 'koori': currentData = KOORI_DATA; break;
         default: currentData = [];
     }
 
@@ -75,7 +79,7 @@ export default function EvolutionList({ initialTab = 'land' }: { initialTab?: st
     return (
         <div className="y2k-container" style={{ marginTop: '20px' }}>
             <h2 className="y2k-title" style={{ fontSize: '2rem' }}>
-                {t(activeTab as 'land' | 'sea' | 'sky' | 'forest')}
+                {t(activeTab as 'land' | 'sea' | 'sky' | 'forest' | 'nangoku' | 'koori')}
                 {t('listTitle')}
             </h2>
 

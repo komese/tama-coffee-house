@@ -28,6 +28,10 @@ export default function Home() {
               <Link prefetch={false} href="/evolution/sky" className="y2k-button" style={{ backgroundColor: '#fffaf0', color: '#8A6BBE', border: '3px solid #8A6BBE', padding: '10px 15px' }}>{t('sky')}</Link>
               <Link prefetch={false} href="/evolution/forest" className="y2k-button" style={{ backgroundColor: '#fffaf0', color: '#4A9E86', border: '3px solid #4A9E86', padding: '10px 15px' }}>{t('forest')}</Link>
             </div>
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', justifyContent: 'center' }}>
+              <Link prefetch={false} href="/evolution/nangoku" className="y2k-button" style={{ backgroundColor: '#fffaf0', color: '#FF8C42', border: '3px solid #FF8C42', padding: '10px 15px' }}>{t('nangoku')}</Link>
+              <Link prefetch={false} href="/evolution/koori" className="y2k-button" style={{ backgroundColor: '#fffaf0', color: '#4FC3F7', border: '3px solid #4FC3F7', padding: '10px 15px' }}>{t('koori')}</Link>
+            </div>
           </div>
 
           <Link prefetch={false} href="/family-tree" className="y2k-button" style={{ alignSelf: 'center', marginTop: '15px' }}>{t('familyTree')}</Link>

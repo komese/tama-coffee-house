@@ -25,6 +25,8 @@
     "sea": "💧 Mar",
     "sky": "☁️ Cielo",
     "forest": "🌲 Bosque",
+    "nangoku": "🌴 Trópico",
+    "koori": "❄️ Hielo",
     "codes": "🔑 Lista de Códigos"
   },
   "familyTree": {
@@ -100,6 +102,8 @@
     "sea": "Mar",
     "sky": "Cielo",
     "forest": "Bosque",
+    "nangoku": "Trópico",
+    "koori": "Hielo",
     "uploadImage": "Subir"
   },
   "evolution": {
@@ -107,6 +111,8 @@
     "sea": "💧 Mar",
     "sky": "☁️ Cielo",
     "forest": "🌲 Bosque",
+    "nangoku": "🌴 Trópico",
+    "koori": "❄️ Hielo",
     "listTitle": " Guía de Evolución",
     "baby": "Bebé",
     "kids": "Niño",
@@ -161,6 +167,8 @@
     "seaTitle": "Guía de Mar",
     "skyTitle": "Guia de Cielo",
     "forestTitle": "Guía de Bosque",
+    "nangokuTitle": "Guía de Evolución Trópico",
+    "kooriTitle": "Guía de Evolución Hielo",
     "evolutionDescription": "¡Lista completa de condiciones de evolución (Tierra, Mar, Cielo, Bosque) de Tamagotchi Paradise! Ideal para criar a tus favoritos.",
     "codesTitle": "Shop & Lab Code List | Tama Coffee House",
     "codesDescription": "Complete list of Shop and Lab codes for Tamagotchi Paradise. Search and copy codes for food, snacks, toys, planet decorations, and lab characters."

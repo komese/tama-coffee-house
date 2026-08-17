@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useTranslations } from 'next-intl';
-import { TAMA_DATA, COLOR_PALETTES, JADE_EXCLUSIVE, NON_BREEDABLE_EYES, RGBColor } from '../data/simulatorData';
+import { TAMA_DATA, COLOR_PALETTES, JADE_EXCLUSIVE, NON_BREEDABLE_EYES, RGBColor, computeSpriteLayout } from '../data/simulatorData';
 
 const tamaNames = Object.keys(TAMA_DATA);
 // 並び順を明確なグラデーション（赤→オレンジ→黄→黄緑→緑→青緑→水色→青→藍→紫→薄紫→ピンク→モノクロ）に固定
@@ -48,18 +48,47 @@ const CombinedIcon = ({ name }: { name: string }) => {
             try {
                 // 1. 体の画像をロード
                 const baseImg = await loadImage(`/simulator/character/${name}.png`);
-                canvas.width = baseImg.width || 64;
-                canvas.height = baseImg.height || 64;
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(baseImg, 0, 0);
+                const baseW = baseImg.width || 64;
+                const baseH = baseImg.height || 64;
 
-                // 2. 目の画像をロード＆位置合わせして合成
+                // 1.5. 口の画像をロード（新フィールド等、口が体から分離されているキャラのみ）
+                const tamaConfigForMouth = TAMA_DATA[name];
+                let mouthImg: HTMLImageElement | null = null;
+                if (tamaConfigForMouth?.mouthPosition) {
+                    try {
+                        mouthImg = await loadImage(`/simulator/mouth/${name}.png`);
+                    } catch (e) { /* no mouth */ }
+                }
+
+                // 2. 目の画像をロード
                 const tamaConfig = TAMA_DATA[name];
+                let eyePosX = 0, eyePosY = 0, eyeImg: HTMLImageElement | null = null;
                 if (tamaConfig) {
-                    const eyePosX = tamaConfig.eyePosition[0];
-                    const eyePosY = tamaConfig.eyePosition[1] + tamaConfig.adjustments;
+                    eyePosX = tamaConfig.eyePosition[0];
+                    eyePosY = tamaConfig.eyePosition[1] + tamaConfig.adjustments;
+                    eyeImg = await loadImage(`/simulator/eyes/${name}.png`);
+                }
 
-                    const eyeImg = await loadImage(`/simulator/eyes/${name}.png`);
+                // 3. レイヤーがはみ出さないようキャンバスサイズとオフセットを算出
+                const layout = computeSpriteLayout(
+                    baseW, baseH,
+                    mouthImg && tamaConfigForMouth?.mouthPosition
+                        ? { x: tamaConfigForMouth.mouthPosition[0], y: tamaConfigForMouth.mouthPosition[1], w: mouthImg.width, h: mouthImg.height }
+                        : null,
+                    eyeImg ? { x: eyePosX, y: eyePosY, w: eyeImg.width, h: eyeImg.height } : { x: 0, y: 0, w: 0, h: 0 }
+                );
+                canvas.width = layout.width;
+                canvas.height = layout.height;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(baseImg, layout.offsetX, layout.offsetY);
+
+                if (mouthImg && tamaConfigForMouth?.mouthPosition) {
+                    ctx.drawImage(mouthImg, tamaConfigForMouth.mouthPosition[0] + layout.offsetX, tamaConfigForMouth.mouthPosition[1] + layout.offsetY);
+                }
+
+                if (eyeImg) {
+                    const ex = eyePosX + layout.offsetX;
+                    const ey = eyePosY + layout.offsetY;
 
                     // マスク処理（あれば）
                     let useMask = false;
@@ -77,13 +106,13 @@ const CombinedIcon = ({ name }: { name: string }) => {
                         if (tempCtx) {
                             tempCtx.drawImage(eyeImg, 0, 0);
                             tempCtx.globalCompositeOperation = 'destination-out';
-                            tempCtx.drawImage(maskImg, eyePosX, eyePosY, eyeImg.width, eyeImg.height, 0, 0, eyeImg.width, eyeImg.height);
-                            ctx.drawImage(tempCanvas, eyePosX, eyePosY);
+                            tempCtx.drawImage(maskImg, ex, ey, eyeImg.width, eyeImg.height, 0, 0, eyeImg.width, eyeImg.height);
+                            ctx.drawImage(tempCanvas, ex, ey);
                         } else {
-                            ctx.drawImage(eyeImg, eyePosX, eyePosY);
+                            ctx.drawImage(eyeImg, ex, ey);
                         }
                     } else {
-                        ctx.drawImage(eyeImg, eyePosX, eyePosY);
+                        ctx.drawImage(eyeImg, ex, ey);
                     }
                 }
 
@@ -121,7 +150,7 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
     const t = useTranslations('simulator');
     // Checkbox states (for filters)
     const [excludeJadeExclusive, setExcludeJadeExclusive] = useState(false);
-    const [worldTab, setWorldTab] = useState<'all' | 'land' | 'sea' | 'sky' | 'forest'>(minimalMode ? 'land' : 'all');
+    const [worldTab, setWorldTab] = useState<'all' | 'land' | 'sea' | 'sky' | 'forest' | 'nangoku' | 'koori'>(minimalMode ? 'land' : 'all');
 
     // Filtered lists
     // NON_BREEDABLE（ベビー・キッズ・ヤング）を除外した eyeNames を使うことでアダルト期限定にする
@@ -159,7 +188,19 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
         "lessapantchi", "kanokotchi", "suigyutchi", "panbootchi",
         "kachitchi", "tokipatchi", "kuchipatchi", "sparrotchi",
         "shiitaketchi", "peatchi", "nappatchi", "rushraditchi",
-        "tatsutchi"
+        "tatsutchi",
+        // なんごく (Tropical) - 17体
+        "tropicalmeowtchi", "madillotchi", "tarantytchi", "crocotchi",
+        "tropicalmametchi", "parorotchi", "tenatchi", "namakemotchi",
+        "kuikuitchi", "poizutchi", "chameleotchi", "iguanatchi",
+        "yashikitchi", "tropicalpotsunentchi", "ananatchi", "avovotchi",
+        "manapatchi",
+        // こおり (Ice) - 17体
+        "okojotchi", "wolftchi", "polakumatchi", "azaratchi",
+        "lemmingtchi", "moosetchi", "raichotchi", "yukiusatchi",
+        "icyirukatchi", "ginjirotchi", "rakkotchi", "hoppentchi",
+        "nerinetchi", "dangouotchi", "yaytytchi", "yukiraratchi",
+        "hobohorntchi"
     ];
 
     const sortByName = (a: string, b: string) => {
@@ -191,6 +232,14 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
     ["foresthorhotchi","konkotchi","tigaotchi","tanoontchi","lessapantchi","kanokotchi","suigyutchi",
      "panbootchi","kachitchi","tokipatchi","kuchipatchi","sparrotchi","shiitaketchi","peatchi",
      "nappatchi","rushraditchi","tatsutchi"].forEach(n => { FIELD_MAP[n] = [...(FIELD_MAP[n]||[]), 'forest']; });
+    // なんごく (Tropical) - 17体
+    ["tropicalmeowtchi","madillotchi","tarantytchi","crocotchi","tropicalmametchi","parorotchi",
+     "tenatchi","namakemotchi","kuikuitchi","poizutchi","chameleotchi","iguanatchi","yashikitchi",
+     "tropicalpotsunentchi","ananatchi","avovotchi","manapatchi"].forEach(n => { FIELD_MAP[n] = [...(FIELD_MAP[n]||[]), 'nangoku']; });
+    // こおり (Ice) - 17体
+    ["okojotchi","wolftchi","polakumatchi","azaratchi","lemmingtchi","moosetchi","raichotchi",
+     "yukiusatchi","icyirukatchi","ginjirotchi","rakkotchi","hoppentchi","nerinetchi","dangouotchi",
+     "yaytytchi","yukiraratchi","hobohorntchi"].forEach(n => { FIELD_MAP[n] = [...(FIELD_MAP[n]||[]), 'koori']; });
 
     const getWorld = (name: string): string[] => {
         return FIELD_MAP[name] || [];
@@ -241,16 +290,63 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
             try {
                 // 1. Load Base Image
                 const baseImg = await loadImage(`/simulator/character/${selectedBase}.png`);
-                canvas.width = baseImg.width || 64;
-                canvas.height = baseImg.height || 64;
+                const baseW = baseImg.width || 64;
+                const baseH = baseImg.height || 64;
+
+                // 1.5. Load Mouth Image（口が体から分離されているキャラのみ）
+                const tamaConfig = TAMA_DATA[selectedBase];
+                if (!tamaConfig) throw new Error("Tamagotchi config not found");
+
+                let mouthImg: HTMLImageElement | null = null;
+                if (tamaConfig.mouthPosition) {
+                    try {
+                        mouthImg = await loadImage(`/simulator/mouth/${selectedBase}.png`);
+                    } catch (e) { /* no mouth */ }
+                }
+
+                // 目の位置を先に計算（レイアウト算出のため、目画像も先にロードしておく）
+                const eyeConfig = TAMA_DATA[selectedEye];
+                const adjustments = eyeConfig ? eyeConfig.adjustments : 0;
+                let eyePosX = tamaConfig.eyePosition[0];
+                let eyePosY = tamaConfig.eyePosition[1] + adjustments;
+
+                // なんごく/こおり（口の座標を持つ＝新形式）と既存フィールド（旧形式）を跨いで
+                // 組み合わせた場合のみ、目画像の余白の取り方の違いによるズレを補正する。
+                // 値は実機で目視調整して決定したもの（新ベース×旧目と旧ベース×新目で符号が反転する）。
+                const isNewBase = !!tamaConfig.mouthPosition;
+                const isNewEye = !!(eyeConfig && eyeConfig.mouthPosition);
+                if (isNewBase && !isNewEye) {
+                    eyePosX += 12;
+                    eyePosY += 6;
+                } else if (!isNewBase && isNewEye) {
+                    eyePosX -= 12;
+                    eyePosY -= 6;
+                }
+
+                const eyeImg = await loadImage(`/simulator/eyes/${selectedEye}.png`);
+
+                // レイヤーが体の輪郭からはみ出さないようキャンバスサイズとオフセットを算出
+                // （crocotchiのように口画像自体に透明マージンが無く、体の輪郭より外に口がはみ出すキャラがいるため）
+                const layout = computeSpriteLayout(
+                    baseW, baseH,
+                    mouthImg && tamaConfig.mouthPosition
+                        ? { x: tamaConfig.mouthPosition[0], y: tamaConfig.mouthPosition[1], w: mouthImg.width, h: mouthImg.height }
+                        : null,
+                    { x: eyePosX, y: eyePosY, w: eyeImg.width, h: eyeImg.height }
+                );
+                canvas.width = layout.width;
+                canvas.height = layout.height;
 
                 // Draw base
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(baseImg, 0, 0);
+                ctx.drawImage(baseImg, layout.offsetX, layout.offsetY);
+
+                // Draw Mouth Image（カラー置換の対象にするため目より先・置換前に描画）
+                if (mouthImg && tamaConfig.mouthPosition) {
+                    ctx.drawImage(mouthImg, tamaConfig.mouthPosition[0] + layout.offsetX, tamaConfig.mouthPosition[1] + layout.offsetY);
+                }
 
                 // 2. Color Swap Logic
-                const tamaConfig = TAMA_DATA[selectedBase];
-                if (!tamaConfig) throw new Error("Tamagotchi config not found");
 
                 const basePaletteName = tamaConfig.baseColor;
                 const basePalette = COLOR_PALETTES[basePaletteName] || [];
@@ -324,13 +420,9 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
                     ctx.putImageData(imgData, 0, 0);
                 }
 
-                // 3. Load & Draw Eye Image
-                const eyeConfig = TAMA_DATA[selectedEye];
-                const adjustments = eyeConfig ? eyeConfig.adjustments : 0;
-                let eyePosX = tamaConfig.eyePosition[0];
-                let eyePosY = tamaConfig.eyePosition[1] + adjustments;
-
-                const eyeImg = await loadImage(`/simulator/eyes/${selectedEye}.png`);
+                // 3. Draw Eye Image
+                const ex = eyePosX + layout.offsetX;
+                const ey = eyePosY + layout.offsetY;
 
                 // check if mask exists
                 let useMask = false;
@@ -352,15 +444,15 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
                         // mask it out: where mask is opaque, erase eye.
                         // equivalent to destination-out with the cropped mask
                         tempCtx.globalCompositeOperation = 'destination-out';
-                        tempCtx.drawImage(maskImg, eyePosX, eyePosY, eyeImg.width, eyeImg.height, 0, 0, eyeImg.width, eyeImg.height);
+                        tempCtx.drawImage(maskImg, ex, ey, eyeImg.width, eyeImg.height, 0, 0, eyeImg.width, eyeImg.height);
 
                         // draw composed eye to main canvas
-                        ctx.drawImage(tempCanvas, eyePosX, eyePosY);
+                        ctx.drawImage(tempCanvas, ex, ey);
                     } else {
-                        ctx.drawImage(eyeImg, eyePosX, eyePosY);
+                        ctx.drawImage(eyeImg, ex, ey);
                     }
                 } else {
-                    ctx.drawImage(eyeImg, eyePosX, eyePosY);
+                    ctx.drawImage(eyeImg, ex, ey);
                 }
 
                 // convert to data URL for react state
@@ -486,8 +578,8 @@ export default function Simulator({ minimalMode = false, onComplete }: Simulator
 
                         {/* フィールド絞り込みタブ */}
                         <div style={{ marginBottom: '10px', display: 'flex', gap: '5px', overflowX: 'auto', paddingBottom: '5px' }}>
-                            {(minimalMode ? ['land', 'sea', 'sky', 'forest'] as const : ['all', 'land', 'sea', 'sky', 'forest'] as const).map(tab => {
-                                const labels = { all: t('all'), land: t('land'), sea: t('sea'), sky: t('sky'), forest: t('forest') };
+                            {(minimalMode ? ['land', 'sea', 'sky', 'forest', 'nangoku', 'koori'] as const : ['all', 'land', 'sea', 'sky', 'forest', 'nangoku', 'koori'] as const).map(tab => {
+                                const labels = { all: t('all'), land: t('land'), sea: t('sea'), sky: t('sky'), forest: t('forest'), nangoku: t('nangoku'), koori: t('koori') };
                                 return (
                                     <button
                                         key={tab}

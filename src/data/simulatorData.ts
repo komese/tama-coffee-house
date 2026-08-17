@@ -4,7 +4,33 @@ export type TamaData = {
     baseColor: string;
     eyePosition: [number, number];
     adjustments: number;
+    mouthPosition?: [number, number];
 };
+
+// 体・口・目のレイヤーを合成するのに必要なキャンバスサイズを算出する。
+// 体画像の範囲(0,0,baseW,baseH)を基準に、口・目の描画位置がそれをはみ出す場合は
+// キャンバスを広げてoffsetX/offsetYぶん全レイヤーをずらして描画する。
+// （crocotchiのように口画像自体に透明マージンが無く、体の輪郭より外に口がはみ出すキャラがいるため）
+export function computeSpriteLayout(
+    baseW: number,
+    baseH: number,
+    mouth: { x: number; y: number; w: number; h: number } | null,
+    eye: { x: number; y: number; w: number; h: number }
+): { width: number; height: number; offsetX: number; offsetY: number } {
+    let minX = 0, minY = 0, maxX = baseW, maxY = baseH;
+
+    const expand = (x: number, y: number, w: number, h: number) => {
+        minX = Math.min(minX, x);
+        minY = Math.min(minY, y);
+        maxX = Math.max(maxX, x + w);
+        maxY = Math.max(maxY, y + h);
+    };
+
+    if (mouth) expand(mouth.x, mouth.y, mouth.w, mouth.h);
+    expand(eye.x, eye.y, eye.w, eye.h);
+
+    return { width: maxX - minX, height: maxY - minY, offsetX: -minX, offsetY: -minY };
+}
 
 export const COLOR_PALETTES: Record<string, Record<string, RGBColor>> = {
     "blue": {
@@ -1329,6 +1355,414 @@ export const TAMA_DATA: Record<string, TamaData> = {
             22
         ],
         "adjustments": 6
+    },
+    "ananatchi": {
+        "baseColor": "yellow",
+        "eyePosition": [
+            -11,
+            17
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            12,
+            37
+        ]
+    },
+    "avovotchi": {
+        "baseColor": "green",
+        "eyePosition": [
+            -6,
+            15
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            21,
+            36
+        ]
+    },
+    "azaratchi": {
+        "baseColor": "teal",
+        "eyePosition": [
+            -8,
+            -3
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            13,
+            17
+        ]
+    },
+    "chameleotchi": {
+        "baseColor": "green",
+        "eyePosition": [
+            -9,
+            13
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            13,
+            35
+        ]
+    },
+    "crocotchi": {
+        "baseColor": "lavender",
+        "eyePosition": [
+            -10,
+            0
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            -6,
+            15
+        ]
+    },
+    "dangouotchi": {
+        "baseColor": "red",
+        "eyePosition": [
+            -9,
+            17
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            17,
+            36
+        ]
+    },
+    "ginjirotchi": {
+        "baseColor": "blue",
+        "eyePosition": [
+            -7,
+            1
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            12,
+            20
+        ]
+    },
+    "hobohorntchi": {
+        "baseColor": "indigo",
+        "eyePosition": [
+            -4,
+            11
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            16,
+            30
+        ]
+    },
+    "hoppentchi": {
+        "baseColor": "indigo",
+        "eyePosition": [
+            -6,
+            4
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            21,
+            24
+        ]
+    },
+    "icyirukatchi": {
+        "baseColor": "white",
+        "eyePosition": [
+            -4,
+            6
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            17,
+            24
+        ]
+    },
+    "iguanatchi": {
+        "baseColor": "orange",
+        "eyePosition": [
+            -13,
+            10
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            8,
+            31
+        ]
+    },
+    "kuikuitchi": {
+        "baseColor": "light_yellow",
+        "eyePosition": [
+            -10,
+            1
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            9,
+            20
+        ]
+    },
+    "lemmingtchi": {
+        "baseColor": "white",
+        "eyePosition": [
+            -10,
+            5
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            17,
+            24
+        ]
+    },
+    "madillotchi": {
+        "baseColor": "light_pink",
+        "eyePosition": [
+            -5,
+            14
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            14,
+            34
+        ]
+    },
+    "manapatchi": {
+        "baseColor": "teal",
+        "eyePosition": [
+            -9,
+            9
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            9,
+            29
+        ]
+    },
+    "moosetchi": {
+        "baseColor": "orange",
+        "eyePosition": [
+            -5,
+            4
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            23,
+            23
+        ]
+    },
+    "namakemotchi": {
+        "baseColor": "green",
+        "eyePosition": [
+            0,
+            10
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            24,
+            28
+        ]
+    },
+    "nerinetchi": {
+        "baseColor": "light_pink",
+        "eyePosition": [
+            -10,
+            11
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            14,
+            30
+        ]
+    },
+    "okojotchi": {
+        "baseColor": "white",
+        "eyePosition": [
+            -5,
+            9
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            22,
+            29
+        ]
+    },
+    "parorotchi": {
+        "baseColor": "light_green",
+        "eyePosition": [
+            -6,
+            10
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            20,
+            22
+        ]
+    },
+    "poizutchi": {
+        "baseColor": "pink",
+        "eyePosition": [
+            -4,
+            8
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            17,
+            27
+        ]
+    },
+    "polakumatchi": {
+        "baseColor": "lavender",
+        "eyePosition": [
+            -2,
+            2
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            19,
+            18
+        ]
+    },
+    "raichotchi": {
+        "baseColor": "light_yellow",
+        "eyePosition": [
+            -7,
+            3
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            20,
+            20
+        ]
+    },
+    "rakkotchi": {
+        "baseColor": "light_yellow",
+        "eyePosition": [
+            -11,
+            5
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            16,
+            20
+        ]
+    },
+    "tarantytchi": {
+        "baseColor": "blue",
+        "eyePosition": [
+            -9,
+            8
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            15,
+            29
+        ]
+    },
+    "tenatchi": {
+        "baseColor": "teal",
+        "eyePosition": [
+            -4,
+            0
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            25,
+            16
+        ]
+    },
+    "tropicalmametchi": {
+        "baseColor": "yellow",
+        "eyePosition": [
+            -9,
+            13
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            20,
+            35
+        ]
+    },
+    "tropicalmeowtchi": {
+        "baseColor": "red",
+        "eyePosition": [
+            -10,
+            18
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            18,
+            38
+        ]
+    },
+    "tropicalpotsunentchi": {
+        "baseColor": "orange",
+        "eyePosition": [
+            -7,
+            22
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            16,
+            42
+        ]
+    },
+    "wolftchi": {
+        "baseColor": "sky_blue",
+        "eyePosition": [
+            -7,
+            7
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            17,
+            25
+        ]
+    },
+    "yashikitchi": {
+        "baseColor": "orange",
+        "eyePosition": [
+            -6,
+            22
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            20,
+            39
+        ]
+    },
+    "yaytytchi": {
+        "baseColor": "sky_blue",
+        "eyePosition": [
+            0,
+            13
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            20,
+            33
+        ]
+    },
+    "yukiraratchi": {
+        "baseColor": "teal",
+        "eyePosition": [
+            -1,
+            15
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            24,
+            34
+        ]
+    },
+    "yukiusatchi": {
+        "baseColor": "white",
+        "eyePosition": [
+            -10,
+            17
+        ],
+        "adjustments": 0,
+        "mouthPosition": [
+            14,
+            35
+        ]
     }
 };
 
